@@ -1,0 +1,45 @@
+<section class="sl" style="padding-top:{{ section.settings.padding_top }}px;padding-bottom:{{ section.settings.padding_bottom }}px">
+  <div class="wrap sl__row">
+    <span class="lbl">{{ section.settings.heading }}</span>
+    {%- for block in section.blocks -%}
+      <a class="pill" href="{{ block.settings.url | default: routes.collections_url }}" {{ block.shopify_attributes }}>{{ block.settings.label }}</a>
+    {%- endfor -%}
+  </div>
+</section>
+
+{% stylesheet %}
+  .sl__row{display:flex;gap:16px;flex-wrap:wrap;align-items:center;border-top:1px solid #000;padding-top:24px}
+  .sl__row .lbl{margin-right:8px}
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Other silhouettes",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Other silhouettes" },
+    { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 120, "step": 8, "unit": "px", "default": 0 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 160, "step": 8, "unit": "px", "default": 96 }
+  ],
+  "blocks": [
+    {
+      "type": "link",
+      "name": "Link",
+      "settings": [
+        { "type": "text", "id": "label", "label": "Label", "default": "Air Jordan 1" },
+        { "type": "url", "id": "url", "label": "Link" }
+      ]
+    }
+  ],
+  "max_blocks": 10,
+  "presets": [
+    {
+      "name": "Other silhouettes",
+      "blocks": [
+        { "type": "link", "settings": { "label": "Air Jordan 1" } },
+        { "type": "link", "settings": { "label": "adidas Samba" } },
+        { "type": "link", "settings": { "label": "New Balance 550" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

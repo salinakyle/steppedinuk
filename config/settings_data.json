@@ -1,0 +1,18 @@
+{
+  "current": {
+    "page_width": 1360,
+    "wordmark": "SteppedIn",
+    "size_option_name": "Size",
+    "low_stock_threshold": 3,
+    "new_badge_days": 14,
+    "show_quick_add": true,
+    "default_delivery_label": "Next-day delivery",
+    "bnpl_enabled": true,
+    "bnpl_instalments": 3,
+    "bnpl_providers": "Klarna or Clearpay",
+    "cart_type": "drawer",
+    "cart_note": "Shipping and taxes calculated at checkout.",
+    "bis_enabled": true,
+    "bis_tag": "back-in-stock"
+  }
+}

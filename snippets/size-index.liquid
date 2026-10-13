@@ -1,0 +1,18 @@
+{%- comment -%}
+  Prints the zero-based position of the size option on a product, or -1.
+  Params: product
+  Usage:
+    {%- capture si -%}{%- render 'size-index', product: product -%}{%- endcapture -%}
+    {%- assign size_index = si | strip | plus: 0 -%}
+{%- endcomment -%}
+{%- liquid
+  assign size_name = settings.size_option_name | downcase
+  assign found = -1
+  for option in product.options_with_values
+    assign option_name = option.name | downcase
+    if option_name == size_name
+      assign found = forloop.index0
+    endif
+  endfor
+  echo found
+-%}

@@ -1,0 +1,124 @@
+<section class="sec rs" style="padding-top:{{ section.settings.padding_top }}px;padding-bottom:{{ section.settings.padding_bottom }}px" aria-labelledby="rs-{{ section.id }}">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2 class="d h2" id="rs-{{ section.id }}">{{ section.settings.heading }}</h2>
+      {%- if section.settings.link_label != blank -%}
+        <a class="lbl u" href="{{ section.settings.link_url | default: '#' }}">{{ section.settings.link_label }}</a>
+      {%- endif -%}
+    </div>
+
+    <div class="grid grid--3 rs__reviews">
+      {%- for block in section.blocks -%}
+        {%- if block.type == 'review' -%}
+          <article class="rs__card" {{ block.shopify_attributes }}>
+            <div class="rs__stars" role="img" aria-label="{{ block.settings.stars }} out of 5 stars">
+              {%- for i in (1..5) -%}
+                <span class="star{% if i > block.settings.stars %} star--empty{% endif %}">{% render 'icon', icon: 'star', size: 16 %}</span>
+              {%- endfor -%}
+            </div>
+            <h3 class="rs__t">{{ block.settings.title }}</h3>
+            <p class="rs__b">{{ block.settings.text }}</p>
+            <div class="lbl">{{ block.settings.author }}</div>
+          </article>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+
+    {%- for block in section.blocks -%}
+      {%- if block.type == '@app' -%}
+        <div class="rs__app" {{ block.shopify_attributes }}>{% render block %}</div>
+      {%- endif -%}
+    {%- endfor -%}
+
+    {%- assign photo_count = 0 -%}
+    {%- for block in section.blocks -%}{%- if block.type == 'photo' -%}{%- assign photo_count = photo_count | plus: 1 -%}{%- endif -%}{%- endfor -%}
+    {%- if photo_count > 0 -%}
+      <div class="sec-head rs__ugc-head">
+        <h3 class="d h3">{{ section.settings.photos_heading }}</h3>
+        <span class="lbl">Customer photos</span>
+      </div>
+      <div class="grid grid--4">
+        {%- for block in section.blocks -%}
+          {%- if block.type == 'photo' -%}
+            {%- assign p = block.settings.product -%}
+            <a class="rs__photo ph ph--{{ forloop.index | modulo: 5 | plus: 1 }}" href="{{ p.url | default: '#' }}" style="aspect-ratio:1/1" {{ block.shopify_attributes }}>
+              {%- if block.settings.image != blank -%}
+                {{ block.settings.image | image_url: width: 700 | image_tag: loading: 'lazy', widths: '350, 500, 700', sizes: '(min-width: 1000px) 25vw, 50vw', alt: block.settings.caption }}
+              {%- else -%}
+                {{ 'lifestyle-2' | placeholder_svg_tag }}
+              {%- endif -%}
+              {%- if p != blank -%}
+                <span class="rs__shop"><span><strong>{{ p.title }}</strong> {{ p.price | money }}</span><span class="lbl">Shop</span></span>
+              {%- endif -%}
+            </a>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+{% stylesheet %}
+  .rs{border-top:1px solid #000}
+  .rs__reviews{margin-bottom:72px}
+  .rs__card{border:1px solid #000;padding:28px;display:flex;flex-direction:column;gap:14px}
+  .rs__stars{display:flex;gap:4px}
+  .star--empty .icon--star{fill:none;stroke:currentColor}
+  .rs__t{margin:0;font-size:18px;font-weight:600}
+  .rs__b{margin:0;flex:1}
+  .rs__app{margin-bottom:72px}
+  .rs__ugc-head{margin-bottom:24px}
+  .rs__shop{position:absolute;left:0;right:0;bottom:0;background:#fff;color:#000;border-top:1px solid #000;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:14px;z-index:1}
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Reviews and photos",
+  "tag": "section",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "What customers say" },
+    { "type": "text", "id": "link_label", "label": "Link label", "default": "Read all reviews" },
+    { "type": "url", "id": "link_url", "label": "Link" },
+    { "type": "text", "id": "photos_heading", "label": "Photos heading", "default": "Worn by you. Shop the pair." },
+    { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 160, "step": 8, "unit": "px", "default": 96 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 160, "step": 8, "unit": "px", "default": 96 }
+  ],
+  "blocks": [
+    {
+      "type": "review",
+      "name": "Review",
+      "settings": [
+        { "type": "range", "id": "stars", "label": "Stars", "min": 1, "max": 5, "step": 1, "default": 5 },
+        { "type": "text", "id": "title", "label": "Title", "default": "Arrived next day, exactly as described" },
+        { "type": "textarea", "id": "text", "label": "Review", "default": "Box was clean, laces bagged separately and the size note on the page was spot on." },
+        { "type": "text", "id": "author", "label": "Author line", "default": "Verified buyer, Samba OG, UK 9" }
+      ]
+    },
+    {
+      "type": "photo",
+      "name": "Customer photo",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Photo" },
+        { "type": "product", "id": "product", "label": "Product to shop" },
+        { "type": "text", "id": "caption", "label": "Alt text", "default": "Customer wearing sneakers" }
+      ]
+    },
+    { "type": "@app" }
+  ],
+  "max_blocks": 16,
+  "presets": [
+    {
+      "name": "Reviews and photos",
+      "blocks": [
+        { "type": "review", "settings": { "title": "Arrived next day, exactly as described" } },
+        { "type": "review", "settings": { "title": "The size guide actually helped", "text": "The fit note said to go half a size down and it was right. Returns were never needed.", "author": "Verified buyer, New Balance 550, UK 8" } },
+        { "type": "review", "settings": { "title": "Confident it was the real thing", "text": "The verification note and photos of my actual pair before dispatch made the difference.", "author": "Verified buyer, Dunk Low, UK 10" } },
+        { "type": "photo", "settings": {} },
+        { "type": "photo", "settings": {} },
+        { "type": "photo", "settings": {} },
+        { "type": "photo", "settings": {} }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,85 @@
+<div class="drawer drawer--right" id="drawer-cart" data-drawer="cart" aria-hidden="true" role="dialog" aria-label="Bag">
+  <div class="drawer__overlay" data-drawer-close></div>
+  <div class="drawer__panel">
+    <div class="drawer__head">
+      <span class="d">Bag</span>
+      <button type="button" class="icon-btn" data-drawer-close aria-label="Close bag">{% render 'icon', icon: 'close' %}</button>
+    </div>
+
+    <div class="cart-drawer__inner" data-cart-inner>
+      {%- if cart.item_count == 0 -%}
+        <div class="drawer__body cart-drawer__empty">
+          <p class="d" style="font-size:30px;margin-bottom:12px">Your bag is empty</p>
+          <p style="margin:0 0 24px">Find your size and add a pair.</p>
+          <a class="btn" href="{{ routes.all_products_collection_url }}">Shop sneakers</a>
+        </div>
+      {%- else -%}
+        <div class="drawer__body">
+          <ul class="cart-lines" role="list">
+            {%- for item in cart.items -%}
+              <li class="cart-line">
+                <a class="cart-line__img ph" href="{{ item.url }}">
+                  {%- if item.image -%}
+                    {{ item.image | image_url: width: 240 | image_tag: loading: 'lazy', widths: '120, 240', sizes: '96px', alt: item.image.alt }}
+                  {%- else -%}
+                    {{ 'product-1' | placeholder_svg_tag }}
+                  {%- endif -%}
+                </a>
+                <div class="cart-line__body">
+                  <div class="lbl">{{ item.product.vendor }}</div>
+                  <a href="{{ item.url }}" class="cart-line__title">{{ item.product.title }}</a>
+                  {%- unless item.product.has_only_default_variant -%}
+                    <div class="cart-line__variant">{{ item.variant.title }}</div>
+                  {%- endunless -%}
+                  <div class="cart-line__row">
+                    <div class="qty" role="group" aria-label="Quantity">
+                      <button type="button" class="icon-btn" data-cart-change data-line="{{ forloop.index }}" data-qty="{{ item.quantity | minus: 1 }}" aria-label="Decrease quantity">{% render 'icon', icon: 'minus', size: 16 %}</button>
+                      <span>{{ item.quantity }}</span>
+                      <button type="button" class="icon-btn" data-cart-change data-line="{{ forloop.index }}" data-qty="{{ item.quantity | plus: 1 }}" aria-label="Increase quantity">{% render 'icon', icon: 'plus', size: 16 %}</button>
+                    </div>
+                    <span class="cart-line__price">{{ item.final_line_price | money }}</span>
+                  </div>
+                  <button type="button" class="cart-line__remove lbl" data-cart-change data-line="{{ forloop.index }}" data-qty="0">Remove</button>
+                </div>
+              </li>
+            {%- endfor -%}
+          </ul>
+        </div>
+        <div class="cart-drawer__foot">
+          <div class="cart-drawer__total"><span class="lbl">Subtotal</span><span class="d" style="font-size:26px">{{ cart.total_price | money }}</span></div>
+          <p class="cart-drawer__note">{{ settings.cart_note }}</p>
+          <form action="{{ routes.cart_url }}" method="post">
+            <button type="submit" name="checkout" class="btn btn--full">Checkout</button>
+          </form>
+          <a class="lbl cart-drawer__view" href="{{ routes.cart_url }}">View bag</a>
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+{% stylesheet %}
+  .cart-drawer__inner{flex:1;display:flex;flex-direction:column;min-height:0}
+  .cart-drawer__empty{justify-content:center;align-items:flex-start}
+  .cart-lines{list-style:none;margin:0;padding:0}
+  .cart-line{display:grid;grid-template-columns:96px minmax(0,1fr);gap:16px;padding:16px 0;border-bottom:1px solid #000}
+  .cart-line:first-child{padding-top:0}
+  .cart-line__img{width:96px;height:96px;display:block}
+  .cart-line__title{font-weight:600;display:block}
+  .cart-line__variant{font-size:14px}
+  .cart-line__row{display:flex;justify-content:space-between;align-items:center;margin-top:6px}
+  .qty{display:inline-flex;align-items:center;border:1px solid #000}
+  .qty .icon-btn{width:36px;height:36px}
+  .qty span{min-width:28px;text-align:center;font-weight:600}
+  .cart-line__remove{background:none;border:0;padding:0;margin-top:6px;text-decoration:underline}
+  .cart-drawer__foot{border-top:1px solid #000;padding:20px 24px 24px;display:flex;flex-direction:column;gap:12px}
+  .cart-drawer__total{display:flex;justify-content:space-between;align-items:center}
+  .cart-drawer__note{margin:0;font-size:13px}
+  .cart-drawer__view{text-align:center;text-decoration:underline;padding:6px}
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Cart drawer"
+}
+{% endschema %}

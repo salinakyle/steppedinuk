@@ -1,0 +1,85 @@
+<nav class="tabbar" aria-label="Quick navigation">
+  {%- for block in section.blocks -%}
+    {%- liquid
+      assign tab_url = block.settings.url | default: '/'
+      assign active = false
+      if tab_url == '/' and request.path == '/'
+        assign active = true
+      elsif tab_url != '/' and request.path contains tab_url
+        assign active = true
+      endif
+    -%}
+    <a
+      href="{{ tab_url }}"
+      class="tabbar__item{% if active %} is-on{% endif %}"
+      {% if block.settings.icon == 'bag' %}data-drawer-open="cart"{% elsif block.settings.icon == 'search' %}data-drawer-open="search"{% endif %}
+      {% if active %}aria-current="page"{% endif %}
+      {{ block.shopify_attributes }}>
+      <span class="tabbar__icon">
+        {% render 'icon', icon: block.settings.icon, size: 22 %}
+        {%- if block.settings.icon == 'bag' -%}
+          <span class="count" data-cart-count{% if cart.item_count == 0 %} hidden{% endif %}>{{ cart.item_count }}</span>
+        {%- endif -%}
+      </span>
+      <span>{{ block.settings.label }}</span>
+    </a>
+  {%- endfor -%}
+</nav>
+
+{% stylesheet %}
+  .tabbar{display:none}
+  @media (max-width:749px){
+    :root{--tabbar-h:calc(64px + env(safe-area-inset-bottom))}
+    .tabbar{display:grid;grid-template-columns:repeat(auto-fit,minmax(0,1fr));grid-auto-flow:column;position:fixed;left:0;right:0;bottom:0;z-index:60;height:var(--tabbar-h);padding-bottom:env(safe-area-inset-bottom);background:#fff;border-top:1px solid #000}
+    .tabbar__item{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase}
+    .tabbar__item.is-on{background:#000;color:#fff}
+    .tabbar__icon{position:relative;display:inline-flex}
+    .tabbar__item.is-on .count{background:#fff;color:#000}
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Mobile tab bar",
+  "settings": [
+    { "type": "paragraph", "content": "Thumb-reach navigation. Only appears on phones." }
+  ],
+  "blocks": [
+    {
+      "type": "tab",
+      "name": "Tab",
+      "settings": [
+        { "type": "text", "id": "label", "label": "Label", "default": "Home" },
+        { "type": "url", "id": "url", "label": "Link" },
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Icon",
+          "options": [
+            { "value": "home", "label": "Home" },
+            { "value": "grid", "label": "Shop" },
+            { "value": "search", "label": "Search (opens search)" },
+            { "value": "society", "label": "Society" },
+            { "value": "account", "label": "Account" },
+            { "value": "bag", "label": "Bag (opens cart, shows count)" }
+          ],
+          "default": "home"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 5,
+  "presets": [
+    {
+      "name": "Mobile tab bar",
+      "blocks": [
+        { "type": "tab", "settings": { "label": "Home", "icon": "home" } },
+        { "type": "tab", "settings": { "label": "Shop", "icon": "grid" } },
+        { "type": "tab", "settings": { "label": "Search", "icon": "search" } },
+        { "type": "tab", "settings": { "label": "Society", "icon": "society" } },
+        { "type": "tab", "settings": { "label": "Bag", "icon": "bag" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

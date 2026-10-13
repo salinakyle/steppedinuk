@@ -1,0 +1,29 @@
+{
+  "name": "Footer group",
+  "type": "footer",
+  "sections": {
+    "footer": {
+      "type": "footer",
+      "blocks": {
+        "brand": { "type": "brand", "settings": { "text": "Authenticated sneakers, sized properly and sent quickly." } },
+        "shop": { "type": "links", "settings": { "heading": "Shop", "menu": "main-menu" } },
+        "help": { "type": "links", "settings": { "heading": "Help", "menu": "footer" } }
+      },
+      "block_order": ["brand", "shop", "help"],
+      "settings": { "copyright": "All rights reserved.", "show_social": true, "show_payment": true }
+    },
+    "tab-bar": {
+      "type": "mobile-tab-bar",
+      "blocks": {
+        "t1": { "type": "tab", "settings": { "label": "Home", "url": "/", "icon": "home" } },
+        "t2": { "type": "tab", "settings": { "label": "Shop", "url": "/collections/all", "icon": "grid" } },
+        "t3": { "type": "tab", "settings": { "label": "Search", "url": "/search", "icon": "search" } },
+        "t4": { "type": "tab", "settings": { "label": "Society", "url": "/pages/society", "icon": "society" } },
+        "t5": { "type": "tab", "settings": { "label": "Bag", "url": "/cart", "icon": "bag" } }
+      },
+      "block_order": ["t1", "t2", "t3", "t4", "t5"],
+      "settings": {}
+    }
+  },
+  "order": ["footer", "tab-bar"]
+}

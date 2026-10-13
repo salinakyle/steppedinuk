@@ -1,0 +1,91 @@
+<section class="sec cg" style="padding-top:{{ section.settings.padding_top }}px;padding-bottom:{{ section.settings.padding_bottom }}px" aria-labelledby="cg-{{ section.id }}">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2 class="d h2" id="cg-{{ section.id }}">{{ section.settings.heading }}</h2>
+      {%- if section.settings.intro != blank -%}<p>{{ section.settings.intro }}</p>{%- endif -%}
+    </div>
+
+    <div class="grid grid--4 cg__bands">
+      {%- for block in section.blocks -%}
+        <a class="cg__band" href="{{ block.settings.link | default: routes.collections_url }}" {{ block.shopify_attributes }}>
+          <div class="cg__img ph ph--{{ forloop.index | modulo: 5 | plus: 1 }}">
+            {%- if block.settings.image != blank -%}
+              {{ block.settings.image | image_url: width: 700 | image_tag: loading: 'lazy', widths: '350, 500, 700', sizes: '(min-width: 1000px) 25vw, 50vw', alt: block.settings.band }}
+            {%- else -%}
+              {{ 'collection-2' | placeholder_svg_tag }}
+            {%- endif -%}
+          </div>
+          <div class="cg__body">
+            <div class="d cg__price">{{ block.settings.band }}</div>
+            <div>{{ block.settings.items }}</div>
+          </div>
+        </a>
+      {%- endfor -%}
+    </div>
+
+    {%- if section.settings.gift_title != blank -%}
+      <div class="cg__gift">
+        <div>
+          <div class="d cg__gift-t">{{ section.settings.gift_title }}</div>
+          <div>{{ section.settings.gift_text }}</div>
+        </div>
+        <a class="btn" href="{{ section.settings.gift_url | default: routes.collections_url }}">{{ section.settings.gift_button }}</a>
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+{% stylesheet %}
+  .cg{border-top:1px solid #000}
+  .cg__bands{margin-bottom:16px}
+  .cg__band{display:block;border:1px solid #000;color:#000;background:#fff}
+  .cg__band:hover{background:#000;color:#fff}
+  .cg__img{aspect-ratio:1/1;border-bottom:1px solid #000}
+  .cg__body{padding:20px 20px 24px}
+  .cg__price{font-size:34px;margin-bottom:10px}
+  .cg__gift{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;border:1px solid #000;padding:28px 32px}
+  .cg__gift-t{font-size:30px;margin-bottom:6px}
+  @media (max-width:749px){.cg__price{font-size:26px}.cg__body{padding:14px 14px 18px}.cg__gift{padding:20px}}
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Collectibles and gifting",
+  "tag": "section",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Collectibles and gifting" },
+    { "type": "text", "id": "intro", "label": "Intro", "default": "Shop by what you want to spend." },
+    { "type": "header", "content": "Gift card banner" },
+    { "type": "text", "id": "gift_title", "label": "Title", "default": "Gift cards" },
+    { "type": "text", "id": "gift_text", "label": "Text", "default": "Sent by email, with a message from you." },
+    { "type": "text", "id": "gift_button", "label": "Button label", "default": "Send a gift card" },
+    { "type": "url", "id": "gift_url", "label": "Button link", "info": "Link to your gift card product." },
+    { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 160, "step": 8, "unit": "px", "default": 96 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 160, "step": 8, "unit": "px", "default": 96 }
+  ],
+  "blocks": [
+    {
+      "type": "band",
+      "name": "Price band",
+      "settings": [
+        { "type": "text", "id": "band", "label": "Price band", "default": "Under £25" },
+        { "type": "text", "id": "items", "label": "What is in it", "default": "Laces, socks, protector spray" },
+        { "type": "image_picker", "id": "image", "label": "Photo" },
+        { "type": "url", "id": "link", "label": "Link", "info": "Collection filtered to this price band." }
+      ]
+    }
+  ],
+  "max_blocks": 6,
+  "presets": [
+    {
+      "name": "Collectibles and gifting",
+      "blocks": [
+        { "type": "band", "settings": { "band": "Under £25", "items": "Laces, socks, protector spray" } },
+        { "type": "band", "settings": { "band": "£25 to £75", "items": "Care kits, caps, bags, small collectibles" } },
+        { "type": "band", "settings": { "band": "£75 to £150", "items": "Collectible figures, gift sets" } },
+        { "type": "band", "settings": { "band": "£150 and up", "items": "Limited collectibles, premium gift boxes" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

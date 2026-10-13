@@ -1,0 +1,20 @@
+<section class="nf" style="padding-top:{{ section.settings.padding_top }}px;padding-bottom:{{ section.settings.padding_bottom }}px">
+  <div class="wrap">
+    <div class="lbl">404</div>
+    <h1 class="d h1">{{ section.settings.heading }}</h1>
+    <p>{{ section.settings.text }}</p>
+    <a class="btn" href="{{ section.settings.link | default: routes.all_products_collection_url }}">{{ section.settings.button }}</a>
+  </div>
+</section>
+{% stylesheet %}.nf{text-align:left}.nf h1{margin:12px 0 16px}.nf p{margin:0 0 28px;max-width:46ch}{% endstylesheet %}
+{% schema %}
+{ "name": "404",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "This pair has moved on" },
+    { "type": "text", "id": "text", "label": "Text", "default": "The page you are looking for is gone. Find your size instead." },
+    { "type": "text", "id": "button", "label": "Button", "default": "Shop sneakers" },
+    { "type": "url", "id": "link", "label": "Button link" },
+    { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 160, "step": 8, "unit": "px", "default": 56 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 160, "step": 8, "unit": "px", "default": 96 }
+  ] }
+{% endschema %}

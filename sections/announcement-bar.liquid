@@ -1,0 +1,64 @@
+<div class="announce dark">
+  <div class="wrap announce__row">
+    <span class="lbl announce__side">{{ section.settings.left_text }}</span>
+    <p class="lbl announce__msg" data-rotator data-interval="{{ section.settings.interval }}">
+      {%- for block in section.blocks -%}
+        <span data-rotator-item{% unless forloop.first %} hidden{% endunless %} {{ block.shopify_attributes }}>
+          {%- if block.settings.link != blank -%}
+            <a href="{{ block.settings.link }}">{{ block.settings.text }}</a>
+          {%- else -%}
+            {{ block.settings.text }}
+          {%- endif -%}
+        </span>
+      {%- endfor -%}
+    </p>
+    <span class="lbl announce__side announce__side--r">
+      {%- if section.settings.right_link != blank -%}
+        <a href="{{ section.settings.right_link }}">{{ section.settings.right_text }}</a>
+      {%- else -%}
+        {{ section.settings.right_text }}
+      {%- endif -%}
+    </span>
+  </div>
+</div>
+
+{% stylesheet %}
+  .announce__row{display:flex;align-items:center;justify-content:space-between;height:36px;gap:16px}
+  .announce__msg{margin:0;flex:1;text-align:center;font-size:11px}
+  .announce__side{flex:0 0 120px}
+  .announce__side--r{text-align:right}
+  @media (max-width:749px){.announce__side{display:none}.announce__msg{font-size:10px}}
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Proof bar",
+  "settings": [
+    { "type": "range", "id": "interval", "label": "Seconds between messages", "min": 2, "max": 10, "step": 1, "default": 4 },
+    { "type": "text", "id": "left_text", "label": "Left text", "default": "UK / GBP" },
+    { "type": "text", "id": "right_text", "label": "Right text", "default": "Help" },
+    { "type": "url", "id": "right_link", "label": "Right link" }
+  ],
+  "blocks": [
+    {
+      "type": "message",
+      "name": "Message",
+      "settings": [
+        { "type": "text", "id": "text", "label": "Message", "default": "Order before 3pm for same-day dispatch" },
+        { "type": "url", "id": "link", "label": "Link" }
+      ]
+    }
+  ],
+  "max_blocks": 6,
+  "presets": [
+    {
+      "name": "Proof bar",
+      "blocks": [
+        { "type": "message", "settings": { "text": "Order before 3pm for same-day dispatch" } },
+        { "type": "message", "settings": { "text": "Every pair authenticated before it ships" } },
+        { "type": "message", "settings": { "text": "30-day returns on unworn pairs" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

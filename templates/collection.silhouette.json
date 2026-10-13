@@ -1,0 +1,37 @@
+{
+  "sections": {
+    "header": {
+      "type": "collection-hub-header",
+      "settings": { "eyebrow": "Silhouette hub", "show_breadcrumb": true, "faq_link_label": "Sizing, fit and FAQs", "padding_bottom": 48 }
+    },
+    "main": {
+      "type": "collection-main",
+      "settings": { "per_page": 24, "columns": "3", "padding_top": 0, "padding_bottom": 88 }
+    },
+    "faq": {
+      "type": "collection-faq",
+      "blocks": {
+        "q1": { "type": "faq", "settings": { "question": "Do they fit true to size?", "answer": "<p>Generally yes. If you are between sizes, most people go up half a size. Each product page carries a fit note for that exact pair.</p>" } },
+        "q2": { "type": "faq", "settings": { "question": "Are they authentic?", "answer": "<p>Every pair is inspected by hand and compared against known genuine references before it leaves us. You get a verification note in the box.</p>" } },
+        "q3": { "type": "faq", "settings": { "question": "How fast will my order arrive?", "answer": "<p>Orders placed before 3pm dispatch the same day. Delivery estimates by country appear on every product page.</p>" } },
+        "q4": { "type": "faq", "settings": { "question": "Can I return them if they do not fit?", "answer": "<p>Unworn pairs in their original box can be returned within 30 days. Full details are on the returns page.</p>" } },
+        "q5": { "type": "faq", "settings": { "question": "Can I get an alert when my size is back?", "answer": "<p>Yes. Choose your size on any sold-out pair and leave your email. We only message you about that size.</p>" } }
+      },
+      "block_order": ["q1", "q2", "q3", "q4", "q5"],
+      "settings": { "eyebrow": "About the silhouette", "heading": "What to know before you buy", "faq_heading": "Frequently asked", "padding_top": 96, "padding_bottom": 96 }
+    },
+    "links": {
+      "type": "silhouette-links",
+      "blocks": {
+        "l1": { "type": "link", "settings": { "label": "Air Jordan 1" } },
+        "l2": { "type": "link", "settings": { "label": "adidas Samba" } },
+        "l3": { "type": "link", "settings": { "label": "New Balance 550" } },
+        "l4": { "type": "link", "settings": { "label": "Air Max 90" } },
+        "l5": { "type": "link", "settings": { "label": "Air Force 1" } }
+      },
+      "block_order": ["l1", "l2", "l3", "l4", "l5"],
+      "settings": { "heading": "Other silhouettes", "padding_top": 0, "padding_bottom": 96 }
+    }
+  },
+  "order": ["header", "main", "faq", "links"]
+}

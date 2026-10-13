@@ -1,0 +1,48 @@
+{%- assign col = section.settings.collection -%}
+<section class="sec rail-sec{% if section.settings.top_border %} rail-sec--bordered{% endif %}" style="padding-top:{{ section.settings.padding_top }}px;padding-bottom:{{ section.settings.padding_bottom }}px" aria-labelledby="rail-{{ section.id }}">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2 class="d h2" id="rail-{{ section.id }}">{{ section.settings.heading }}</h2>
+      {%- if section.settings.link_label != blank -%}
+        <a class="lbl u" href="{{ col.url | default: routes.all_products_collection_url }}">{{ section.settings.link_label }}</a>
+      {%- endif -%}
+    </div>
+    <div class="rail">
+      {%- if col != blank and col.products_count > 0 -%}
+        {%- for product in col.products limit: section.settings.limit -%}
+          <div class="rail__item" style="width:288px">
+            {% render 'product-card', product: product, sizes: '288px', lazy: true %}
+          </div>
+        {%- endfor -%}
+      {%- else -%}
+        {%- for i in (1..4) -%}
+          <div class="rail__item" style="width:288px">
+            <div class="ph ph--{{ i }}" style="aspect-ratio:1/1">{{ 'product-' | append: i | placeholder_svg_tag }}</div>
+            <div class="tile__info"><div class="lbl tile__vendor">Brand</div><span class="tile__title">Product title</span><div class="tile__meta">£000</div></div>
+          </div>
+        {%- endfor -%}
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .rail-sec--bordered{border-top:1px solid #000}
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Product rail",
+  "tag": "section",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "New arrivals" },
+    { "type": "collection", "id": "collection", "label": "Collection" },
+    { "type": "range", "id": "limit", "label": "Products to show", "min": 4, "max": 16, "step": 1, "default": 8 },
+    { "type": "text", "id": "link_label", "label": "Link label", "default": "View all" },
+    { "type": "checkbox", "id": "top_border", "label": "Line above section", "default": true },
+    { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 160, "step": 8, "unit": "px", "default": 56 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 160, "step": 8, "unit": "px", "default": 88 }
+  ],
+  "presets": [ { "name": "Product rail" } ]
+}
+{% endschema %}

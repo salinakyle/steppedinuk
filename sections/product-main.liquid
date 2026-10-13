@@ -1,0 +1,632 @@
+{%- liquid
+  capture si
+    render 'size-index', product: product
+  endcapture
+  assign size_index = si | strip | plus: 0
+  assign threshold = settings.low_stock_threshold
+  assign labels = section.settings.shot_labels | split: ','
+  assign delivery = product.metafields.custom.delivery_speed.value | default: settings.default_delivery_label
+  assign fit_note = product.metafields.custom.fit_note.value
+  assign country = localization.country.name
+  assign delivery_done = false
+-%}
+
+<section class="pm" data-product-main data-product-id="{{ product.id }}" data-size-index="{{ size_index }}" data-low="{{ threshold }}" data-handle="{{ product.handle }}" style="padding-top:{{ section.settings.padding_top }}px;padding-bottom:{{ section.settings.padding_bottom }}px">
+  <div class="wrap">
+    <nav class="pm__crumbs lbl" aria-label="Breadcrumb">
+      <a href="{{ routes.root_url }}">Home</a> / <a href="{{ product.collections.first.url | default: routes.collections_url }}">{{ product.collections.first.title | default: 'All' }}</a> / <span>{{ product.title }}</span>
+    </nav>
+
+    <div class="pm__grid">
+      {%- comment -%} Gallery {%- endcomment -%}
+      <div class="pm__gallery" data-gallery>
+        <div class="pm__track">
+          {%- for media in product.media -%}
+            {%- assign label = labels[forloop.index0] | strip -%}
+            <figure class="pm__shot ph{% if forloop.first %} pm__shot--lead{% endif %}" data-shot tabindex="0" aria-label="Zoom image {{ forloop.index }}">
+              {%- case media.media_type -%}
+                {%- when 'image' -%}
+                  {{ media | image_url: width: 1400 | image_tag: loading: 'lazy', widths: '600, 900, 1200, 1400', sizes: '(min-width: 1000px) 40vw, 100vw', alt: media.alt | default: product.title }}
+                {%- when 'video' -%}
+                  {{ media | video_tag: controls: true, muted: true, loop: true, image_size: '1200x' }}
+                {%- when 'external_video' -%}
+                  {{ media | external_video_tag }}
+                {%- else -%}
+                  {{ media | media_tag }}
+              {%- endcase -%}
+              {%- if label != blank or media.media_type != 'image' -%}
+                <figcaption class="lbl pm__cap">{% if media.media_type == 'video' or media.media_type == 'external_video' %}Video{% else %}{{ label }}{% endif %}</figcaption>
+              {%- endif -%}
+            </figure>
+          {%- else -%}
+            <figure class="pm__shot pm__shot--lead ph">{{ 'product-1' | placeholder_svg_tag }}</figure>
+          {%- endfor -%}
+        </div>
+        <div class="pm__count lbl" data-count>1 / {{ product.media.size | at_least: 1 }}</div>
+      </div>
+
+      {%- comment -%} Buy box {%- endcomment -%}
+      <div class="pm__info">
+        <div class="pm__sticky">
+          <div class="lbl pm__vendor"><a href="{{ product.vendor | url_for_vendor }}">{{ product.vendor }}</a></div>
+          <h1 class="d h2 pm__title">{{ product.title }}</h1>
+
+          <div class="pm__priceRow">
+            <span class="price" data-price-wrap>
+              <span class="price__now" data-price>{{ product.selected_or_first_available_variant.price | money }}</span>
+              <s class="price__was" data-compare{% unless product.selected_or_first_available_variant.compare_at_price > product.selected_or_first_available_variant.price %} hidden{% endunless %}>{{ product.selected_or_first_available_variant.compare_at_price | money }}</s>
+            </span>
+            {%- if product.available -%}<span class="pill pm__deliv">{{ delivery }}</span>{%- endif -%}
+          </div>
+
+          {%- if settings.bnpl_enabled and product.available -%}
+            <p class="pm__bnpl" data-bnpl data-instalments="{{ settings.bnpl_instalments }}">
+              or {{ settings.bnpl_instalments }} interest-free payments of <strong data-bnpl-amount>{{ product.selected_or_first_available_variant.price | divided_by: settings.bnpl_instalments | money }}</strong> with {{ settings.bnpl_providers }}.
+              {%- if settings.bnpl_link != blank %} <a href="{{ settings.bnpl_link }}" class="u">Learn more</a>{% endif -%}
+            </p>
+          {%- endif -%}
+
+          {%- comment -%} Variant data {%- endcomment -%}
+          <script type="application/json" data-variants>
+            [
+              {%- for v in product.variants -%}
+                {%- assign q = 0 -%}
+                {%- if v.available -%}
+                  {%- assign q = 99 -%}
+                  {%- if v.inventory_management and v.inventory_policy == 'deny' -%}{%- assign q = v.inventory_quantity -%}{%- endif -%}
+                {%- endif -%}
+                {
+                  "id": {{ v.id }},
+                  "options": {{ v.options | json }},
+                  "available": {{ v.available | json }},
+                  "qty": {{ q }},
+                  "price": {{ v.price }},
+                  "compare": {{ v.compare_at_price | default: 0 }},
+                  "sku": {{ v.sku | json }}
+                }{% unless forloop.last %},{% endunless %}
+              {%- endfor -%}
+            ]
+          </script>
+
+          {%- form 'product', product, id: 'pm-form', class: 'pm__form' -%}
+            <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}" data-variant-input>
+
+            {%- for option in product.options_with_values -%}
+              {%- assign is_size = false -%}
+              {%- if forloop.index0 == size_index %}{% assign is_size = true %}{% endif -%}
+              <fieldset class="pm__opt{% if is_size %} pm__opt--size{% endif %}" data-opt="{{ forloop.index0 }}" data-is-size="{{ is_size }}">
+                <legend class="pm__legend">
+                  <span class="lbl">{{ option.name }}</span>
+                  {%- if is_size -%}
+                    <span class="pm__selected" data-selected-label>Select your size</span>
+                    <span class="pm__sizeNote lbl">UK sizing</span>
+                  {%- endif -%}
+                </legend>
+                <div class="{% if is_size %}sz{% else %}chips{% endif %}" {% if is_size %}data-size-grid{% endif %}>
+                  {%- for value in option.values -%}
+                    <button type="button" class="chip{% if is_size %} sz__btn{% endif %}" data-opt-btn data-opt-index="{{ forloop.parentloop.index0 }}" data-value="{{ value | escape }}" aria-pressed="false">
+                      <span>{{ value }}</span>
+                      {%- if is_size -%}<small class="sz__stock" data-stock-note></small>{%- endif -%}
+                    </button>
+                  {%- endfor -%}
+                </div>
+              </fieldset>
+            {%- endfor -%}
+
+            <p class="pm__stock" data-stock-msg role="status"></p>
+
+            {%- if fit_note != blank -%}<p class="pm__fit"><span class="lbl">Fit</span> {{ fit_note }}</p>{%- endif -%}
+
+            <div class="pm__actions" data-actions>
+              <button type="submit" class="btn btn--full pm__add" data-add{% unless product.available %} disabled{% endunless %}>
+                {%- if product.available -%}{%- if size_index >= 0 -%}Select your size{%- else -%}Add to bag{%- endif -%}{%- else -%}Sold out{%- endif -%}
+              </button>
+            </div>
+          {%- endform -%}
+
+          {%- comment -%} Size alert {%- endcomment -%}
+          {%- if settings.bis_enabled -%}
+            <div class="pm__bis" data-bis hidden>
+              <div class="lbl">Size <span data-bis-size></span> is sold out</div>
+              <p>Leave your email and we will message you once, when it is back.</p>
+              {%- form 'customer', class: 'pm__bisForm', id: 'pm-bis' -%}
+                {%- if form.posted_successfully? -%}
+                  <p class="pm__ok"><strong>Done.</strong> We will let you know.</p>
+                {%- else -%}
+                  <input type="hidden" name="contact[tags]" value="{{ settings.bis_tag }}" data-bis-tags data-base="{{ settings.bis_tag }}" data-handle="{{ product.handle }}">
+                  <div class="pm__bisRow">
+                    <label class="visually-hidden" for="pm-bis-email">Email</label>
+                    <input class="field" id="pm-bis-email" type="email" name="contact[email]" required autocomplete="email" placeholder="Email address">
+                    <button class="btn" type="submit">Notify me</button>
+                  </div>
+                  {%- if form.errors -%}<p class="pm__err">{{ form.errors | default_errors }}</p>{%- endif -%}
+                {%- endif -%}
+              {%- endform -%}
+            </div>
+          {%- endif -%}
+
+          {%- comment -%} Blocks {%- endcomment -%}
+          {%- for block in section.blocks -%}
+            {%- case block.type -%}
+
+              {%- when 'brand_fit' -%}
+                {%- assign bv = block.settings.brand | downcase -%}
+                {%- assign pv = product.vendor | downcase -%}
+                {%- if bv == pv -%}
+                  <div class="pm__block pm__fitBlock" {{ block.shopify_attributes }}>
+                    <div class="lbl">{{ product.vendor }} fit</div>
+                    <p>{{ block.settings.note }}</p>
+                  </div>
+                {%- elsif request.design_mode -%}
+                  <div class="pm__block lbl" {{ block.shopify_attributes }}>Fit note for {{ block.settings.brand }} (hidden on other brands)</div>
+                {%- endif -%}
+
+              {%- when 'size_guide' -%}
+                {%- assign rows = block.settings.table | newline_to_br | split: '<br />' -%}
+                <details class="pm__block pm__guide" {{ block.shopify_attributes }}>
+                  <summary class="lbl">{{ block.settings.title }}</summary>
+                  <div class="pm__tableWrap">
+                    <table>
+                      {%- for row in rows -%}
+                        {%- assign cells = row | strip | split: '|' -%}
+                        {%- if cells.size > 0 and cells[0] != blank -%}
+                          <tr>{%- for c in cells -%}<{% if forloop.parentloop.first %}th{% else %}td{% endif %}>{{ c | strip }}</{% if forloop.parentloop.first %}th{% else %}td{% endif %}>{%- endfor -%}</tr>
+                        {%- endif -%}
+                      {%- endfor -%}
+                    </table>
+                  </div>
+                  {%- if block.settings.note != blank -%}<p class="pm__small">{{ block.settings.note }}</p>{%- endif -%}
+                </details>
+
+              {%- when 'delivery' -%}
+                {%- unless delivery_done -%}{%- assign delivery_done = true -%}
+                  <div class="pm__block pm__delivery" data-delivery {{ block.shopify_attributes }}>
+                    <div class="lbl">Delivery</div>
+                    <select class="sel" data-delivery-select aria-label="Delivery destination">
+                      {%- for b in section.blocks -%}{%- if b.type == 'delivery' -%}
+                        <option value="{{ b.settings.text | escape }}"{% if b.settings.country == country %} selected{% endif %}>{{ b.settings.country }}</option>
+                      {%- endif -%}{%- endfor -%}
+                    </select>
+                    <p data-delivery-text>{{ block.settings.text }}</p>
+                  </div>
+                {%- endunless -%}
+
+              {%- when 'authenticity' -%}
+                <div class="pm__block pm__auth" {{ block.shopify_attributes }}>
+                  <div class="pm__authHead">{% render 'icon', icon: 'shield', size: 24 %}<h2 class="d h3">{{ block.settings.heading }}</h2></div>
+                  <p>{{ block.settings.text }}</p>
+                  <ul>
+                    {%- for i in (1..4) -%}
+                      {%- assign key = 'point_' | append: i -%}
+                      {%- if block.settings[key] != blank -%}<li>{% render 'icon', icon: 'check', size: 18 %} {{ block.settings[key] }}</li>{%- endif -%}
+                    {%- endfor -%}
+                  </ul>
+                  {%- if block.settings.link != blank -%}<a class="u" href="{{ block.settings.link }}">{{ block.settings.link_label }}</a>{%- endif -%}
+                </div>
+
+              {%- when 'description' -%}
+                <details class="pm__block pm__acc" {% if block.settings.open %}open{% endif %} {{ block.shopify_attributes }}>
+                  <summary>{{ block.settings.title }}</summary>
+                  <div class="rte">{{ product.description }}</div>
+                </details>
+
+              {%- when 'accordion' -%}
+                <details class="pm__block pm__acc" {{ block.shopify_attributes }}>
+                  <summary>{{ block.settings.title }}</summary>
+                  <div class="rte">{{ block.settings.content }}</div>
+                </details>
+
+              {%- when 'share' -%}
+                <div class="pm__block pm__share" {{ block.shopify_attributes }}>
+                  <button type="button" class="pill" data-share data-title="{{ product.title | escape }}">Share</button>
+                  <span class="lbl">SKU {{ product.selected_or_first_available_variant.sku | default: product.handle }}</span>
+                </div>
+
+              {%- when '@app' -%}
+                <div class="pm__block" {{ block.shopify_attributes }}>{% render block %}</div>
+
+            {%- endcase -%}
+          {%- endfor -%}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {%- comment -%} Mobile sticky bar {%- endcomment -%}
+  {%- if product.available -%}
+    <div class="pm__bar" data-bar>
+      <div class="pm__barInfo"><strong data-bar-price>{{ product.selected_or_first_available_variant.price | money }}</strong><span class="lbl" data-bar-size>Select size</span></div>
+      <button type="button" class="btn" data-bar-add>Select your size</button>
+    </div>
+  {%- endif -%}
+
+  {%- comment -%} Zoom {%- endcomment -%}
+  <div class="pm__zoom" data-zoom hidden><button type="button" class="pm__zoomClose" data-zoom-close aria-label="Close">{% render 'icon', icon: 'close', size: 28 %}</button><div data-zoom-body></div></div>
+</section>
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org/",
+    "@type": "Product",
+    "name": {{ product.title | json }},
+    "url": {{ shop.url | append: product.url | json }},
+    "description": {{ product.description | strip_html | truncate: 500 | json }},
+    "brand": { "@type": "Brand", "name": {{ product.vendor | json }} },
+    {%- if product.featured_image -%}"image": [{{ product.featured_image | image_url: width: 1200 | json }}],{%- endif -%}
+    {%- assign rating = product.metafields.reviews.rating.value -%}
+    {%- assign rating_count = product.metafields.reviews.rating_count.value -%}
+    {%- if rating != blank and rating_count > 0 -%}
+      "aggregateRating": { "@type": "AggregateRating", "ratingValue": {{ rating.rating | default: rating | json }}, "reviewCount": {{ rating_count | json }} },
+    {%- endif -%}
+    "offers": [
+      {%- for v in product.variants -%}
+        {
+          "@type": "Offer",
+          "sku": {{ v.sku | json }},
+          "price": {{ v.price | divided_by: 100.0 | json }},
+          "priceCurrency": {{ cart.currency.iso_code | json }},
+          "itemCondition": "https://schema.org/NewCondition",
+          "availability": "https://schema.org/{% if v.available %}InStock{% else %}OutOfStock{% endif %}",
+          "url": {{ shop.url | append: v.url | json }}
+        }{% unless forloop.last %},{% endunless %}
+      {%- endfor -%}
+    ]
+  }
+</script>
+
+{% stylesheet %}
+  .pm__crumbs{display:flex;flex-wrap:wrap;gap:6px;padding:20px 0}
+  .pm__crumbs a:hover{text-decoration:underline}
+  .pm__grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:56px;align-items:start}
+  .pm__track{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  .pm__shot{position:relative;margin:0;aspect-ratio:1/1;overflow:hidden;cursor:zoom-in}
+  .pm__shot--lead{grid-column:1/-1;aspect-ratio:5/4}
+  .pm__shot img,.pm__shot video{width:100%;height:100%;object-fit:cover;display:block}
+  .pm__cap{position:absolute;left:10px;bottom:10px;background:#fff;color:#000;border:1px solid #000;padding:4px 8px}
+  .pm__count{display:none}
+  .pm__sticky{position:sticky;top:96px}
+  .pm__vendor{margin-bottom:10px}
+  .pm__vendor a:hover{text-decoration:underline}
+  .pm__title{margin:0 0 16px}
+  .pm__priceRow{display:flex;align-items:center;gap:14px;flex-wrap:wrap;font-size:24px;font-weight:600}
+  .pm__deliv{font-size:13px;font-weight:500}
+  .pm__bnpl{margin:10px 0 0;font-size:15px}
+  .pm__form{margin-top:28px}
+  .pm__opt{border:0;margin:0 0 24px;padding:0;min-width:0}
+  .pm__legend{display:flex;align-items:baseline;gap:12px;width:100%;padding:0;margin-bottom:12px}
+  .pm__selected{font-weight:600}
+  .pm__sizeNote{margin-left:auto}
+  .sz{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+  .sz__btn{height:auto;min-height:56px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:6px}
+  .sz__stock{font-size:11px;font-weight:600;letter-spacing:.02em;text-transform:uppercase;min-height:12px}
+  .sz__btn.is-off .sz__stock{text-decoration:none}
+  .pm__stock{min-height:24px;margin:0 0 8px;font-weight:600}
+  .pm__fit{margin:0 0 16px}
+  .pm__add{height:60px;font-size:17px}
+  .pm__bis{border:1px solid #000;padding:20px;margin-top:16px}
+  .pm__bis p{margin:8px 0 14px}
+  .pm__bisRow{display:flex;gap:8px}
+  .pm__bisRow .btn{flex:none}
+  .pm__err{margin:10px 0 0;font-weight:600}
+  .pm__block{border-top:1px solid #000;padding:20px 0}
+  .pm__block:first-of-type{margin-top:24px}
+  .pm__block p{margin:8px 0 0}
+  .pm__fitBlock,.pm__delivery{display:block}
+  .pm__delivery .sel{margin-top:10px;width:100%}
+  .pm__guide summary,.pm__acc summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;font-weight:600}
+  .pm__acc summary{font-size:17px}
+  .pm__guide summary::-webkit-details-marker,.pm__acc summary::-webkit-details-marker{display:none}
+  .pm__guide summary::after,.pm__acc summary::after{content:'+';font-size:20px;line-height:1}
+  details[open]>summary::after{content:'\2212'}
+  .pm__acc .rte{margin-top:12px}
+  .pm__tableWrap{overflow-x:auto;margin-top:14px}
+  .pm__tableWrap table{border-collapse:collapse;width:100%;font-size:15px}
+  .pm__tableWrap th,.pm__tableWrap td{border:1px solid #000;padding:8px 10px;text-align:center}
+  .pm__tableWrap th{background:#000;color:#fff}
+  .pm__small{font-size:14px}
+  .pm__auth{border:2px solid #000;padding:22px;margin-top:24px}
+  .pm__block.pm__auth{border-top:2px solid #000}
+  .pm__authHead{display:flex;align-items:center;gap:12px}
+  .pm__authHead h2{margin:0}
+  .pm__auth ul{list-style:none;padding:0;margin:14px 0}
+  .pm__auth li{display:flex;gap:10px;align-items:center;padding:4px 0}
+  .pm__share{display:flex;align-items:center;justify-content:space-between}
+  .sz.is-nudge{outline:2px solid #000;outline-offset:6px}
+  .pm__bar{display:none}
+  .pm__zoom{position:fixed;inset:0;background:#fff;z-index:90;overflow:auto;padding:56px 0 0}
+  .pm__zoom[hidden]{display:none}
+  .pm__zoom img{width:100%;max-width:1400px;margin:0 auto;display:block}
+  .pm__zoomClose{position:fixed;top:12px;right:12px;width:44px;height:44px;background:#fff;border:1px solid #000;display:grid;place-items:center;z-index:2}
+  @media (max-width:999px){
+    .pm__grid{grid-template-columns:minmax(0,1fr);gap:24px}
+    .pm__sticky{position:static}
+    .pm__track{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:0;margin:0 calc(var(--gutter, 16px) * -1);scrollbar-width:none}
+    .pm__track::-webkit-scrollbar{display:none}
+    .pm__shot,.pm__shot--lead{flex:0 0 100%;aspect-ratio:1/1;scroll-snap-align:start}
+    .pm__count{display:block;margin-top:10px}
+    .pm__crumbs{display:none}
+    .pm__bar{display:flex;position:fixed;left:0;right:0;bottom:var(--tabbar-h,0px);z-index:40;background:#fff;border-top:1px solid #000;padding:10px 16px;gap:12px;align-items:center;justify-content:space-between;transform:translateY(0)}
+    .pm__barInfo{display:flex;flex-direction:column}
+    .pm__bar .btn{flex:1;max-width:240px}
+  }
+{% endstylesheet %}
+
+{% javascript %}
+(function () {
+  var S = function () { return window.SteppedIn; };
+  function q(s, c) { return (c || document).querySelector(s); }
+  function qa(s, c) { return Array.prototype.slice.call((c || document).querySelectorAll(s)); }
+
+  function init(root) {
+    if (root._pm) return;
+    root._pm = true;
+    var variants = [];
+    try { variants = JSON.parse(q('[data-variants]', root).textContent); } catch (e) {}
+    var sizeIdx = Number(root.getAttribute('data-size-index'));
+    var low = Number(root.getAttribute('data-low')) || 3;
+    var optGroups = qa('[data-opt]', root);
+    var sel = [];
+    var input = q('[data-variant-input]', root);
+    var addBtn = q('[data-add]', root), barBtn = q('[data-bar-add]', root);
+    var form = q('.pm__form', root);
+    var current = null;
+
+    function matches(v, skip) {
+      for (var i = 0; i < sel.length; i++) {
+        if (i === skip) continue;
+        if (sel[i] && v.options[i] !== sel[i]) return false;
+      }
+      return true;
+    }
+    function find() {
+      for (var i = 0; i < variants.length; i++) if (matches(variants[i], -1) && sel.every(Boolean)) return variants[i];
+      return null;
+    }
+
+    function paint() {
+      current = find();
+      qa('[data-opt-btn]', root).forEach(function (b) {
+        var i = Number(b.getAttribute('data-opt-index')), val = b.getAttribute('data-value');
+        var on = sel[i] === val;
+        b.classList.toggle('is-on', on);
+        b.setAttribute('aria-pressed', on ? 'true' : 'false');
+        var pool = variants.filter(function (v) { return v.options[i] === val && matches(v, i); });
+        var avail = pool.some(function (v) { return v.available; });
+        b.classList.toggle('is-off', !avail);
+        b.classList.remove('is-soldout');
+        var note = q('[data-stock-note]', b);
+        if (note) {
+          var qty = pool.reduce(function (m, v) { return v.available ? Math.max(m, v.qty) : m; }, 0);
+          note.textContent = !avail ? 'Sold out' : (qty <= low ? qty + ' left' : '');
+        }
+      });
+
+      var sizeVal = sizeIdx >= 0 ? sel[sizeIdx] : '';
+      var label = q('[data-selected-label]', root);
+      if (label) label.textContent = sizeVal ? 'UK ' + sizeVal.replace(/^UK\s*/i, '') : 'Select your size';
+      var barSize = q('[data-bar-size]', root);
+      if (barSize) barSize.textContent = sizeVal ? 'Size ' + sizeVal : 'Select size';
+
+      var msg = q('[data-stock-msg]', root), bis = q('[data-bis]', root);
+      if (bis) bis.hidden = true;
+      var text = 'Add to bag';
+
+      if (!current) {
+        text = sizeIdx >= 0 && !sizeVal ? 'Select your size' : 'Select options';
+        addBtn.disabled = false; addBtn.setAttribute('data-needs', '1');
+        msg.textContent = '';
+      } else {
+        addBtn.removeAttribute('data-needs');
+        input.value = current.id;
+        q('[data-price]', root).textContent = S().money(current.price);
+        var cmp = q('[data-compare]', root);
+        cmp.hidden = !(current.compare > current.price);
+        if (!cmp.hidden) cmp.textContent = S().money(current.compare);
+        var bn = q('[data-bnpl-amount]', root), bw = q('[data-bnpl]', root);
+        if (bn && bw) bn.textContent = S().money(Math.round(current.price / Number(bw.getAttribute('data-instalments'))));
+        var bp = q('[data-bar-price]', root); if (bp) bp.textContent = S().money(current.price);
+        if (current.available) {
+          addBtn.disabled = false;
+          msg.textContent = current.qty <= low ? 'Only ' + current.qty + ' left in this size' : '';
+        } else {
+          text = 'Sold out';
+          addBtn.disabled = true;
+          msg.textContent = '';
+          if (bis) {
+            bis.hidden = false;
+            var bs = q('[data-bis-size]', bis); if (bs) bs.textContent = sizeVal || '';
+            var tags = q('[data-bis-tags]', bis);
+            if (tags) tags.value = [tags.getAttribute('data-base'), 'bis-' + tags.getAttribute('data-handle'), sizeVal ? 'bis-size-' + sizeVal : ''].filter(Boolean).join(',');
+          }
+        }
+        try {
+          var u = new URL(window.location.href); u.searchParams.set('variant', current.id);
+          history.replaceState(null, '', u.toString());
+        } catch (e) {}
+      }
+      addBtn.textContent = text;
+      if (barBtn) { barBtn.textContent = text; barBtn.disabled = current && !current.available; }
+    }
+
+    function pick(i, val) {
+      sel[i] = val;
+      if (i === sizeIdx && val) S().setSize(val);
+      paint();
+    }
+
+    /* initial selection */
+    var fromUrl = null;
+    try {
+      var vid = new URL(window.location.href).searchParams.get('variant');
+      if (vid) fromUrl = variants.filter(function (v) { return String(v.id) === vid; })[0];
+    } catch (e) {}
+    optGroups.forEach(function (g, i) { sel[i] = ''; });
+    if (fromUrl) { sel = fromUrl.options.slice(); }
+    else {
+      optGroups.forEach(function (g, i) {
+        if (i === sizeIdx) {
+          var s = S().getSize();
+          var has = s && variants.some(function (v) { return v.options[i] === s; });
+          sel[i] = has ? s : '';
+        } else {
+          var first = variants.filter(function (v) { return v.available; })[0] || variants[0];
+          sel[i] = first ? first.options[i] : '';
+        }
+      });
+    }
+    paint();
+
+    root.addEventListener('click', function (e) {
+      var b = e.target.closest('[data-opt-btn]');
+      if (b && root.contains(b)) { pick(Number(b.getAttribute('data-opt-index')), b.getAttribute('data-value')); return; }
+
+      if (e.target.closest('[data-bar-add]')) {
+        if (!current) { var g = q('[data-size-grid]', root); if (g) { g.scrollIntoView({ behavior: 'smooth', block: 'center' }); g.classList.add('is-nudge'); setTimeout(function () { g.classList.remove('is-nudge'); }, 1200); } return; }
+        if (current.available) S().addAndShow(current.id, 1);
+        return;
+      }
+      if (e.target.closest('[data-share]')) {
+        var t = e.target.closest('[data-share]');
+        if (navigator.share) navigator.share({ title: t.getAttribute('data-title'), url: location.href }).catch(function () {});
+        else if (navigator.clipboard) navigator.clipboard.writeText(location.href).then(function () { S().toast('Link copied'); });
+        return;
+      }
+      var shot = e.target.closest('[data-shot]');
+      if (shot) {
+        var img = q('img', shot);
+        if (!img) return;
+        var z = q('[data-zoom]', root), body = q('[data-zoom-body]', root);
+        body.innerHTML = '';
+        var big = new Image(); big.src = img.currentSrc || img.src; big.alt = img.alt;
+        body.appendChild(big); z.hidden = false;
+        return;
+      }
+      if (e.target.closest('[data-zoom-close]')) { q('[data-zoom]', root).hidden = true; }
+    });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { var z = q('[data-zoom]', root); if (z) z.hidden = true; } });
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      if (!current) { var g = q('[data-size-grid]', root); if (g) g.scrollIntoView({ behavior: 'smooth', block: 'center' }); return; }
+      if (!current.available) return;
+      addBtn.disabled = true;
+      S().addAndShow(current.id, 1).then(function () { addBtn.disabled = false; paint(); });
+    });
+
+    /* delivery select */
+    var ds = q('[data-delivery-select]', root);
+    if (ds) {
+      var out = q('[data-delivery-text]', root);
+      var sync = function () { out.textContent = ds.value; };
+      ds.addEventListener('change', sync); sync();
+    }
+
+    /* gallery counter */
+    var track = q('.pm__track', root), count = q('[data-count]', root);
+    if (track && count) {
+      var total = qa('[data-shot]', track).length || 1;
+      track.addEventListener('scroll', function () {
+        var i = Math.round(track.scrollLeft / (track.clientWidth || 1)) + 1;
+        count.textContent = Math.min(i, total) + ' / ' + total;
+      }, { passive: true });
+    }
+  }
+
+  function boot(scope) { qa('[data-product-main]', scope || document).forEach(init); }
+  document.addEventListener('DOMContentLoaded', function () { boot(); });
+  document.addEventListener('shopify:section:load', function (e) { boot(e.target); });
+  if (document.readyState !== 'loading' && window.SteppedIn) boot();
+})();
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "Product",
+  "tag": "div",
+  "settings": [
+    { "type": "paragraph", "content": "Sizes are read from the product option named in Theme settings > Sneaker settings (default: Size). Stock counts show only when the variant tracks inventory and 'Continue selling when out of stock' is off." },
+    { "type": "text", "id": "shot_labels", "label": "Photo labels, in order", "default": "Side, Heel, Sole, Box, Tag, Detail", "info": "Comma separated. Shown on each photo so buyers know which angle they are looking at." },
+    { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 80, "step": 4, "unit": "px", "default": 0 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 160, "step": 8, "unit": "px", "default": 72 }
+  ],
+  "blocks": [
+    {
+      "type": "brand_fit",
+      "name": "Brand fit note",
+      "settings": [
+        { "type": "paragraph", "content": "Shown only when the product vendor matches the brand below. Add one block per brand." },
+        { "type": "text", "id": "brand", "label": "Brand (vendor)", "default": "Nike" },
+        { "type": "textarea", "id": "note", "label": "Fit note", "default": "Runs true to size. Half a size down if you prefer a snug fit." }
+      ]
+    },
+    {
+      "type": "size_guide",
+      "name": "Size guide",
+      "limit": 1,
+      "settings": [
+        { "type": "text", "id": "title", "label": "Title", "default": "Size guide" },
+        { "type": "textarea", "id": "table", "label": "Table", "info": "One row per line, columns separated by |. First line is the header.", "default": "UK|US|EU|CM\n6|7|40|25\n7|8|41|26\n8|9|42|27\n9|10|43|28\n10|11|44.5|29" },
+        { "type": "text", "id": "note", "label": "Note under table", "default": "Measure your foot heel to toe and match to the CM column." }
+      ]
+    },
+    {
+      "type": "delivery",
+      "name": "Delivery country",
+      "settings": [
+        { "type": "paragraph", "content": "Add one block per destination. Consecutive blocks form a single selector." },
+        { "type": "text", "id": "country", "label": "Country (must match Shopify market name)", "default": "United Kingdom" },
+        { "type": "text", "id": "text", "label": "Delivery text", "default": "Order before 3pm for next-day delivery. Free over £150." }
+      ]
+    },
+    {
+      "type": "authenticity",
+      "name": "Authenticity",
+      "limit": 1,
+      "settings": [
+        { "type": "text", "id": "heading", "label": "Heading", "default": "Verified authentic" },
+        { "type": "textarea", "id": "text", "label": "Text", "default": "Every pair is inspected by hand before it ships." },
+        { "type": "text", "id": "point_1", "label": "Point 1", "default": "Checked against genuine reference pairs" },
+        { "type": "text", "id": "point_2", "label": "Point 2", "default": "Stitching, materials and box label reviewed" },
+        { "type": "text", "id": "point_3", "label": "Point 3", "default": "Verification note in every box" },
+        { "type": "text", "id": "point_4", "label": "Point 4" },
+        { "type": "url", "id": "link", "label": "Link" },
+        { "type": "text", "id": "link_label", "label": "Link label", "default": "How we verify" }
+      ]
+    },
+    {
+      "type": "description",
+      "name": "Product details",
+      "limit": 1,
+      "settings": [
+        { "type": "text", "id": "title", "label": "Title", "default": "Details" },
+        { "type": "checkbox", "id": "open", "label": "Open by default", "default": true }
+      ]
+    },
+    {
+      "type": "accordion",
+      "name": "Accordion",
+      "settings": [
+        { "type": "text", "id": "title", "label": "Title", "default": "Delivery and returns" },
+        { "type": "richtext", "id": "content", "label": "Content", "default": "<p>Unworn pairs in their original box can be returned within 30 days.</p>" }
+      ]
+    },
+    { "type": "share", "name": "Share and SKU", "limit": 1 },
+    { "type": "@app" }
+  ],
+  "presets": [
+    {
+      "name": "Product",
+      "blocks": [
+        { "type": "brand_fit" },
+        { "type": "size_guide" },
+        { "type": "delivery", "settings": { "country": "United Kingdom", "text": "Order before 3pm for next-day delivery. Free over £150." } },
+        { "type": "delivery", "settings": { "country": "Ireland", "text": "2 to 3 working days." } },
+        { "type": "authenticity" },
+        { "type": "description" },
+        { "type": "accordion" },
+        { "type": "share" }
+      ]
+    }
+  ]
+}
+{% endschema %}

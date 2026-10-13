@@ -1,0 +1,70 @@
+[
+  {
+    "name": "theme_info",
+    "theme_name": "SteppedIn",
+    "theme_version": "1.0.0",
+    "theme_author": "Atom Developers",
+    "theme_documentation_url": "https://steppedin.uk",
+    "theme_support_url": "https://steppedin.uk"
+  },
+  {
+    "name": "Brand",
+    "settings": [
+      { "type": "image_picker", "id": "logo", "label": "Logo image (optional)" },
+      { "type": "range", "id": "logo_width", "label": "Logo width", "min": 80, "max": 260, "step": 10, "unit": "px", "default": 140 },
+      { "type": "text", "id": "wordmark", "label": "Wordmark (used when no logo image)", "default": "SteppedIn" },
+      { "type": "image_picker", "id": "favicon", "label": "Favicon (PNG, 48 x 48)" },
+      { "type": "image_picker", "id": "share_image", "label": "Default social sharing image" }
+    ]
+  },
+  {
+    "name": "Layout",
+    "settings": [
+      { "type": "range", "id": "page_width", "label": "Maximum page width", "min": 1200, "max": 1600, "step": 40, "unit": "px", "default": 1360 }
+    ]
+  },
+  {
+    "name": "Sneaker settings",
+    "settings": [
+      { "type": "paragraph", "content": "Model every sneaker as one product per colourway with a single option for size. Quick add, stock by size and the size filter all key off the option name below." },
+      { "type": "text", "id": "size_option_name", "label": "Size option name", "default": "Size", "info": "Must match the option name on your products." },
+      { "type": "range", "id": "low_stock_threshold", "label": "Low stock threshold", "min": 1, "max": 10, "step": 1, "default": 3, "info": "Shows '2 left in your size' at or below this number." },
+      { "type": "range", "id": "new_badge_days", "label": "Show 'New' badge for", "min": 1, "max": 60, "step": 1, "unit": "days", "default": 14, "info": "Counted from the product publish date. Products tagged 'new' always show it." },
+      { "type": "checkbox", "id": "show_quick_add", "label": "Show quick add sizes on product tiles", "default": true },
+      { "type": "text", "id": "default_delivery_label", "label": "Default delivery badge", "default": "Next-day delivery", "info": "Override per product with the metafield custom.delivery_speed (single line text)." }
+    ]
+  },
+  {
+    "name": "Payments messaging",
+    "settings": [
+      { "type": "checkbox", "id": "bnpl_enabled", "label": "Show instalment message on product pages", "default": true },
+      { "type": "range", "id": "bnpl_instalments", "label": "Number of instalments", "min": 2, "max": 6, "step": 1, "default": 3 },
+      { "type": "text", "id": "bnpl_providers", "label": "Provider names", "default": "Klarna or Clearpay", "info": "Text only. Enable Klarna and Clearpay in Shopify Payments or via their apps." },
+      { "type": "url", "id": "bnpl_link", "label": "Learn more link" }
+    ]
+  },
+  {
+    "name": "Cart",
+    "settings": [
+      { "type": "select", "id": "cart_type", "label": "Cart type", "options": [ { "value": "drawer", "label": "Drawer" }, { "value": "page", "label": "Page" } ], "default": "drawer" },
+      { "type": "text", "id": "cart_note", "label": "Message under checkout button", "default": "Shipping and taxes calculated at checkout." }
+    ]
+  },
+  {
+    "name": "Back in stock",
+    "settings": [
+      { "type": "checkbox", "id": "bis_enabled", "label": "Show size alert form on sold-out sizes", "default": true },
+      { "type": "text", "id": "bis_tag", "label": "Customer tag added", "default": "back-in-stock", "info": "Each sign-up is a customer tagged with this, plus bis-[product-handle] and bis-size-[size]. Use Shopify Flow, Klaviyo or an app to email when stock returns." }
+    ]
+  },
+  {
+    "name": "Social links",
+    "settings": [
+      { "type": "url", "id": "social_instagram", "label": "Instagram" },
+      { "type": "url", "id": "social_tiktok", "label": "TikTok" },
+      { "type": "url", "id": "social_pinterest", "label": "Pinterest" },
+      { "type": "url", "id": "social_youtube", "label": "YouTube" },
+      { "type": "url", "id": "social_x", "label": "X" }
+    ]
+  }
+]

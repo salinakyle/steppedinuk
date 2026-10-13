@@ -1,0 +1,25 @@
+<section class="rv" data-recently-viewed data-max="{{ section.settings.max }}" {% unless request.design_mode %}hidden{% endunless %} style="padding-top:{{ section.settings.padding_top }}px;padding-bottom:{{ section.settings.padding_bottom }}px">
+  <div class="wrap">
+    <div class="sec-head"><h2 class="d h2">{{ section.settings.heading }}</h2></div>
+    <div class="rail" data-viewed-list>
+      {%- if request.design_mode -%}<p class="lbl">Products customers viewed appear here. Hidden until there are some.</p>{%- endif -%}
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .rv{border-top:1px solid #000}
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Recently viewed",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Recently viewed" },
+    { "type": "range", "id": "max", "label": "Products to show", "min": 2, "max": 12, "step": 1, "default": 6 },
+    { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 160, "step": 8, "unit": "px", "default": 72 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 160, "step": 8, "unit": "px", "default": 96 }
+  ],
+  "presets": [{ "name": "Recently viewed" }]
+}
+{% endschema %}

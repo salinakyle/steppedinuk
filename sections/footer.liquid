@@ -1,0 +1,89 @@
+<footer class="footer dark">
+  <div class="wrap">
+    <div class="footer__grid">
+      {%- for block in section.blocks -%}
+        {%- case block.type -%}
+          {%- when 'brand' -%}
+            <div class="footer__brand" {{ block.shopify_attributes }}>
+              <div class="d footer__wordmark">{{ settings.wordmark | default: shop.name }}</div>
+              {%- if block.settings.text != blank -%}<p>{{ block.settings.text }}</p>{%- endif -%}
+            </div>
+          {%- when 'links' -%}
+            <div {{ block.shopify_attributes }}>
+              <div class="lbl footer__head">{{ block.settings.heading }}</div>
+              <ul class="footer__list">
+                {%- for link in block.settings.menu.links -%}
+                  <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+                {%- endfor -%}
+              </ul>
+            </div>
+        {%- endcase -%}
+      {%- endfor -%}
+    </div>
+
+    <div class="footer__base">
+      <span>&copy; {{ 'now' | date: '%Y' }} {{ shop.name }}. {{ section.settings.copyright }}</span>
+      <span class="footer__social">
+        {%- if section.settings.show_social -%}
+          {%- if settings.social_instagram != blank -%}<a href="{{ settings.social_instagram }}">Instagram</a>{%- endif -%}
+          {%- if settings.social_tiktok != blank -%}<a href="{{ settings.social_tiktok }}">TikTok</a>{%- endif -%}
+          {%- if settings.social_pinterest != blank -%}<a href="{{ settings.social_pinterest }}">Pinterest</a>{%- endif -%}
+          {%- if settings.social_youtube != blank -%}<a href="{{ settings.social_youtube }}">YouTube</a>{%- endif -%}
+          {%- if settings.social_x != blank -%}<a href="{{ settings.social_x }}">X</a>{%- endif -%}
+        {%- endif -%}
+      </span>
+      {%- if section.settings.show_payment -%}
+        <ul class="footer__pay" role="list">
+          {%- for type in shop.enabled_payment_types -%}
+            <li>{{ type | payment_type_svg_tag: class: 'footer__pay-icon' }}</li>
+          {%- endfor -%}
+        </ul>
+      {%- endif -%}
+    </div>
+  </div>
+</footer>
+
+{% stylesheet %}
+  .footer{padding:72px 0 32px}
+  .footer__grid{display:grid;grid-template-columns:2fr repeat(3,1fr);gap:40px;padding-bottom:56px}
+  .footer__wordmark{font-size:40px;margin-bottom:12px}
+  .footer__brand p{margin:0;max-width:34ch}
+  .footer__head{margin-bottom:14px}
+  .footer__list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+  .footer__list a:hover,.footer__social a:hover{text-decoration:underline}
+  .footer__base{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;border-top:1px solid #fff;padding-top:24px;font-size:14px}
+  .footer__social{display:flex;gap:20px;flex-wrap:wrap}
+  .footer__pay{list-style:none;margin:0;padding:0;display:flex;gap:8px;flex-wrap:wrap}
+  .footer__pay-icon{height:24px;width:auto}
+  @media (max-width:1000px){.footer__grid{grid-template-columns:repeat(2,minmax(0,1fr))}.footer__brand{grid-column:1/-1}}
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Footer",
+  "settings": [
+    { "type": "text", "id": "copyright", "label": "Extra line after copyright", "default": "All rights reserved." },
+    { "type": "checkbox", "id": "show_social", "label": "Show social links", "default": true },
+    { "type": "checkbox", "id": "show_payment", "label": "Show payment icons", "default": true }
+  ],
+  "blocks": [
+    {
+      "type": "brand",
+      "name": "Brand",
+      "limit": 1,
+      "settings": [
+        { "type": "textarea", "id": "text", "label": "Tagline", "default": "Authenticated sneakers, sized properly and sent quickly." }
+      ]
+    },
+    {
+      "type": "links",
+      "name": "Link list",
+      "settings": [
+        { "type": "text", "id": "heading", "label": "Heading", "default": "Shop" },
+        { "type": "link_list", "id": "menu", "label": "Menu", "default": "footer" }
+      ]
+    }
+  ],
+  "max_blocks": 6
+}
+{% endschema %}

@@ -1,0 +1,55 @@
+{%- comment -%}
+  One storefront filter group. Params: filter, is_size (bool)
+{%- endcomment -%}
+{%- case filter.type -%}
+  {%- when 'price_range' -%}
+    <details class="fg"{% if filter.min_value.value != nil or filter.max_value.value != nil %} open{% endif %}>
+      <summary><span class="lbl">{{ filter.label }}</span></summary>
+      <div class="fg__price">
+        <label class="fg__price-field">
+          <span class="lbl">From</span>
+          <input class="field fg__input" type="number" inputmode="decimal" min="0" placeholder="0"
+            name="{{ filter.min_value.param_name }}"
+            value="{% if filter.min_value.value %}{{ filter.min_value.value | money_without_currency | replace: ',', '' }}{% endif %}">
+        </label>
+        <label class="fg__price-field">
+          <span class="lbl">To</span>
+          <input class="field fg__input" type="number" inputmode="decimal" min="0"
+            placeholder="{{ filter.range_max | money_without_currency | replace: ',', '' }}"
+            name="{{ filter.max_value.param_name }}"
+            value="{% if filter.max_value.value %}{{ filter.max_value.value | money_without_currency | replace: ',', '' }}{% endif %}">
+        </label>
+      </div>
+    </details>
+
+  {%- else -%}
+    <details class="fg"{% if is_size or filter.active_values.size > 0 %} open{% endif %}>
+      <summary><span class="lbl">{{ filter.label }}{% if is_size %} (UK){% endif %}</span></summary>
+      {%- if is_size -%}
+        <div class="fg__sizes">
+          {%- for value in filter.values -%}
+            <label class="fg__size">
+              <input type="checkbox" class="visually-hidden" name="{{ value.param_name }}" value="{{ value.value }}" data-size-value="{{ value.label | escape }}"
+                {%- if value.active %} checked{% endif -%}
+                {%- if value.count == 0 and value.active == false %} disabled{% endif -%}>
+              <span>{{ value.label }}</span>
+            </label>
+          {%- endfor -%}
+        </div>
+        <p class="fg__hint">Your size stays selected as you browse.</p>
+      {%- else -%}
+        <ul class="fg__list" role="list">
+          {%- for value in filter.values -%}
+            <li>
+              <label class="ck{% if value.count == 0 and value.active == false %} is-off{% endif %}">
+                <input type="checkbox" name="{{ value.param_name }}" value="{{ value.value }}"
+                  {%- if value.active %} checked{% endif -%}
+                  {%- if value.count == 0 and value.active == false %} disabled{% endif -%}>
+                <span>{{ value.label }} <span class="fg__n">({{ value.count }})</span></span>
+              </label>
+            </li>
+          {%- endfor -%}
+        </ul>
+      {%- endif -%}
+    </details>
+{%- endcase -%}

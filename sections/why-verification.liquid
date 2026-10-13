@@ -1,0 +1,97 @@
+{%- liquid
+  assign rating = shop.metafields.custom.review_rating.value | default: section.settings.rating
+  assign count = shop.metafields.custom.review_count.value | default: section.settings.review_count
+-%}
+<section class="wv wrap" style="padding-top:{{ section.settings.padding_top }}px;padding-bottom:{{ section.settings.padding_bottom }}px" aria-labelledby="wv-{{ section.id }}">
+  <div class="wv__grid">
+    <div class="wv__media ph ph--2">
+      {%- if section.settings.image != blank -%}
+        {{ section.settings.image | image_url: width: 1000 | image_tag: loading: 'lazy', widths: '500, 800, 1000', sizes: '(min-width: 1000px) 45vw, 100vw', alt: section.settings.heading }}
+      {%- else -%}
+        {{ 'lifestyle-1' | placeholder_svg_tag }}
+      {%- endif -%}
+    </div>
+    <div>
+      <div class="lbl wv__eyebrow">{{ section.settings.eyebrow }}</div>
+      <h2 class="d wv__title" id="wv-{{ section.id }}">{{ section.settings.heading }}</h2>
+      <ol class="wv__steps" role="list">
+        {%- for block in section.blocks -%}
+          <li class="wv__step" {{ block.shopify_attributes }}>
+            <span class="lbl wv__n">{{ forloop.index | prepend: '0' }}</span>
+            <div>
+              <div class="wv__t">{{ block.settings.title }}</div>
+              <div>{{ block.settings.text }}</div>
+            </div>
+          </li>
+        {%- endfor -%}
+      </ol>
+      <div class="wv__foot">
+        {%- if rating != blank or count != blank -%}
+          <p class="wv__rating">
+            {%- if rating != blank -%}<strong>{{ rating }}</strong> out of 5{%- endif -%}
+            {%- if count != blank %} from <strong>{{ count }}</strong> verified reviews{%- endif -%}
+          </p>
+        {%- endif -%}
+        {%- if section.settings.button_label != blank -%}
+          <a class="btn btn--w btn--sm" href="{{ section.settings.button_url | default: '#' }}">{{ section.settings.button_label }}</a>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .wv__grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:72px;align-items:center}
+  .wv__media{aspect-ratio:4/5}
+  .wv__eyebrow{margin-bottom:20px}
+  .wv__title{font-size:clamp(36px,4.8vw,68px);margin-bottom:36px}
+  .wv__steps{list-style:none;margin:0;padding:0;border-bottom:1px solid #000}
+  .wv__step{display:grid;grid-template-columns:40px minmax(0,1fr);gap:12px;padding:18px 0;border-top:1px solid #000}
+  .wv__n{padding-top:5px}
+  .wv__t{font-weight:600;font-size:18px;margin-bottom:4px}
+  .wv__foot{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-top:28px}
+  .wv__rating{margin:0}
+  @media (max-width:1000px){.wv__grid{grid-template-columns:minmax(0,1fr);gap:32px}}
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Why SteppedIn",
+  "tag": "section",
+  "settings": [
+    { "type": "image_picker", "id": "image", "label": "Photo", "info": "Real photography of your authentication process." },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Why SteppedIn" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Every pair is checked before it leaves us." },
+    { "type": "header", "content": "Review count" },
+    { "type": "paragraph", "content": "Reads the shop metafields custom.review_rating and custom.review_count first, so a reviews app or Flow can keep them live. The fields below are the fallback." },
+    { "type": "text", "id": "rating", "label": "Average rating", "info": "For example 4.8" },
+    { "type": "text", "id": "review_count", "label": "Review count", "info": "For example 1,240" },
+    { "type": "text", "id": "button_label", "label": "Button label", "default": "How we authenticate" },
+    { "type": "url", "id": "button_url", "label": "Button link" },
+    { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 160, "step": 8, "unit": "px", "default": 96 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 160, "step": 8, "unit": "px", "default": 96 }
+  ],
+  "blocks": [
+    {
+      "type": "step",
+      "name": "Step",
+      "settings": [
+        { "type": "text", "id": "title", "label": "Title", "default": "Inspected by hand" },
+        { "type": "textarea", "id": "text", "label": "Text", "default": "Stitching, glue lines, materials and box labels, checked under proper light." }
+      ]
+    }
+  ],
+  "max_blocks": 6,
+  "presets": [
+    {
+      "name": "Why SteppedIn",
+      "blocks": [
+        { "type": "step", "settings": { "title": "Sourced with a paper trail", "text": "We buy from retailers and vetted suppliers, and keep the records." } },
+        { "type": "step", "settings": { "title": "Inspected by hand", "text": "Stitching, glue lines, materials and box labels, checked under proper light." } },
+        { "type": "step", "settings": { "title": "Matched to reference", "text": "Compared against known genuine pairs for the same model and colourway." } },
+        { "type": "step", "settings": { "title": "Sealed and sent", "text": "Packed with a verification note you can look up." } }
+      ]
+    }
+  ]
+}
+{% endschema %}

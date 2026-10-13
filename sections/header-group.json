@@ -1,0 +1,21 @@
+{
+  "name": "Header group",
+  "type": "header",
+  "sections": {
+    "announcement": {
+      "type": "announcement-bar",
+      "blocks": {
+        "msg-1": { "type": "message", "settings": { "text": "Order before 3pm for same-day dispatch" } },
+        "msg-2": { "type": "message", "settings": { "text": "Every pair authenticated before it ships" } },
+        "msg-3": { "type": "message", "settings": { "text": "30-day returns on unworn pairs" } }
+      },
+      "block_order": ["msg-1", "msg-2", "msg-3"],
+      "settings": { "interval": 4, "left_text": "UK / GBP", "right_text": "Help" }
+    },
+    "header": {
+      "type": "header",
+      "settings": { "menu": "main-menu", "sticky": true }
+    }
+  },
+  "order": ["announcement", "header"]
+}

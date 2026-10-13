@@ -1,0 +1,47 @@
+<section class="mc" style="padding-top:{{ section.settings.padding_top }}px;padding-bottom:{{ section.settings.padding_bottom }}px">
+  <div class="wrap">
+    <h1 class="d h1">Bag</h1>
+    {%- if cart.item_count == 0 -%}
+      <p class="mc__empty">Your bag is empty.</p>
+      <a class="btn" href="{{ routes.all_products_collection_url }}">Shop sneakers</a>
+    {%- else -%}
+      <form action="{{ routes.cart_url }}" method="post" class="mc__grid">
+        <ul class="cart-lines mc__lines" role="list">
+          {%- for item in cart.items -%}
+            <li class="cart-line">
+              <a class="cart-line__img ph" href="{{ item.url }}">
+                {%- if item.image -%}{{ item.image | image_url: width: 300 | image_tag: loading: 'lazy', widths: '150, 300', sizes: '120px', alt: item.image.alt }}{%- else -%}{{ 'product-1' | placeholder_svg_tag }}{%- endif -%}
+              </a>
+              <div class="cart-line__body">
+                <div class="lbl">{{ item.product.vendor }}</div>
+                <a href="{{ item.url }}" class="cart-line__title">{{ item.product.title }}</a>
+                {%- unless item.product.has_only_default_variant -%}<div class="cart-line__variant">{{ item.variant.title }}</div>{%- endunless -%}
+                <div class="cart-line__row">
+                  <label class="visually-hidden" for="q-{{ item.key }}">Quantity</label>
+                  <input class="field mc__qty" id="q-{{ item.key }}" type="number" name="updates[]" min="0" value="{{ item.quantity }}">
+                  <span class="cart-line__price">{{ item.final_line_price | money }}</span>
+                </div>
+                <a class="cart-line__remove lbl" href="{{ item.url_to_remove }}">Remove</a>
+              </div>
+            </li>
+          {%- endfor -%}
+        </ul>
+        <aside class="mc__sum">
+          <div class="cart-drawer__total"><span class="lbl">Subtotal</span><span class="d" style="font-size:26px">{{ cart.total_price | money }}</span></div>
+          {%- if section.settings.show_note -%}
+            <label class="lbl" for="cart-note">Order note</label>
+            <textarea class="field mc__note" id="cart-note" name="note">{{ cart.note }}</textarea>
+          {%- endif -%}
+          <p class="cart-drawer__note">{{ settings.cart_note }}</p>
+          <button type="submit" name="checkout" class="btn btn--full">Checkout</button>
+          <button type="submit" name="update" class="btn btn--w btn--full" style="margin-top:8px">Update bag</button>
+        </aside>
+      </form>
+    {%- endif -%}
+  </div>
+</section>
+{% stylesheet %}.mc h1{margin-bottom:32px}.mc__empty{margin:0 0 24px}.mc__grid{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,.7fr);gap:56px;align-items:start}.mc__qty{width:88px;height:44px}.mc__note{height:96px;padding:12px;margin:8px 0 16px}.mc__sum{border:1px solid #000;padding:24px;position:sticky;top:96px}@media(max-width:999px){.mc__grid{grid-template-columns:minmax(0,1fr);gap:32px}.mc__sum{position:static}}{% endstylesheet %}
+{% schema %}
+{ "name": "Cart page", "settings": [ { "type": "checkbox", "id": "show_note", "label": "Show order note", "default": false }, { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 160, "step": 8, "unit": "px", "default": 56 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 160, "step": 8, "unit": "px", "default": 96 } ] }
+{% endschema %}

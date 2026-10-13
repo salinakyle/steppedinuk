@@ -1,0 +1,179 @@
+{%- liquid
+  assign now_num = 'now' | date: '%s' | plus: 0
+-%}
+<section class="drop wrap" data-tabs style="padding-top:{{ section.settings.padding_top }}px;padding-bottom:{{ section.settings.padding_bottom }}px" aria-label="Drops">
+
+  {%- if section.blocks.size > 1 -%}
+    <div class="drop__tabs" role="tablist">
+      {%- for block in section.blocks -%}
+        <button type="button" role="tab" class="drop__tab" data-tab-btn aria-selected="false">
+          <span class="lbl drop__tab-n">{{ forloop.index | prepend: '0' }}</span>
+          <span class="lbl">{{ block.settings.type_label }}</span>
+          <span class="drop__tab-t">{{ block.settings.title }}</span>
+        </button>
+      {%- endfor -%}
+    </div>
+  {%- endif -%}
+
+  {%- for block in section.blocks -%}
+    {%- liquid
+      assign p = block.settings.product
+      assign drop_ts = block.settings.drop_time | date: '%s' | plus: 0
+      assign upcoming = false
+      if block.settings.drop_time != blank and drop_ts > now_num
+        assign upcoming = true
+      endif
+      assign primary_url = block.settings.primary_url | default: p.url | default: routes.all_products_collection_url
+      assign hero_image = block.settings.image
+      assign size_index = -1
+      if p != blank
+        capture si
+          render 'size-index', product: p
+        endcapture
+        assign size_index = si | strip | plus: 0
+      endif
+    -%}
+    <div class="drop__panel" data-tab-panel{% unless forloop.first %} hidden{% endunless %} {{ block.shopify_attributes }}>
+      <div class="drop__copy">
+        <div class="drop__top">
+          <div class="drop__kicker">
+            <span class="drop__dot" aria-hidden="true"></span>
+            <span class="lbl">{{ block.settings.type_label }}</span>
+            {%- if block.settings.when_label != blank -%}<span class="lbl">{{ block.settings.when_label }}</span>{%- endif -%}
+          </div>
+          <h1 class="d drop__title">{{ block.settings.title }}</h1>
+          {%- if block.settings.subtitle != blank -%}<p class="drop__sub">{{ block.settings.subtitle }}</p>{%- endif -%}
+        </div>
+
+        {%- if upcoming -%}
+          <div class="cd" data-countdown-wrap>
+            <div class="cd__grid" data-countdown="{{ block.settings.drop_time | date: '%Y-%m-%dT%H:%M:%S%:z' }}" role="timer" aria-label="Time until release">
+              <div class="cd__cell"><div class="d cd__n" data-cd-d>00</div><div class="lbl">Days</div></div>
+              <div class="cd__cell"><div class="d cd__n" data-cd-h>00</div><div class="lbl">Hours</div></div>
+              <div class="cd__cell"><div class="d cd__n" data-cd-m>00</div><div class="lbl">Minutes</div></div>
+              <div class="cd__cell"><div class="d cd__n" data-cd-s>00</div><div class="lbl">Seconds</div></div>
+            </div>
+          </div>
+        {%- endif -%}
+
+        {%- if block.settings.show_sizes and size_index >= 0 -%}
+          <div class="drop__sizes">
+            <div class="drop__sizes-head">
+              <span class="lbl">Select size</span>
+            </div>
+            <div class="drop__chips" data-drop-sizes>
+              {%- for variant in p.variants -%}
+                {%- assign vsize = variant.options[size_index] -%}
+                <button type="button" class="chip{% unless variant.available %} is-off{% endunless %}" data-drop-size data-variant-id="{{ variant.id }}" data-size="{{ vsize | escape }}"{% unless variant.available %} disabled{% endunless %}>{{ vsize }}</button>
+              {%- endfor -%}
+            </div>
+          </div>
+        {%- endif -%}
+
+        <div class="drop__cta">
+          {%- if block.settings.primary_label != blank -%}
+            <a href="{{ primary_url }}" class="btn" data-drop-cta data-base-href="{{ primary_url }}">{{ block.settings.primary_label }}</a>
+          {%- endif -%}
+          {%- if block.settings.secondary_label != blank -%}
+            <a href="{{ block.settings.secondary_url | default: '#' }}" class="btn btn--w">{{ block.settings.secondary_label }}</a>
+          {%- endif -%}
+          {%- if block.settings.note != blank -%}<span class="drop__note">{{ block.settings.note }}</span>{%- endif -%}
+        </div>
+      </div>
+
+      <div class="drop__media ph">
+        {%- if hero_image != blank -%}
+          {{ hero_image | image_url: width: 1400 | image_tag: loading: 'eager', widths: '700, 1000, 1400', sizes: '(min-width: 1000px) 45vw, 100vw', alt: block.settings.title }}
+        {%- elsif p != blank and p.featured_media -%}
+          {{ p.featured_media.preview_image | image_url: width: 1400 | image_tag: loading: 'eager', widths: '700, 1000, 1400', sizes: '(min-width: 1000px) 45vw, 100vw', alt: p.title }}
+        {%- else -%}
+          {{ 'product-1' | placeholder_svg_tag }}
+        {%- endif -%}
+        <span class="lbl drop__flag">{{ block.settings.type_label }}</span>
+      </div>
+    </div>
+  {%- endfor -%}
+</section>
+
+{% stylesheet %}
+  .drop__tabs{display:flex}
+  .drop__tab{flex:1;display:flex;align-items:center;gap:14px;padding:14px 18px;background:#fff;color:#000;border:1px solid #000;border-right:0;text-align:left}
+  .drop__tab:last-child{border-right:1px solid #000}
+  .drop__tab:hover,.drop__tab.is-on{background:#000;color:#fff}
+  .drop__tab-t{margin-left:auto;font-size:14px}
+  .drop__panel{display:grid;grid-template-columns:1.05fr .95fr;border:1px solid #000}
+  .drop__tabs + .drop__panel{border-top:0}
+  .drop__panel[hidden]{display:none}
+  .drop__copy{padding:56px 48px;display:flex;flex-direction:column;gap:28px;justify-content:space-between}
+  .drop__top{display:flex;flex-direction:column;gap:22px}
+  .drop__kicker{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .drop__dot{width:10px;height:10px;background:#000;display:inline-block}
+  .drop__title{font-size:clamp(44px,6.4vw,96px)}
+  .drop__sub{margin:0;font-size:17px;max-width:46ch}
+  .cd__grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border:1px solid #000;max-width:480px}
+  .cd__cell{padding:14px 16px}
+  .cd__cell + .cd__cell{border-left:1px solid #000}
+  .cd__n{font-size:44px;margin-bottom:6px}
+  .drop__sizes-head{margin-bottom:10px}
+  .drop__chips{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;max-width:460px}
+  .drop__chips .chip{min-width:0}
+  .drop__cta{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+  .drop__note{flex-basis:100%;font-size:14px}
+  .drop__media{min-height:560px;border-left:1px solid #000}
+  .drop__flag{position:absolute;top:20px;left:20px;background:#000;color:#fff;padding:6px 8px;z-index:1}
+  @media (max-width:1000px){
+    .drop__tabs{flex-direction:column}
+    .drop__tab{border-right:1px solid #000;border-bottom:0}
+    .drop__tab:last-child{border-bottom:1px solid #000}
+    .drop__panel{grid-template-columns:minmax(0,1fr)}
+    .drop__media{order:-1;min-height:0;aspect-ratio:4/3;border-left:0;border-bottom:1px solid #000}
+    .drop__copy{padding:24px 16px 28px;gap:20px}
+    .cd__n{font-size:30px}
+    .cd__cell{padding:10px 12px}
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Drop hero",
+  "tag": "section",
+  "settings": [
+    { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 120, "step": 8, "unit": "px", "default": 24 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 160, "step": 8, "unit": "px", "default": 64 }
+  ],
+  "blocks": [
+    {
+      "type": "drop",
+      "name": "Drop",
+      "settings": [
+        { "type": "header", "content": "Content" },
+        { "type": "text", "id": "type_label", "label": "Type label", "default": "Live release", "info": "For example Live release, Restock, Member drop." },
+        { "type": "text", "id": "title", "label": "Title", "default": "Air Jordan 4 Retro" },
+        { "type": "textarea", "id": "subtitle", "label": "Description", "default": "Members enter first, general release follows. Choose your size now." },
+        { "type": "text", "id": "when_label", "label": "Timing label", "default": "Release 10:00 UK" },
+        { "type": "image_picker", "id": "image", "label": "Image", "info": "Falls back to the product image." },
+        { "type": "header", "content": "Product and sizes" },
+        { "type": "product", "id": "product", "label": "Product" },
+        { "type": "checkbox", "id": "show_sizes", "label": "Show size chips from the product", "default": true },
+        { "type": "header", "content": "Countdown" },
+        { "type": "text", "id": "drop_time", "label": "Release date and time", "info": "Leave blank for restocks and anything already live. Use ISO format with offset, e.g. 2026-10-20T10:00:00+01:00. The countdown only shows while this is in the future." },
+        { "type": "header", "content": "Buttons" },
+        { "type": "text", "id": "primary_label", "label": "Primary button", "default": "Enter the drop" },
+        { "type": "url", "id": "primary_url", "label": "Primary link", "info": "Defaults to the product page." },
+        { "type": "text", "id": "secondary_label", "label": "Secondary button", "default": "Remind me" },
+        { "type": "url", "id": "secondary_url", "label": "Secondary link" },
+        { "type": "text", "id": "note", "label": "Small print", "default": "One pair per customer. Every pair authenticated on arrival." }
+      ]
+    }
+  ],
+  "max_blocks": 4,
+  "presets": [
+    {
+      "name": "Drop hero",
+      "blocks": [
+        { "type": "drop", "settings": { "type_label": "Live release", "title": "Air Jordan 4 Retro" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

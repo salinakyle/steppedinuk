@@ -1,0 +1,39 @@
+<section class="ms" style="padding-top:{{ section.settings.padding_top }}px;padding-bottom:{{ section.settings.padding_bottom }}px">
+  <div class="wrap">
+    <h1 class="d h1">{% if search.performed %}{{ search.results_count }} result{% if search.results_count != 1 %}s{% endif %} for "{{ search.terms | escape }}"{% else %}Search{% endif %}</h1>
+    <form action="{{ routes.search_url }}" method="get" role="search" class="ms__form">
+      <input class="field" type="search" name="q" value="{{ search.terms | escape }}" placeholder="Search sneakers, brands, models" aria-label="Search">
+      <input type="hidden" name="type" value="product">
+      <button class="btn" type="submit">Search</button>
+    </form>
+    {%- if search.performed -%}
+      {%- paginate search.results by section.settings.per_page -%}
+        {%- if search.results.size == 0 -%}
+          <p class="ms__none">Nothing matched. Try a model name or a brand.</p>
+        {%- else -%}
+          <div class="grid grid--4 ms__grid">
+            {%- for item in search.results -%}
+              {%- if item.object_type == 'product' -%}
+                {% render 'product-card', product: item %}
+              {%- else -%}
+                <a class="pill" href="{{ item.url }}">{{ item.title }}</a>
+              {%- endif -%}
+            {%- endfor -%}
+          </div>
+          {%- if paginate.pages > 1 -%}
+            <nav class="ms__pages" aria-label="Pagination">
+              {%- if paginate.previous -%}<a class="pill" href="{{ paginate.previous.url }}">Previous</a>{%- endif -%}
+              <span class="lbl">Page {{ paginate.current_page }} of {{ paginate.pages }}</span>
+              {%- if paginate.next -%}<a class="pill" href="{{ paginate.next.url }}">Next</a>{%- endif -%}
+            </nav>
+          {%- endif -%}
+        {%- endif -%}
+      {%- endpaginate -%}
+    {%- endif -%}
+  </div>
+</section>
+{% stylesheet %}.ms h1{margin-bottom:24px}.ms__form{display:flex;gap:8px;max-width:640px;margin-bottom:40px}.ms__form .btn{flex:none}.ms__grid{gap:24px 16px}.ms__pages{display:flex;gap:16px;align-items:center;justify-content:center;margin-top:48px}{% endstylesheet %}
+{% schema %}
+{ "name": "Search results", "settings": [ { "type": "range", "id": "per_page", "label": "Results per page", "min": 12, "max": 48, "step": 4, "default": 24 }, { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 160, "step": 8, "unit": "px", "default": 56 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 160, "step": 8, "unit": "px", "default": 96 } ] }
+{% endschema %}

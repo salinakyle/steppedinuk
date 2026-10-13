@@ -1,0 +1,125 @@
+{%- comment -%}
+  Product tile used in every grid and rail.
+  Params:
+    product  (required)
+    compact  (optional, true = small "Add" tile for cross-sell)
+    ratio    (optional, CSS aspect ratio, default 1/1)
+    sizes    (optional, image sizes attribute)
+    lazy     (optional, false to load eagerly)
+{%- endcomment -%}
+{%- liquid
+  capture si
+    render 'size-index', product: product
+  endcapture
+  assign size_index = si | strip | plus: 0
+  assign ratio = ratio | default: '1/1'
+  assign img_sizes = sizes | default: '(min-width: 1000px) 25vw, 50vw'
+  assign loading = 'lazy'
+  if lazy == false
+    assign loading = 'eager'
+  endif
+
+  comment
+    Stock per size, as JSON, so JS can show "2 left in your size".
+  endcomment
+  assign stock_json = ''
+  assign sep = ''
+  if size_index >= 0
+    for variant in product.variants
+      assign vsize = variant.options[size_index]
+      assign vq = 0
+      if variant.available
+        assign vq = 99
+        if variant.inventory_management and variant.inventory_policy == 'deny'
+          assign vq = variant.inventory_quantity
+        endif
+      endif
+      assign stock_json = stock_json | append: sep | append: '"' | append: vsize | append: '":' | append: vq
+      assign sep = ','
+    endfor
+  endif
+  assign stock_json = '{' | append: stock_json | append: '}'
+
+  comment
+    Badges.
+  endcomment
+  assign is_new = false
+  if product.tags contains 'new'
+    assign is_new = true
+  else
+    assign now_ts = 'now' | date: '%s'
+    assign pub_ts = product.published_at | date: '%s'
+    assign age_days = now_ts | minus: pub_ts | divided_by: 86400
+    if age_days <= settings.new_badge_days
+      assign is_new = true
+    endif
+  endif
+
+  assign saved = 0
+  if product.compare_at_price > product.price
+    assign saved = product.compare_at_price | minus: product.price | times: 100.0 | divided_by: product.compare_at_price | round
+  endif
+
+  assign delivery = product.metafields.custom.delivery_speed.value | default: settings.default_delivery_label
+-%}
+
+<article class="tile{% if compact %} tile--compact{% endif %}" data-stock="{{ stock_json | escape }}" data-product-handle="{{ product.handle }}">
+  <div class="tile__media ph" style="aspect-ratio:{{ ratio }}">
+    <a class="tile__img" href="{{ product.url }}" aria-label="{{ product.title | escape }}" tabindex="-1">
+      {%- if product.featured_media -%}
+        {{ product.featured_media | image_url: width: 720 | image_tag: loading: loading, widths: '360, 540, 720', sizes: img_sizes, alt: product.featured_media.alt }}
+        {%- if product.media.size > 1 and compact != true -%}
+          {{ product.media[1] | image_url: width: 720 | image_tag: loading: 'lazy', widths: '360, 540, 720', sizes: img_sizes, alt: '', class: 'tile__alt' }}
+        {%- endif -%}
+      {%- else -%}
+        {{ 'product-1' | placeholder_svg_tag }}
+      {%- endif -%}
+    </a>
+
+    <div class="tile__badges">
+      {%- unless product.available -%}
+        <span class="lbl badge">Sold out</span>
+      {%- else -%}
+        {%- if is_new -%}<span class="lbl badge">New</span>{%- endif -%}
+        {%- if saved > 0 -%}<span class="lbl badge badge--o">{{ saved }}% saved</span>{%- endif -%}
+        <span class="lbl badge badge--o" data-low-stock-badge hidden></span>
+      {%- endunless -%}
+    </div>
+
+    {%- if settings.show_quick_add and compact != true and product.available -%}
+      <div class="qa">
+        {%- if size_index >= 0 -%}
+          <div class="lbl">Quick add, size</div>
+          <div class="chips">
+            {%- for variant in product.variants -%}
+              {%- assign vsize = variant.options[size_index] -%}
+              <button type="button" class="chip chip--sm{% unless variant.available %} is-off{% endunless %}" data-quick-add data-variant-id="{{ variant.id }}" data-size="{{ vsize | escape }}"{% unless variant.available %} disabled{% endunless %}>{{ vsize }}</button>
+            {%- endfor -%}
+          </div>
+        {%- elsif product.variants.size == 1 -%}
+          <button type="button" class="btn btn--sm btn--full" data-quick-add data-variant-id="{{ product.selected_or_first_available_variant.id }}">Quick add</button>
+        {%- else -%}
+          <a class="btn btn--sm btn--full" href="{{ product.url }}">Choose options</a>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+  </div>
+
+  <div class="tile__info">
+    {%- if compact != true -%}<div class="lbl tile__vendor">{{ product.vendor }}</div>{%- endif -%}
+    <a class="tile__title" href="{{ product.url }}">{{ product.title }}</a>
+    <div class="tile__meta">{% render 'price', product: product %}</div>
+    {%- if compact != true and product.available -%}
+      <div class="tile__deliv">{{ delivery }}</div>
+    {%- endif -%}
+    {%- if compact -%}
+      {%- if product.available -%}
+        {%- if product.variants.size == 1 -%}
+          <button type="button" class="pill" style="margin-top:10px" data-quick-add data-variant-id="{{ product.selected_or_first_available_variant.id }}">Add</button>
+        {%- else -%}
+          <a class="pill" style="margin-top:10px" href="{{ product.url }}">Choose</a>
+        {%- endif -%}
+      {%- endif -%}
+    {%- endif -%}
+  </div>
+</article>

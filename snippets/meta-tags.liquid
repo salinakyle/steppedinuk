@@ -1,0 +1,32 @@
+{%- liquid
+  assign og_title = page_title | default: shop.name
+  assign og_url = canonical_url
+  assign og_type = 'website'
+  if request.page_type == 'product'
+    assign og_type = 'product'
+  endif
+  assign og_image = settings.share_image
+  if request.page_type == 'product' and product.featured_media
+    assign og_image = product.featured_media.preview_image
+  elsif request.page_type == 'collection' and collection.image
+    assign og_image = collection.image
+  elsif request.page_type == 'article' and article.image
+    assign og_image = article.image
+  endif
+-%}
+<meta property="og:site_name" content="{{ shop.name | escape }}">
+<meta property="og:url" content="{{ og_url }}">
+<meta property="og:title" content="{{ og_title | escape }}">
+<meta property="og:type" content="{{ og_type }}">
+<meta property="og:description" content="{{ page_description | default: shop.description | default: shop.name | escape }}">
+{%- if og_image != blank -%}
+  <meta property="og:image" content="{{ og_image | image_url: width: 1200 }}">
+  <meta property="og:image:secure_url" content="{{ og_image | image_url: width: 1200 }}">
+{%- endif -%}
+{%- if request.page_type == 'product' -%}
+  <meta property="og:price:amount" content="{{ product.price | money_without_currency | strip_html | escape }}">
+  <meta property="og:price:currency" content="{{ cart.currency.iso_code }}">
+{%- endif -%}
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ og_title | escape }}">
+<meta name="twitter:description" content="{{ page_description | default: shop.description | default: shop.name | escape }}">

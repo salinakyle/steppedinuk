@@ -1,0 +1,73 @@
+<section class="sec" style="padding-top:{{ section.settings.padding_top }}px;padding-bottom:{{ section.settings.padding_bottom }}px" aria-labelledby="sil-{{ section.id }}">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2 class="d h2" id="sil-{{ section.id }}">{{ section.settings.heading }}</h2>
+      {%- if section.settings.intro != blank -%}<p>{{ section.settings.intro }}</p>{%- endif -%}
+    </div>
+    <div class="sil">
+      {%- for block in section.blocks -%}
+        <a class="sil__row" href="{{ block.settings.link | default: routes.collections_url }}" {{ block.shopify_attributes }}>
+          <span class="d sil__n sil__p">{%- if forloop.index < 10 -%}0{%- endif -%}{{ forloop.index }}</span>
+          <span class="d sil__name sil__p">{{ block.settings.name }}</span>
+          <span class="sil__why">{{ block.settings.why }}</span>
+          <span class="sil__thumb ph ph--2">
+            {%- if block.settings.image != blank -%}
+              {{ block.settings.image | image_url: width: 240 | image_tag: loading: 'lazy', widths: '120, 240', sizes: '96px', alt: block.settings.name }}
+            {%- endif -%}
+          </span>
+        </a>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .sil{border-bottom:1px solid #000}
+  .sil__row{display:grid;grid-template-columns:72px 1.1fr 1.6fr 96px;align-items:center;gap:24px;padding:22px 0;border-top:1px solid #000;color:#000;background:#fff}
+  .sil__row:hover{background:#000;color:#fff}
+  .sil__p{transition:padding .2s}
+  .sil__row:hover .sil__p{padding-left:16px}
+  .sil__n{font-size:20px}
+  .sil__name{font-size:clamp(28px,3.4vw,48px)}
+  .sil__why{font-size:17px;max-width:48ch}
+  .sil__thumb{height:64px;display:block}
+  @media (max-width:1000px){
+    .sil__row{grid-template-columns:48px 1fr;gap:12px}
+    .sil__why,.sil__thumb{display:none}
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Silhouette hubs",
+  "tag": "section",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Five silhouettes we stand behind" },
+    { "type": "textarea", "id": "intro", "label": "Intro", "default": "The models we keep deep in stock, in the sizes people actually ask for." },
+    { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 160, "step": 8, "unit": "px", "default": 0 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 160, "step": 8, "unit": "px", "default": 96 }
+  ],
+  "blocks": [
+    {
+      "type": "silhouette",
+      "name": "Silhouette",
+      "settings": [
+        { "type": "text", "id": "name", "label": "Model name", "default": "Air Jordan 1" },
+        { "type": "textarea", "id": "why", "label": "Why we stock it", "default": "The reference high-top, with the core colourways kept deep." },
+        { "type": "url", "id": "link", "label": "Hub page link", "info": "The collection that uses the silhouette template." },
+        { "type": "image_picker", "id": "image", "label": "Thumbnail" }
+      ]
+    }
+  ],
+  "max_blocks": 8,
+  "presets": [
+    {
+      "name": "Silhouette hubs",
+      "blocks": [
+        { "type": "silhouette", "settings": { "name": "Air Jordan 1", "why": "The reference high-top, with the core colourways kept deep." } },
+        { "type": "silhouette", "settings": { "name": "Nike Dunk Low", "why": "The everyday classic in a wide run of colours." } }
+      ]
+    }
+  ]
+}
+{% endschema %}

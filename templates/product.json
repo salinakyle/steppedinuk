@@ -1,0 +1,31 @@
+{
+  "sections": {
+    "main": {
+      "type": "product-main",
+      "blocks": {
+        "fit": { "type": "brand_fit", "settings": { "brand": "Nike", "note": "Runs true to size. Half a size down if you prefer a snug fit." } },
+        "fit2": { "type": "brand_fit", "settings": { "brand": "adidas", "note": "Slightly narrow through the midfoot. Half a size up if you are between sizes." } },
+        "guide": { "type": "size_guide" },
+        "d1": { "type": "delivery", "settings": { "country": "United Kingdom", "text": "Order before 3pm for next-day delivery. Free over £150." } },
+        "d2": { "type": "delivery", "settings": { "country": "Ireland", "text": "2 to 3 working days." } },
+        "d3": { "type": "delivery", "settings": { "country": "Germany", "text": "3 to 5 working days." } },
+        "auth": { "type": "authenticity" },
+        "desc": { "type": "description" },
+        "ret": { "type": "accordion", "settings": { "title": "Delivery and returns", "content": "<p>Unworn pairs in their original box can be returned within 30 days. Return label included with every order.</p>" } },
+        "share": { "type": "share" }
+      },
+      "block_order": ["fit", "fit2", "guide", "d1", "d2", "d3", "auth", "desc", "ret", "share"],
+      "settings": { "shot_labels": "Side, Heel, Sole, Box, Tag, Detail", "padding_top": 0, "padding_bottom": 72 }
+    },
+    "look": { "type": "product-complete-look", "settings": { "heading": "Complete the look", "subheading": "Laces, cleaner and care. Added in one tap.", "max": 6, "padding_top": 72, "padding_bottom": 72 } },
+    "reviews": { "type": "product-reviews", "settings": { "heading": "Reviews", "padding_top": 72, "padding_bottom": 72 },
+      "blocks": {
+        "r1": { "type": "review", "settings": { "rating": 5, "text": "Arrived in a day, box perfect, fit exactly as described.", "name": "Jordan T.", "size": "9", "verified": true } },
+        "r2": { "type": "review", "settings": { "rating": 5, "text": "The verification note in the box made me trust it straight away.", "name": "Amara K.", "size": "7", "verified": true } },
+        "r3": { "type": "review", "settings": { "rating": 4, "text": "Quiet, quick, no drama. Will buy again.", "name": "Sam R.", "size": "8", "verified": true } }
+      },
+      "block_order": ["r1", "r2", "r3"] },
+    "viewed": { "type": "recently-viewed", "settings": { "heading": "Recently viewed", "max": 6, "padding_top": 72, "padding_bottom": 96 } }
+  },
+  "order": ["main", "look", "reviews", "viewed"]
+}

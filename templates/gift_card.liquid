@@ -1,0 +1,21 @@
+{% layout none %}
+<!doctype html>
+<html lang="{{ request.locale.iso_code }}">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>{{ shop.name }} gift card</title>
+  <link rel="stylesheet" href="{{ 'base.css' | asset_url }}">
+  <style>body{display:grid;place-items:center;min-height:100vh;padding:24px}.gc{max-width:520px;width:100%;border:2px solid #000;padding:40px}.gc__code{font-size:28px;letter-spacing:.08em;border:1px solid #000;padding:16px;text-align:center;margin:24px 0}</style>
+</head>
+<body>
+  <div class="gc">
+    <div class="lbl">{{ shop.name }} gift card</div>
+    <h1 class="d h1">{{ gift_card.initial_value | money }}</h1>
+    {%- if gift_card.balance != gift_card.initial_value -%}<p>Remaining balance: {{ gift_card.balance | money }}</p>{%- endif -%}
+    <div class="gc__code d">{{ gift_card.code | format_code }}</div>
+    {%- if gift_card.enabled and gift_card.expired == false -%}
+      <a class="btn btn--full" href="{{ shop.url }}">Start shopping</a>
+    {%- else -%}<p>This gift card is no longer active.</p>{%- endif -%}
+  </div>
+</body>
+</html>

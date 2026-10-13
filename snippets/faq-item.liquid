@@ -1,0 +1,7 @@
+{%- comment -%}
+  Params: question (string), answer (HTML), open (bool)
+{%- endcomment -%}
+<details class="faq"{% if open %} open{% endif %}>
+  <summary>{{ question }}</summary>
+  <div class="faq__a rte">{{ answer }}</div>
+</details>

@@ -1,0 +1,11 @@
+<section class="mp" style="padding-top:{{ section.settings.padding_top }}px;padding-bottom:{{ section.settings.padding_bottom }}px">
+  <div class="wrap mp__in">
+    <h1 class="d h1">{{ page.title }}</h1>
+    <div class="rte">{{ page.content }}</div>
+  </div>
+</section>
+{% stylesheet %}.mp__in{max-width:760px}.mp__in h1{margin-bottom:32px}{% endstylesheet %}
+{% schema %}
+{ "name": "Page", "settings": [ { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 160, "step": 8, "unit": "px", "default": 56 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 160, "step": 8, "unit": "px", "default": 96 } ] }
+{% endschema %}

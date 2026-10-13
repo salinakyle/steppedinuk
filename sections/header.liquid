@@ -1,0 +1,112 @@
+<header class="site-header{% if section.settings.sticky %} is-sticky{% endif %}">
+  <div class="wrap site-header__bar">
+    <button type="button" class="icon-btn site-header__menu" data-drawer-open="nav" aria-label="Menu" aria-controls="drawer-nav">
+      {% render 'icon', icon: 'menu', size: 24 %}
+    </button>
+
+    <a href="{{ routes.root_url }}" class="site-header__logo d">
+      {%- if settings.logo != blank -%}
+        {{ settings.logo | image_url: width: 520 | image_tag: width: settings.logo_width, alt: shop.name, loading: 'eager' }}
+      {%- else -%}
+        {{ settings.wordmark | default: shop.name }}
+      {%- endif -%}
+    </a>
+
+    <nav class="site-nav lbl" aria-label="Main">
+      {%- for link in section.settings.menu.links -%}
+        <a href="{{ link.url }}"{% if link.current or link.child_current %} aria-current="page"{% endif %}>{{ link.title }}</a>
+      {%- endfor -%}
+    </nav>
+
+    <div class="site-header__tools">
+      <button type="button" class="icon-btn" data-drawer-open="search" aria-label="Search" aria-controls="drawer-search">{% render 'icon', icon: 'search' %}</button>
+      <a class="icon-btn" href="{{ routes.account_url }}" aria-label="Account">{% render 'icon', icon: 'account' %}</a>
+      <a class="icon-btn" href="{{ routes.cart_url }}" data-drawer-open="cart" aria-label="Bag">
+        {% render 'icon', icon: 'bag' %}
+        <span class="count" data-cart-count{% if cart.item_count == 0 %} hidden{% endif %}>{{ cart.item_count }}</span>
+      </a>
+    </div>
+  </div>
+</header>
+
+<div class="drawer drawer--left" id="drawer-nav" data-drawer="nav" aria-hidden="true" role="dialog" aria-label="Menu">
+  <div class="drawer__overlay" data-drawer-close></div>
+  <div class="drawer__panel">
+    <div class="drawer__head">
+      <span class="d">Menu</span>
+      <button type="button" class="icon-btn" data-drawer-close aria-label="Close menu">{% render 'icon', icon: 'close' %}</button>
+    </div>
+    <nav class="drawer__body nav-drawer" aria-label="Mobile">
+      {%- for link in section.settings.menu.links -%}
+        {%- if link.links.size > 0 -%}
+          <details class="nav-drawer__group">
+            <summary class="d">{{ link.title }}</summary>
+            <div class="nav-drawer__sub">
+              <a href="{{ link.url }}" class="lbl">All {{ link.title }}</a>
+              {%- for child in link.links -%}
+                <a href="{{ child.url }}">{{ child.title }}</a>
+              {%- endfor -%}
+            </div>
+          </details>
+        {%- else -%}
+          <a href="{{ link.url }}" class="d nav-drawer__link">{{ link.title }}</a>
+        {%- endif -%}
+      {%- endfor -%}
+      <a href="{{ routes.account_url }}" class="lbl nav-drawer__acct">{% if customer %}Your account{% else %}Log in{% endif %}</a>
+    </nav>
+  </div>
+</div>
+
+<div class="drawer drawer--top" id="drawer-search" data-drawer="search" aria-hidden="true" role="dialog" aria-label="Search">
+  <div class="drawer__overlay" data-drawer-close></div>
+  <div class="drawer__panel">
+    <form class="search-drawer wrap" action="{{ routes.search_url }}" method="get" role="search">
+      <label for="header-search" class="lbl">Search sneakers, brands, models</label>
+      <div class="search-drawer__row">
+        <input id="header-search" class="field" type="search" name="q" placeholder="Try &quot;Dunk Low&quot;" autocomplete="off">
+        <input type="hidden" name="type" value="product">
+        <button type="submit" class="btn">Search</button>
+        <button type="button" class="icon-btn" data-drawer-close aria-label="Close search">{% render 'icon', icon: 'close' %}</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+{% stylesheet %}
+  .shopify-section:has(> .site-header.is-sticky){position:sticky;top:0;z-index:50}
+  .site-header{background:#fff;border-bottom:1px solid #000}
+  .site-header__bar{display:flex;align-items:center;justify-content:space-between;height:72px;gap:24px}
+  .site-header__logo{font-size:30px;font-weight:800;flex:none}
+  .site-header__logo img{height:auto}
+  .site-nav{display:flex;gap:28px;flex:1;justify-content:center}
+  .site-nav a{padding:8px 0;border-bottom:1px solid transparent}
+  .site-nav a:hover,.site-nav a[aria-current]{border-bottom-color:#000}
+  .site-header__tools{display:flex;align-items:center;gap:4px;flex:none}
+  .site-header__menu{display:none}
+  .nav-drawer{gap:4px}
+  .nav-drawer__link,.nav-drawer__group>summary{font-size:34px;padding:12px 0;display:block;border-bottom:1px solid #000;cursor:pointer}
+  .nav-drawer__group>summary::-webkit-details-marker{display:none}
+  .nav-drawer__sub{display:flex;flex-direction:column;gap:10px;padding:16px 0 20px}
+  .nav-drawer__acct{margin-top:auto;padding-top:24px;text-decoration:underline}
+  .search-drawer{padding-top:24px;padding-bottom:32px}
+  .search-drawer label{display:block;margin-bottom:10px}
+  .search-drawer__row{display:flex;gap:8px;align-items:center}
+  @media (max-width:1000px){
+    .site-nav{display:none}
+    .site-header__menu{display:inline-flex}
+    .site-header__bar{height:56px}
+    .site-header__logo{font-size:26px;margin-right:auto;margin-left:4px}
+    .site-header__tools .icon-btn[aria-label="Account"]{display:none}
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Header",
+  "settings": [
+    { "type": "link_list", "id": "menu", "label": "Menu", "default": "main-menu" },
+    { "type": "checkbox", "id": "sticky", "label": "Sticky header", "default": true },
+    { "type": "paragraph", "content": "Logo and wordmark are set under Theme settings, Brand." }
+  ]
+}
+{% endschema %}

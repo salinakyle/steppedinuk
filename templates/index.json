@@ -1,0 +1,138 @@
+{
+  "sections": {
+    "drop-hero": {
+      "type": "drop-hero",
+      "blocks": {
+        "drop-1": {
+          "type": "drop",
+          "settings": {
+            "type_label": "Live release",
+            "title": "Air Jordan 4 Retro",
+            "subtitle": "Members enter first, general release follows. Choose your size now.",
+            "when_label": "Release 10:00 UK",
+            "show_sizes": true,
+            "primary_label": "Enter the drop",
+            "secondary_label": "Remind me",
+            "note": "One pair per customer. Every pair authenticated on arrival."
+          }
+        },
+        "drop-2": {
+          "type": "drop",
+          "settings": {
+            "type_label": "Restock",
+            "title": "adidas Samba OG",
+            "subtitle": "Back in the core colourways. Sizes move quickly on restocks, so pick yours while it is there.",
+            "when_label": "Restocked today",
+            "show_sizes": true,
+            "primary_label": "Shop the restock",
+            "secondary_label": "Notify me for my size",
+            "note": "Dispatched same day before cut-off."
+          }
+        },
+        "drop-3": {
+          "type": "drop",
+          "settings": {
+            "type_label": "Member drop",
+            "title": "New Balance 550",
+            "subtitle": "A Society-only pair, held for members for 24 hours before it goes on general sale.",
+            "when_label": "Members first",
+            "show_sizes": false,
+            "primary_label": "Join Society to enter",
+            "primary_url": "/pages/society",
+            "secondary_label": "Remind me",
+            "note": "Society is free to join."
+          }
+        }
+      },
+      "block_order": ["drop-1", "drop-2", "drop-3"],
+      "settings": { "padding_top": 24, "padding_bottom": 64 }
+    },
+    "brands": {
+      "type": "brand-grid",
+      "blocks": {
+        "b1": { "type": "brand", "settings": { "name": "Nike" } },
+        "b2": { "type": "brand", "settings": { "name": "Jordan" } },
+        "b3": { "type": "brand", "settings": { "name": "adidas" } },
+        "b4": { "type": "brand", "settings": { "name": "New Balance" } },
+        "b5": { "type": "brand", "settings": { "name": "ASICS" } },
+        "b6": { "type": "brand", "settings": { "name": "Salomon" } },
+        "b7": { "type": "brand", "settings": { "name": "Converse" } },
+        "b8": { "type": "brand", "settings": { "name": "Puma" } }
+      },
+      "block_order": ["b1", "b2", "b3", "b4", "b5", "b6", "b7", "b8"],
+      "settings": { "heading": "Shop by brand", "link_label": "All brands", "columns": "4", "ratio": "4/5", "padding_top": 0, "padding_bottom": 88 }
+    },
+    "new-arrivals": {
+      "type": "product-rail",
+      "settings": { "heading": "New arrivals", "limit": 8, "link_label": "View all", "top_border": true, "padding_top": 56, "padding_bottom": 88 }
+    },
+    "silhouettes": {
+      "type": "silhouette-hubs",
+      "blocks": {
+        "s1": { "type": "silhouette", "settings": { "name": "Air Jordan 1", "why": "The reference high-top. We keep the core colourways deep, so your size is usually there." } },
+        "s2": { "type": "silhouette", "settings": { "name": "Nike Dunk Low", "why": "The everyday classic. A wide run of colours at fair prices, always checked in hand." } },
+        "s3": { "type": "silhouette", "settings": { "name": "adidas Samba", "why": "Slim, simple and goes with everything. Sizes restock in waves, and Society hears first." } },
+        "s4": { "type": "silhouette", "settings": { "name": "New Balance 550", "why": "Court heritage without the hype tax. Comfortable out of the box." } },
+        "s5": { "type": "silhouette", "settings": { "name": "Nike Air Max 90", "why": "A proper cushioned runner with real history. Half sizes where the maker offers them." } }
+      },
+      "block_order": ["s1", "s2", "s3", "s4", "s5"],
+      "settings": { "heading": "Five silhouettes we stand behind", "intro": "The models we keep deep in stock, in the sizes people actually ask for.", "padding_top": 0, "padding_bottom": 96 }
+    },
+    "society": {
+      "type": "society-block",
+      "blocks": {
+        "c1": { "type": "benefit", "settings": { "text": "Early access before general release" } },
+        "c2": { "type": "benefit", "settings": { "text": "Alerts only for your size, never the whole range" } },
+        "c3": { "type": "benefit", "settings": { "text": "Member-only drops, held for 24 hours" } }
+      },
+      "block_order": ["c1", "c2", "c3"],
+      "settings": {
+        "eyebrow": "SteppedIn Society",
+        "heading": "First in line. Every drop.",
+        "text": "Free to join. Members get early access windows, size-specific restock alerts and the occasional pair we hold back for them.",
+        "drop_title": "New Balance 550",
+        "button_label": "Join Society",
+        "tag": "society",
+        "padding_top": 96,
+        "padding_bottom": 96
+      }
+    },
+    "why": {
+      "type": "why-verification",
+      "blocks": {
+        "w1": { "type": "step", "settings": { "title": "Sourced with a paper trail", "text": "We buy from retailers and vetted suppliers, and keep the records." } },
+        "w2": { "type": "step", "settings": { "title": "Inspected by hand", "text": "Stitching, glue lines, materials and box labels, checked under proper light." } },
+        "w3": { "type": "step", "settings": { "title": "Matched to reference", "text": "Compared against known genuine pairs for the same model and colourway." } },
+        "w4": { "type": "step", "settings": { "title": "Sealed and sent", "text": "Packed with a verification note you can look up." } }
+      },
+      "block_order": ["w1", "w2", "w3", "w4"],
+      "settings": { "eyebrow": "Why SteppedIn", "heading": "Every pair is checked before it leaves us.", "button_label": "How we authenticate", "padding_top": 96, "padding_bottom": 96 }
+    },
+    "reviews": {
+      "type": "reviews-social",
+      "blocks": {
+        "r1": { "type": "review", "settings": { "stars": 5, "title": "Arrived next day, exactly as described", "text": "Box was clean, laces bagged separately and the size note on the page was spot on.", "author": "Verified buyer, Samba OG, UK 9" } },
+        "r2": { "type": "review", "settings": { "stars": 5, "title": "The size guide actually helped", "text": "The fit note said to go half a size down and it was right. Returns were never needed.", "author": "Verified buyer, New Balance 550, UK 8" } },
+        "r3": { "type": "review", "settings": { "stars": 5, "title": "Confident it was the real thing", "text": "The verification note and photos of my actual pair before dispatch made the difference.", "author": "Verified buyer, Dunk Low, UK 10" } },
+        "p1": { "type": "photo", "settings": {} },
+        "p2": { "type": "photo", "settings": {} },
+        "p3": { "type": "photo", "settings": {} },
+        "p4": { "type": "photo", "settings": {} }
+      },
+      "block_order": ["r1", "r2", "r3", "p1", "p2", "p3", "p4"],
+      "settings": { "heading": "What customers say", "link_label": "Read all reviews", "photos_heading": "Worn by you. Shop the pair.", "padding_top": 96, "padding_bottom": 96 }
+    },
+    "gifting": {
+      "type": "collectibles-gifting",
+      "blocks": {
+        "g1": { "type": "band", "settings": { "band": "Under £25", "items": "Laces, socks, protector spray" } },
+        "g2": { "type": "band", "settings": { "band": "£25 to £75", "items": "Care kits, caps, bags, small collectibles" } },
+        "g3": { "type": "band", "settings": { "band": "£75 to £150", "items": "Collectible figures, gift sets" } },
+        "g4": { "type": "band", "settings": { "band": "£150 and up", "items": "Limited collectibles, premium gift boxes" } }
+      },
+      "block_order": ["g1", "g2", "g3", "g4"],
+      "settings": { "heading": "Collectibles and gifting", "intro": "Shop by what you want to spend.", "gift_title": "Gift cards", "gift_text": "Sent by email, with a message from you.", "gift_button": "Send a gift card", "padding_top": 96, "padding_bottom": 96 }
+    }
+  },
+  "order": ["drop-hero", "brands", "new-arrivals", "silhouettes", "society", "why", "reviews", "gifting"]
+}

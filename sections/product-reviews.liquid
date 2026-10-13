@@ -1,0 +1,84 @@
+{%- liquid
+  assign rating = product.metafields.reviews.rating.value
+  assign rcount = product.metafields.reviews.rating_count.value
+  assign avg = rating.rating | default: rating
+  if avg == blank
+    assign avg = shop.metafields.custom.review_rating.value
+  endif
+-%}
+<section class="rvw" id="reviews" style="padding-top:{{ section.settings.padding_top }}px;padding-bottom:{{ section.settings.padding_bottom }}px">
+  <div class="wrap">
+    <div class="rvw__head">
+      <h2 class="d h2">{{ section.settings.heading }}</h2>
+      {%- if avg != blank -%}
+        <div class="rvw__sum"><span class="d rvw__avg">{{ avg }}</span><span class="lbl">{% if rcount != blank %}{{ rcount }} reviews{% else %}Average rating{% endif %}</span></div>
+      {%- endif -%}
+    </div>
+
+    <div class="rvw__list">
+      {%- for block in section.blocks -%}
+        {%- if block.type == 'review' -%}
+          <article class="rvw__item" {{ block.shopify_attributes }}>
+            <div class="rvw__stars" aria-label="{{ block.settings.rating }} out of 5">
+              {%- for i in (1..5) -%}<span class="{% if i > block.settings.rating %}is-dim{% endif %}">{% render 'icon', icon: 'star', size: 16 %}</span>{%- endfor -%}
+            </div>
+            <p class="rvw__text">{{ block.settings.text }}</p>
+            <div class="lbl">{{ block.settings.name }}{% if block.settings.verified %} · Verified buyer{% endif %}{% if block.settings.size != blank %} · Bought UK {{ block.settings.size }}{% endif %}</div>
+          </article>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+
+    {%- for block in section.blocks -%}
+      {%- if block.type == '@app' -%}<div class="rvw__app" {{ block.shopify_attributes }}>{% render block %}</div>{%- endif -%}
+    {%- endfor -%}
+
+    {%- if section.blocks.size == 0 and request.design_mode -%}
+      <p class="lbl">Add review blocks, or an app block from your reviews app.</p>
+    {%- endif -%}
+  </div>
+</section>
+
+{% stylesheet %}
+  .rvw{border-top:1px solid #000}
+  .rvw__head{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;margin-bottom:32px;flex-wrap:wrap}
+  .rvw__sum{display:flex;align-items:baseline;gap:12px}
+  .rvw__avg{font-size:48px;line-height:1;font-weight:700}
+  .rvw__list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;border-top:1px solid #000}
+  .rvw__item{padding:24px 24px 24px 0;border-bottom:1px solid #000}
+  .rvw__stars{display:flex;gap:2px;margin-bottom:12px}
+  .rvw__stars svg{fill:#000}
+  .rvw__stars .is-dim svg{fill:none}
+  .rvw__text{margin:0 0 14px;font-size:17px}
+  .rvw__app{margin-top:32px}
+  @media (max-width:999px){.rvw__list{grid-template-columns:minmax(0,1fr)}.rvw__item{padding-right:0}}
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Product reviews",
+  "settings": [
+    { "type": "paragraph", "content": "Star ratings in search results come from the product metafields reviews.rating and reviews.rating_count (written by Shopify's Product Reviews app and most review apps). Manual reviews below are display only and do not generate review markup." },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Reviews" },
+    { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 160, "step": 8, "unit": "px", "default": 72 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 160, "step": 8, "unit": "px", "default": 72 }
+  ],
+  "blocks": [
+    {
+      "type": "review",
+      "name": "Review",
+      "settings": [
+        { "type": "range", "id": "rating", "label": "Rating", "min": 1, "max": 5, "step": 1, "default": 5 },
+        { "type": "textarea", "id": "text", "label": "Review", "default": "Arrived in a day, box perfect, fit exactly as described." },
+        { "type": "text", "id": "name", "label": "Name", "default": "Jordan T." },
+        { "type": "text", "id": "size", "label": "Size bought (UK)", "default": "9" },
+        { "type": "checkbox", "id": "verified", "label": "Verified buyer", "default": true }
+      ]
+    },
+    { "type": "@app" }
+  ],
+  "presets": [
+    { "name": "Product reviews", "blocks": [{ "type": "review" }, { "type": "review", "settings": { "name": "Amara K.", "text": "Verification note in the box made me trust it straight away." } }, { "type": "review", "settings": { "name": "Sam R.", "size": "8", "text": "Quiet, quick, no drama. Will buy again." } }] }
+  ]
+}
+{% endschema %}

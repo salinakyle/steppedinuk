@@ -1,0 +1,28 @@
+{%- comment -%}
+  Inline stroke icons. Params: icon (name), size (px, default 22)
+{%- endcomment -%}
+{%- liquid
+  assign s = size | default: 22
+-%}
+<svg class="icon icon--{{ icon }}" width="{{ s }}" height="{{ s }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true" focusable="false">
+  {%- case icon -%}
+    {%- when 'search' -%}<circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21"/>
+    {%- when 'account' -%}<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/>
+    {%- when 'bag' -%}<path d="M5 8h14l-1 12H6L5 8z"/><path d="M9 8V6a3 3 0 016 0v2"/>
+    {%- when 'menu' -%}<path d="M4 7h16M4 12h16M4 17h16"/>
+    {%- when 'close' -%}<path d="M6 6l12 12M18 6L6 18"/>
+    {%- when 'plus' -%}<path d="M12 5v14M5 12h14"/>
+    {%- when 'minus' -%}<path d="M5 12h14"/>
+    {%- when 'arrow-left' -%}<path d="M15 5l-7 7 7 7"/>
+    {%- when 'arrow-right' -%}<path d="M9 5l7 7-7 7"/>
+    {%- when 'truck' -%}<path d="M2 6h13v10H2zM15 9h4l3 3v4h-7"/><circle cx="7" cy="18" r="2"/><circle cx="18" cy="18" r="2"/>
+    {%- when 'shield' -%}<path d="M12 2l8 3v6c0 5-3.4 9-8 11-4.6-2-8-6-8-11V5z"/><path d="M8.5 12l2.5 2.5L16 9.5"/>
+    {%- when 'home' -%}<path d="M4 11l8-7 8 7v9H4z"/>
+    {%- when 'grid' -%}<path d="M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z"/>
+    {%- when 'society' -%}<circle cx="12" cy="12" r="8"/><path d="M12 8v8M8 12h8"/>
+    {%- when 'star' -%}<path d="M12 2.5l2.9 6.2 6.8.8-5 4.7 1.3 6.7L12 17.4 6 20.9l1.3-6.7-5-4.7 6.8-.8z"/>
+    {%- when 'play' -%}<path d="M7 4l13 8-13 8z"/>
+    {%- when 'check' -%}<path d="M5 12.5l4.5 4.5L19 7.5"/>
+    {%- else -%}<circle cx="12" cy="12" r="8"/>
+  {%- endcase -%}
+</svg>
