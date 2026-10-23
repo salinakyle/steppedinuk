@@ -264,7 +264,7 @@
     "new_arrivals": {
       "type": "featured-collection",
       "settings": {
-        "collection": "",
+        "collection": "new-arrivals",
         "eyebrow": "Just landed",
         "heading": "New",
         "heading_outline": "arrivals",
@@ -302,7 +302,7 @@
     "brand_asics": {
       "type": "featured-collection",
       "settings": {
-        "collection": "",
+        "collection": "asics-2",
         "eyebrow": "Shop the collection",
         "heading": "ASICS",
         "heading_outline": "",
@@ -321,7 +321,7 @@
     "brand_ugg": {
       "type": "featured-collection",
       "settings": {
-        "collection": "",
+        "collection": "ugg",
         "eyebrow": "Shop the collection",
         "heading": "UGG",
         "heading_outline": "",
@@ -340,7 +340,7 @@
     "brand_pokemon": {
       "type": "featured-collection",
       "settings": {
-        "collection": "",
+        "collection": "pokemon",
         "eyebrow": "Shop the collection",
         "heading": "Pokémon",
         "heading_outline": "",
@@ -362,10 +362,11 @@
         "v1": {
           "type": "tile",
           "settings": {
-            "collection": "",
+            "collection": "air-jordan",
             "title": "Air Jordan",
-            "link": "",
-            "image_fill": false,
+            "link": "{{ block.settings.collection.url }}",
+            "image": "shopify://shop_images/air-jordan-4-oxidized-green-fq8138-103_w1024_h1024_pad__jpg.webp",
+            "image_fill": true,
             "tint": "#ededed",
             "text_color": "#000000"
           }
