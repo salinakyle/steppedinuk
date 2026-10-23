@@ -212,35 +212,35 @@
           "type": "tab",
           "settings": {
             "label": "Sale",
-            "collection": ""
+            "collection": "clearance-sale"
           }
         },
         "p1": {
           "type": "tab",
           "settings": {
             "label": "Nike",
-            "collection": ""
+            "collection": "nike"
           }
         },
         "p2": {
           "type": "tab",
           "settings": {
             "label": "ASICS",
-            "collection": ""
+            "collection": "asics-2"
           }
         },
         "p3": {
           "type": "tab",
           "settings": {
             "label": "UGG",
-            "collection": ""
+            "collection": "ugg"
           }
         },
         "p4": {
           "type": "tab",
           "settings": {
             "label": "Pokémon",
-            "collection": ""
+            "collection": "pokemon"
           }
         }
       },
