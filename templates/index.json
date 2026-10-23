@@ -653,7 +653,7 @@
         "heading_outline": "shipped.",
         "text": "<p>Every pair is verified for authenticity and packed properly before it leaves our warehouse.</p>",
         "button_label": "Learn more",
-        "button_link": "shopify://pages/about",
+        "button_link": "shopify://pages/authenticity",
         "padding_top": 72,
         "padding_bottom": 40
       }
