@@ -41,13 +41,6 @@
             "menu": "footer"
           }
         },
-        "info": {
-          "type": "link_list",
-          "settings": {
-            "title": "Info",
-            "menu": "footer"
-          }
-        },
         "social": {
           "type": "social",
           "settings": {
@@ -59,7 +52,6 @@
       "block_order": [
         "brand",
         "help",
-        "info",
         "social"
       ],
       "settings": {
