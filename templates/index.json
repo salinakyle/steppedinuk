@@ -646,6 +646,7 @@
       "name": "Image with text",
       "settings": {
         "color_scheme": "light",
+        "image": "shopify://shop_images/1180251-BCDR_8.webp",
         "flip": false,
         "eyebrow": "ABOUT US",
         "heading": "Checked, packed,",
