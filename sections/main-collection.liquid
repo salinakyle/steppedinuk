@@ -1,0 +1,194 @@
+{%- paginate collection.products by section.settings.products_per_page -%}
+{%- liquid
+  assign sort_by = collection.sort_by | default: collection.default_sort_by
+  assign has_filters = false
+  assign filter_count = 0
+  for filter in collection.filters
+    assign has_filters = true
+    if filter.type == 'price_range'
+      if filter.min_value.value != nil or filter.max_value.value != nil
+        assign filter_count = filter_count | plus: 1
+      endif
+    else
+      assign filter_count = filter_count | plus: filter.active_values.size
+    endif
+  endfor
+  assign has_sort = false
+  if collection.sort_options.size > 1
+    assign has_sort = true
+  endif
+  assign show_drawer = false
+  if has_filters or has_sort
+    assign show_drawer = true
+  endif
+-%}
+<collection-filters data-section="{{ section.id }}" style="display:block">
+  {%- comment -%} Mobile toolbar: count left, Filter right (sort lives in the drawer) {%- endcomment -%}
+  <div class="mtoolbar">
+    <span class="toolbar__count" aria-live="polite" data-collection-swap="count">{{ 'collection.product_count' | t: count: paginate.items }}</span>
+    {%- if show_drawer -%}
+      <button type="button" class="mtoolbar__filter" data-open-drawer="collection-filters" aria-controls="collection-filters">
+        {% render 'icon', name: 'filter', size: 18 %}
+        <span>{{ 'collection.filter' | t }}</span><span data-collection-swap="filter-count">{% if filter_count > 0 %} ({{ filter_count }}){% endif %}</span>
+      </button>
+    {%- endif -%}
+  </div>
+
+  {%- comment -%} Desktop toolbar: unchanged original layout {%- endcomment -%}
+  <div class="toolbar">
+    <div class="container toolbar__inner">
+      <div style="display:flex;align-items:center;gap:20px">
+        {%- if has_filters -%}
+          <button type="button" class="btn" data-open-drawer="collection-filters" aria-controls="collection-filters">
+            {% render 'icon', name: 'filter', size: 20 %}
+            {{ 'collection.filter' | t }}<span data-collection-swap="filter-count">{% if filter_count > 0 %} ({{ filter_count }}){% endif %}</span>
+          </button>
+        {%- endif -%}
+        <span class="toolbar__count" aria-live="polite" data-collection-swap="count">{{ 'collection.product_count' | t: count: paginate.items }}</span>
+      </div>
+      {%- if has_sort -%}
+        <div class="toolbar__sort">
+          <label for="SortBy-{{ section.id }}" class="label-mono">{{ 'collection.sort_by' | t }}</label>
+          <select id="SortBy-{{ section.id }}" class="select" data-sort data-default="{{ collection.default_sort_by }}">
+            {%- for option in collection.sort_options -%}
+              <option value="{{ option.value }}" {% if option.value == sort_by %}selected{% endif %}>{{ option.name | escape }}</option>
+            {%- endfor -%}
+          </select>
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+
+  <div class="container" data-collection-swap="chips">
+    {%- if filter_count > 0 -%}
+      <div class="chips">
+        {%- for filter in collection.filters -%}
+          {%- if filter.type == 'price_range' -%}
+            {%- if filter.min_value.value != nil or filter.max_value.value != nil -%}
+              <a class="chip" data-filter-link href="{{ filter.url_to_remove }}" aria-label="{{ 'collection.remove_filter' | t: label: filter.label }}">
+                {{ filter.min_value.value | default: 0 | money }} – {% if filter.max_value.value %}{{ filter.max_value.value | money }}{% else %}{{ filter.range_max | money }}{% endif %}
+                {% render 'icon', name: 'close', size: 14, stroke_width: 2.4 %}
+              </a>
+            {%- endif -%}
+          {%- else -%}
+            {%- for value in filter.active_values -%}
+              <a class="chip" data-filter-link href="{{ value.url_to_remove }}" aria-label="{{ 'collection.remove_filter' | t: label: value.label }}">{{ value.label | escape }} {% render 'icon', name: 'close', size: 14, stroke_width: 2.4 %}</a>
+            {%- endfor -%}
+          {%- endif -%}
+        {%- endfor -%}
+        <a class="chip-clear" data-filter-link href="{{ collection.url }}{% if sort_by != collection.default_sort_by %}?sort_by={{ sort_by }}{% endif %}">{{ 'collection.clear_all' | t }}</a>
+      </div>
+    {%- endif -%}
+  </div>
+
+  <div class="container col-grid" style="--cols:{{ section.settings.columns }}" data-collection-swap="results">
+    {%- if collection.products.size > 0 -%}
+      <div class="grid-products {% if section.settings.mobile_columns == '1' %}grid-products--single{% endif %}">
+        {%- for product in collection.products -%}
+          {% render 'product-card', product: product, show_new: section.settings.show_new, new_days: section.settings.new_days, quick_add: section.settings.quick_add %}
+        {%- endfor -%}
+      </div>
+      <div class="load-more" data-load-more data-total="{{ paginate.items }}" data-offset="{{ paginate.current_offset }}"{% if paginate.next %} data-next-url="{{ paginate.next.url }}"{% endif %}><div class="load-more__progress"><span data-load-more-bar></span></div><p class="load-more__count" data-load-more-count aria-live="polite"></p><button type="button" class="load-more__btn" data-load-more-btn>Load more</button></div>
+    {%- else -%}
+      <div class="col-empty">
+        <p>{{ 'collection.empty' | t }}</p>
+        <a class="btn" data-filter-link href="{{ collection.url }}">{{ 'collection.clear_all' | t }}</a>
+      </div>
+    {%- endif -%}
+  </div>
+
+  {%- if show_drawer -%}
+    <aside class="drawer drawer--left" id="collection-filters" role="dialog" aria-modal="true" aria-label="{{ 'collection.filter' | t }}" data-drawer>
+      <form id="CollectionFiltersForm-{{ section.id }}" class="filters-form" style="display:flex;flex-direction:column;height:100%;min-height:0" data-filters-form>
+        <div class="drawer__head">
+          <h2 class="display drawer__title">{{ 'collection.filter' | t }}</h2>
+          <button type="button" class="icon-btn" data-close-drawer aria-label="{{ 'general.close' | t }}">{% render 'icon', name: 'close', size: 24, stroke_width: 2 %}</button>
+        </div>
+        <div class="drawer__body" data-collection-swap="filters">
+          {%- if has_sort -%}
+            <div class="filter-group filter-group--sort">
+              <label for="SortByM-{{ section.id }}" class="label-mono">{{ 'collection.sort_by' | t }}</label>
+              <select id="SortByM-{{ section.id }}" class="select" data-sort data-default="{{ collection.default_sort_by }}" oninput="event.stopPropagation()" onchange="var d=document.getElementById('SortBy-{{ section.id }}');if(d){d.value=this.value}" style="margin-top:12px">
+                {%- for option in collection.sort_options -%}
+                  <option value="{{ option.value }}" {% if option.value == sort_by %}selected{% endif %}>{{ option.name | escape }}</option>
+                {%- endfor -%}
+              </select>
+            </div>
+          {%- endif -%}
+          {%- for filter in collection.filters -%}
+            <div class="filter-group">
+              <span class="label-mono">{{ filter.label | escape }}</span>
+              {%- case filter.type -%}
+                {%- when 'price_range' -%}
+                  <div class="price-fields" style="margin-top:12px">
+                    <div class="field">
+                      <label for="Filter-{{ filter.param_name }}-min" class="label-mono">{{ 'collection.min' | t }}</label>
+                      <input class="input" id="Filter-{{ filter.param_name }}-min" type="number" inputmode="decimal" min="0" max="{{ filter.range_max | money_without_currency | replace: ',', '' }}" name="{{ filter.min_value.param_name }}" placeholder="0" value="{% if filter.min_value.value %}{{ filter.min_value.value | money_without_currency | replace: ',', '' }}{% endif %}">
+                    </div>
+                    <div class="field">
+                      <label for="Filter-{{ filter.param_name }}-max" class="label-mono">{{ 'collection.max' | t }}</label>
+                      <input class="input" id="Filter-{{ filter.param_name }}-max" type="number" inputmode="decimal" min="0" name="{{ filter.max_value.param_name }}" placeholder="{{ filter.range_max | money_without_currency | replace: ',', '' }}" value="{% if filter.max_value.value %}{{ filter.max_value.value | money_without_currency | replace: ',', '' }}{% endif %}">
+                    </div>
+                  </div>
+                {%- else -%}
+                  <ul style="list-style:none;margin:0;padding:0">
+                    {%- for value in filter.values -%}
+                      <li>
+                        <label class="chk">
+                          <input type="checkbox" name="{{ value.param_name }}" value="{{ value.value }}" {% if value.active %}checked{% endif %} {% if value.count == 0 and value.active == false %}disabled{% endif %}>
+                          <span class="chk__box">{% render 'icon', name: 'check', size: 14, stroke_width: 3.2 %}</span>
+                          {%- if filter.presentation == 'swatch' and value.swatch -%}
+                            <span class="swatch-dot" style="background:{% if value.swatch.color %}{{ value.swatch.color }}{% else %}url({{ value.swatch.image | image_url: width: 44 }}){% endif %}"></span>
+                          {%- endif -%}
+                          <span class="chk__label">{{ value.label | escape }}</span>
+                          <span class="chk__count">({{ value.count }})</span>
+                        </label>
+                      </li>
+                    {%- endfor -%}
+                  </ul>
+              {%- endcase -%}
+            </div>
+          {%- endfor -%}
+          {%- if sort_by != collection.default_sort_by -%}<input type="hidden" name="sort_by" value="{{ sort_by }}">{%- endif -%}
+        </div>
+        <div class="drawer__actions">
+          <a class="btn btn--outline" data-filter-link data-close-drawer href="{{ collection.url }}{% if sort_by != collection.default_sort_by %}?sort_by={{ sort_by }}{% endif %}" style="color:var(--color-text)">{{ 'collection.clear' | t }}</a>
+          <button type="button" class="btn btn--lg" data-close-drawer data-collection-swap="apply">{{ 'collection.show_results' | t: count: paginate.items }}</button>
+        </div>
+      </form>
+    </aside>
+  {%- endif -%}
+</collection-filters>
+{%- endpaginate -%}
+
+<style>
+  .grid-products--single{grid-template-columns:repeat(1,minmax(0,1fr))}
+  @media (min-width:750px){.grid-products--single{grid-template-columns:repeat(var(--cols,4),minmax(0,1fr))}}
+</style>
+
+{% stylesheet %}
+  .mtoolbar{display:none}
+  @media (max-width:749px){
+    .mtoolbar{display:flex;align-items:stretch;justify-content:space-between;position:sticky;top:var(--header-h,73px);z-index:20;background:var(--color-bg);border-top:1px solid var(--color-border);border-bottom:1px solid var(--color-border);min-height:56px}
+    .mtoolbar .toolbar__count{display:flex;align-items:center;padding:0 16px;white-space:nowrap}
+    .mtoolbar__filter{display:inline-flex;align-items:center;gap:8px;padding:0 20px;border:0;border-left:1px solid var(--color-border);background:transparent;color:var(--color-text);font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;white-space:nowrap}
+    .toolbar{display:none}
+  }
+  @media (min-width:750px){
+    .filter-group--sort{display:none}
+  }
+.grid-products>[hidden]{display:none!important}.load-more{margin-top:40px;margin-bottom:40px;text-align:center}.load-more__progress{height:3px;max-width:320px;margin:0 auto 16px;background:var(--color-border)}.load-more__progress span{display:block;height:100%;width:0;background:var(--color-text);transition:width .3s ease}.load-more__count{margin:0 0 20px;font-size:13px;letter-spacing:.04em}.load-more__btn{display:block;width:100%;max-width:360px;margin:0 auto;padding:18px 24px;border:0;background:var(--color-text);color:var(--color-bg);font:inherit;font-size:13px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;cursor:pointer}.load-more__btn:disabled{opacity:.6;cursor:progress}.load-more__btn[hidden]{display:none}@media (min-width:750px){collection-filters:not([data-grid-ready]) .grid-products>.card:nth-child(n+17){display:none}}@media (max-width:749px){collection-filters:not([data-grid-ready]) .grid-products>.card:nth-child(n+9){display:none}.load-more__btn{max-width:none}}{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Product grid",
+  "settings": [
+    { "type": "range", "id": "products_per_page", "label": "Products per page", "min": 8, "max": 48, "step": 4, "default": 24 },
+    { "type": "range", "id": "columns", "label": "Columns on desktop", "min": 2, "max": 5, "step": 1, "default": 4 },
+    { "type": "select", "id": "mobile_columns", "label": "Columns on mobile", "default": "2", "options": [ { "value": "1", "label": "1" }, { "value": "2", "label": "2" } ] },
+    { "type": "checkbox", "id": "quick_add", "label": "Show quick add", "default": true },
+    { "type": "checkbox", "id": "show_new", "label": "Show “New” badge on recent products", "default": true },
+    { "type": "range", "id": "new_days", "label": "Count as new for", "min": 7, "max": 90, "step": 1, "default": 30 }
+  ]
+}
+{% endschema %}

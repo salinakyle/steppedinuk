@@ -1,0 +1,19 @@
+{%- comment -%}
+  Section header: optional eyebrow, outlined heading, optional link.
+  Params: eyebrow, heading, outline, size ('xl'|'lg'), link_text, link_url, tag
+{%- endcomment -%}
+{%- liquid
+  assign hsize = size | default: 'xl'
+  assign htag = tag | default: 'h2'
+-%}
+{%- if heading != blank or outline != blank -%}
+<div class="sec-head">
+  <div>
+    {%- if eyebrow != blank -%}<div class="eyebrow">{{ eyebrow }}</div>{%- endif -%}
+    <{{ htag }} class="display display-{{ hsize }}">{{ heading | escape }}{% if outline != blank %} <span class="ital">{{ outline | escape }}</span>{% endif %}</{{ htag }}>
+  </div>
+  {%- if link_text != blank and link_url != blank -%}
+    <a class="sec-head__link navlink" href="{{ link_url }}">{{ link_text | escape }} →</a>
+  {%- endif -%}
+</div>
+{%- endif -%}

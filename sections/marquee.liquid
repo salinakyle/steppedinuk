@@ -1,0 +1,39 @@
+{%- if section.blocks.size > 0 -%}
+<div class="marquee scheme-{{ section.settings.color_scheme }}" style="--speed:{{ section.settings.speed }}s" aria-hidden="true">
+  <div class="marquee__track">
+    {%- for i in (1..4) -%}
+      <div class="marquee__group">
+        {%- for block in section.blocks -%}
+          <span class="marquee__item" {% if i == 1 %}{{ block.shopify_attributes }}{% endif %}>{{ block.settings.text | escape }} <span>✦</span></span>
+        {%- endfor -%}
+      </div>
+    {%- endfor -%}
+  </div>
+</div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Scrolling text",
+  "settings": [
+    { "type": "select", "id": "color_scheme", "label": "Color scheme", "default": "light", "options": [
+      { "value": "light", "label": "Light" }, { "value": "grey", "label": "Grey" }, { "value": "dark", "label": "Dark" }
+    ] },
+    { "type": "range", "id": "speed", "label": "Loop duration", "min": 10, "max": 90, "step": 2, "unit": "s", "default": 40 }
+  ],
+  "blocks": [
+    { "type": "item", "name": "Item", "settings": [ { "type": "text", "id": "text", "label": "Text", "default": "Nike" } ] }
+  ],
+  "presets": [
+    {
+      "name": "Scrolling text",
+      "blocks": [
+        { "type": "item", "settings": { "text": "Nike" } }, { "type": "item", "settings": { "text": "ASICS" } },
+        { "type": "item", "settings": { "text": "UGG" } }, { "type": "item", "settings": { "text": "Saucony" } },
+        { "type": "item", "settings": { "text": "HOKA" } }, { "type": "item", "settings": { "text": "Air Jordan" } },
+        { "type": "item", "settings": { "text": "Adidas" } }, { "type": "item", "settings": { "text": "Pokémon" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

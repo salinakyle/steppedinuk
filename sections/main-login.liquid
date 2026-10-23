@@ -1,0 +1,48 @@
+<div class="container section" style="--pt:56px;--pb:72px">
+  <div class="form-stack">
+    <div id="login-form">
+      <h1 class="display display-xl" style="margin-bottom:28px">{{ 'customer.login_title' | t }}</h1>
+      {%- form 'customer_login', novalidate: 'novalidate' -%}
+        <div class="form-stack">
+          {%- if form.errors -%}<div class="form-error" role="alert">{{ form.errors | default_errors }}</div>{%- endif -%}
+          <div class="field"><label for="CustomerEmail">{{ 'customer.email' | t }}</label><input class="input" type="email" name="customer[email]" id="CustomerEmail" autocomplete="email" required></div>
+          {%- if form.password_needed -%}
+            <div class="field"><label for="CustomerPassword">{{ 'customer.password' | t }}</label><input class="input" type="password" name="customer[password]" id="CustomerPassword" autocomplete="current-password" required></div>
+            <a href="#recover" data-toggle-recover class="link-underline" style="justify-self:start">{{ 'customer.forgot_password' | t }}</a>
+          {%- endif -%}
+          <button class="btn btn--lg" type="submit" style="justify-self:start">{{ 'customer.sign_in' | t }}</button>
+          <a class="link-underline" style="justify-self:start" href="{{ routes.account_register_url }}">{{ 'customer.create_account' | t }}</a>
+        </div>
+      {%- endform -%}
+    </div>
+
+    <div id="recover" hidden>
+      <h2 class="display display-lg" style="margin-bottom:20px">{{ 'customer.reset_title' | t }}</h2>
+      {%- form 'recover_customer_password' -%}
+        {%- assign recover_success = form.posted_successfully? -%}
+        <div class="form-stack">
+          {%- if form.errors -%}<div class="form-error" role="alert">{{ form.errors | default_errors }}</div>{%- endif -%}
+          {%- if recover_success -%}<div class="form-message" role="status">{{ 'customer.reset_sent' | t }}</div>{%- endif -%}
+          <div class="field"><label for="RecoverEmail">{{ 'customer.email' | t }}</label><input class="input" type="email" name="email" id="RecoverEmail" autocomplete="email" required></div>
+          <button class="btn" type="submit" style="justify-self:start">{{ 'customer.reset_submit' | t }}</button>
+          <a href="#login-form" data-toggle-recover class="link-underline" style="justify-self:start">{{ 'general.cancel' | t }}</a>
+        </div>
+      {%- endform -%}
+    </div>
+  </div>
+</div>
+<script>
+  (function () {
+    var login = document.getElementById('login-form'), recover = document.getElementById('recover');
+    function show(r) { login.hidden = r; recover.hidden = !r; }
+    document.querySelectorAll('[data-toggle-recover]').forEach(function (a) {
+      a.addEventListener('click', function (e) { e.preventDefault(); show(a.getAttribute('href') === '#recover'); });
+    });
+    if (location.hash === '#recover') show(true);
+    {% if recover_success %}show(true);{% endif %}
+  })();
+</script>
+
+{% schema %}
+{ "name": "Login" }
+{% endschema %}

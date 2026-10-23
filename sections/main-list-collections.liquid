@@ -1,0 +1,33 @@
+{%- paginate collections by section.settings.per_page -%}
+<div class="container page-title">
+  <h1 class="display">{{ 'collection.all_collections' | t }}</h1>
+</div>
+<div class="container section" style="--pt:24px;--pb:72px">
+  <div class="tiles">
+    {%- for collection in collections -%}
+      <a class="tile" href="{{ collection.url }}">
+        <div class="tile__top">{{ 'collection.product_count' | t: count: collection.products_count }}</div>
+        {%- if collection.featured_image -%}
+          {{- collection.featured_image | image_url: width: 900 | image_tag: class: 'tile__bg', loading: 'lazy', widths: '450, 600, 900', sizes: '(min-width: 990px) 33vw, 100vw', alt: '' -}}
+        {%- else -%}
+          <div class="tile__art">{% render 'shoe-placeholder', stroke_width: 1.6 %}</div>
+        {%- endif -%}
+        <div class="tile__foot">
+          <span class="display display-md" style="font-size:44px;line-height:.9;{% if collection.featured_image %}background:#fff;padding:4px 8px{% endif %}">{{ collection.title | escape }}</span>
+          <span class="tile__arrow" aria-hidden="true">{% render 'icon', name: 'arrow-up-right', size: 18, stroke_width: 2 %}</span>
+        </div>
+      </a>
+    {%- endfor -%}
+  </div>
+  {% render 'pagination', paginate: paginate %}
+</div>
+{%- endpaginate -%}
+
+{% schema %}
+{
+  "name": "Collection list",
+  "settings": [
+    { "type": "range", "id": "per_page", "label": "Collections per page", "min": 6, "max": 30, "step": 3, "default": 12 }
+  ]
+}
+{% endschema %}

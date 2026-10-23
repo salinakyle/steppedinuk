@@ -1,0 +1,29 @@
+{% layout none %}
+<!doctype html>
+<html lang="{{ request.locale.iso_code }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>{{ 'gift_card.title' | t }} – {{ shop.name | escape }}</title>
+  {% render 'head-assets' %}
+  {{ content_for_header }}
+</head>
+<body>
+  <main class="password-page">
+    <div class="box" style="text-align:center;justify-items:center">
+      <a class="logo" href="{{ routes.root_url }}" style="font-size:40px"><span>{{ shop.name | escape }}</span></a>
+      <h1 class="display display-xl">{{ 'gift_card.title' | t }}</h1>
+      <p class="display" style="font-size:72px">{{ gift_card.initial_value | money }}</p>
+      {%- if gift_card.enabled == false or gift_card.expired -%}
+        <p class="form-message">{{ 'gift_card.expired' | t }}</p>
+      {%- endif -%}
+      {%- if gift_card.balance != gift_card.initial_value -%}
+        <p>{{ 'gift_card.remaining' | t }}: <strong>{{ gift_card.balance | money }}</strong></p>
+      {%- endif -%}
+      <div class="info-box mono" style="letter-spacing:.12em;font-size:20px" data-gift-code>{{ gift_card.code | format_code }}</div>
+      <a class="btn btn--lg" href="{{ shop.url }}">{{ 'gift_card.shop' | t }}</a>
+      <button type="button" class="link-underline" onclick="window.print()">{{ 'gift_card.print' | t }}</button>
+    </div>
+  </main>
+</body>
+</html>

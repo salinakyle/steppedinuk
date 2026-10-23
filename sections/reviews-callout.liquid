@@ -1,0 +1,45 @@
+<div id="reviews" class="container section" style="--pt:{{ section.settings.padding_top }}px;--pb:{{ section.settings.padding_bottom }}px">
+  <h2 class="display display-lg" style="margin-bottom:28px">{{ section.settings.heading | escape }}{% if section.settings.heading_outline != blank %} <span class="ital">{{ section.settings.heading_outline | escape }}</span>{% endif %}</h2>
+  <div class="reviews-grid">
+    <div class="review-card">
+      <div class="stars" role="img" aria-label="{{ section.settings.stars }} / 5" style="gap:3px">
+        {%- for i in (1..section.settings.stars) -%}{% render 'icon', name: 'star', size: 18 %}{%- endfor -%}
+      </div>
+      <div class="display" style="font-size:44px;line-height:.95">{{ section.settings.card_title | escape }}</div>
+      {%- if section.settings.button_label != blank -%}
+        <a class="btn" style="align-self:flex-start" href="{{ section.settings.button_link | default: '#' }}" {% if section.settings.button_link contains 'http' %}rel="noopener" target="_blank"{% endif %}>{{ section.settings.button_label | escape }} →</a>
+      {%- endif -%}
+    </div>
+    <figure class="review-card review-card--fill">
+      <blockquote class="display" style="font-size:40px;line-height:.95">“{{ section.settings.quote | escape }}”</blockquote>
+      <figcaption class="label-mono" style="display:flex;align-items:center;gap:8px">{{ section.settings.attribution | escape }} {% render 'icon', name: 'check', size: 16, stroke_width: 2.4 %}</figcaption>
+    </figure>
+  </div>
+  {%- if product.metafields.reviews.rating.value != blank -%}
+    <p class="label-mono" style="margin-top:16px">{{ product.metafields.reviews.rating.value.rating }} / {{ product.metafields.reviews.rating.value.scale_max }}</p>
+  {%- endif -%}
+  {%- comment -%} Review apps: drop their app block below via the theme editor {%- endcomment -%}
+  {%- for block in section.blocks -%}
+    {%- if block.type == '@app' -%}<div style="margin-top:32px" {{ block.shopify_attributes }}>{% render block %}</div>{%- endif -%}
+  {%- endfor -%}
+</div>
+
+{% schema %}
+{
+  "name": "Customer reviews",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Customer" },
+    { "type": "text", "id": "heading_outline", "label": "Outlined heading text", "default": "reviews" },
+    { "type": "range", "id": "stars", "label": "Stars", "min": 1, "max": 5, "step": 1, "default": 5 },
+    { "type": "text", "id": "card_title", "label": "Card title", "default": "Rated 5 stars on Trustpilot" },
+    { "type": "text", "id": "button_label", "label": "Button label", "default": "Read all reviews" },
+    { "type": "url", "id": "button_link", "label": "Button link" },
+    { "type": "text", "id": "quote", "label": "Quote", "default": "Wow, great customer service." },
+    { "type": "text", "id": "attribution", "label": "Attribution", "default": "Verified customer · Trustpilot" },
+    { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 140, "step": 4, "unit": "px", "default": 80 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 140, "step": 4, "unit": "px", "default": 0 }
+  ],
+  "blocks": [ { "type": "@app" } ],
+  "presets": [{ "name": "Customer reviews" }]
+}
+{% endschema %}

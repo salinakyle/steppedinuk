@@ -1,0 +1,256 @@
+{%- comment -%}
+  Size Conversion Look Up Table (UK / EU / US) with brand + gender tabs and a "find your match" input.
+  Usage: {% render 'size-conversion-table', product: product %}
+{%- endcomment -%}
+{%- liquid
+  assign scp_tags = product.tags | join: ' '
+  assign scp_hay = product.vendor | append: ' ' | append: product.title | append: ' ' | append: product.type | append: ' ' | append: scp_tags | downcase
+  assign scp_brand = ''
+  if scp_hay contains 'new balance'
+    assign scp_brand = 'New Balance'
+  elsif scp_hay contains 'asics'
+    assign scp_brand = 'ASICS'
+  elsif scp_hay contains 'hoka'
+    assign scp_brand = 'Hoka'
+  elsif scp_hay contains 'ugg'
+    assign scp_brand = 'UGG'
+  elsif scp_hay contains 'nike'
+    assign scp_brand = 'Nike'
+  endif
+  assign scp_gender = "Men's"
+  if scp_hay contains 'women' or scp_hay contains 'wmns' or scp_hay contains 'ladies'
+    assign scp_gender = "Women's"
+  endif
+  assign scp_uid = 'scp-' | append: product.id
+-%}
+
+<div class="scp" data-scp-root="{{ scp_uid }}" data-scp-brand-hint="{{ scp_brand | escape }}" data-scp-gender-hint="{{ scp_gender | escape }}">
+  <button type="button" class="scp-trigger" data-scp-trigger>Size Conversion Look Up Table</button>
+</div>
+
+<style>
+  .scp { display: inline-block; margin: 4px 0 16px; }
+  .scp-trigger { background: none; border: 0; padding: 0; cursor: pointer; font: inherit; font-size: 13px; font-weight: 600; color: #1c1c1c; text-decoration: underline; }
+  .scp-locked { overflow: hidden; }
+  .scp-overlay { position: fixed; inset: 0; z-index: 999999; background: rgba(0,0,0,.5); display: none; align-items: center; justify-content: center; padding: 16px; }
+  .scp-overlay.is-open { display: flex; }
+  .scp-dialog { background: #fff; color: #111; width: 480px; max-width: 100%; max-height: min(545px, 92vh); border-radius: 14px; box-shadow: 0 24px 64px rgba(0,0,0,.3); display: flex; flex-direction: column; overflow: hidden; font-family: inherit; text-align: left; }
+  .scp-header { display: flex; justify-content: space-between; align-items: center; padding: 18px 20px 14px; border-bottom: 1px solid #eee; }
+  .scp-title { margin: 0; font-size: 16px; font-weight: 700; text-transform: none; letter-spacing: 0; }
+  .scp-close { background: none; border: 0; cursor: pointer; width: 32px; height: 32px; font-size: 26px; line-height: 1; color: #111; }
+  .scp-body { padding: 16px 20px 20px; overflow-y: auto; }
+  .scp-brand-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+  .scp-brand-tab, .scp-tab, .scp-unit { font: inherit; cursor: pointer; background: transparent; color: #111; border: 1px solid #111; border-radius: 6px; font-weight: 600; }
+  .scp-brand-tab { padding: 8px 14px; font-size: 12.5px; }
+  .scp-tabs { display: flex; gap: 8px; margin-bottom: 16px; }
+  .scp-tab { flex: 1; padding: 11px 10px; font-size: 13px; }
+  .scp-brand-tab.is-active, .scp-tab.is-active, .scp-unit.is-active { background: #111; color: #fff; }
+  .scp-finder__label { display: block; font-size: 12px; margin-bottom: 8px; color: #111; }
+  .scp-finder__row { display: flex; gap: 6px; align-items: stretch; }
+  .scp-input-wrap { position: relative; flex: 1; }
+  .scp-input { width: 100%; box-sizing: border-box; height: 43px; padding: 9px 32px 9px 12px; border: 1px solid #ccc; border-radius: 6px; font: inherit; font-size: 14px; background: #fff; color: #111; }
+  .scp-input-clear { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); background: none; border: 0; cursor: pointer; font-size: 18px; line-height: 1; display: none; color: #666; }
+  .scp-input-wrap.has-value .scp-input-clear { display: block; }
+  .scp-units { display: flex; gap: 6px; }
+  .scp-unit { padding: 9px 10px; font-size: 12px; min-width: 40px; }
+  .scp-summary { min-height: 18px; margin: 10px 0 12px; font-size: 13px; color: #111; }
+  .scp-table-wrap { border: 1px solid #eee; border-radius: 8px; max-height: 280px; overflow: auto; }
+  .scp-table { width: 100%; border-collapse: collapse; }
+  .scp-table th { position: sticky; top: 0; background: #fff; padding: 9px 6px; font-size: 12px; text-transform: uppercase; color: #111; border-bottom: 1px solid #eee; text-align: center; }
+  .scp-table td { padding: 8px 6px; font-size: 13px; text-align: center; border-bottom: 1px solid #f3f3f3; }
+  .scp-table tr.is-match td { background: #111; color: #fff; font-weight: 700; }
+  .scp-help { margin-top: 14px; font-size: 13px; }
+  .scp-help summary { cursor: pointer; font-weight: 600; }
+  .scp-help__note { margin: 8px 0 0; line-height: 1.5; color: #333; }
+</style>
+
+<script>
+(function () {
+  var root = document.querySelector('[data-scp-root="{{ scp_uid }}"]');
+  if (!root || root.dataset.scpReady) return;
+  root.dataset.scpReady = '1';
+
+  var DATA = {
+    'Nike': {
+      "Men's": [[6,40,7],[7,41,8],[7.5,42,8.5],[8,42.5,9],[8.5,43,9.5],[9,44,10],[9.5,44.5,10.5],[10,45,11],[10.5,45.5,11.5],[11,46,12],[12,47.5,13],[13,48.5,14]],
+      "Women's": [[3.5,36.5,6],[4,37.5,6.5],[4.5,38,7],[5,38.5,7.5],[5.5,39,8],[6,40,8.5],[6.5,40.5,9],[7,41,9.5],[7.5,42,10]]
+    },
+    'ASICS': {
+      "Men's": [[6,40,7],[7,41.5,8],[8,42.5,9],[8.5,43.5,9.5],[9,44,10],[9.5,44.5,10.5],[10,45,11],[10.5,46,11.5],[11,46.5,12],[12,48,13],[13,49,14]],
+      "Women's": [[4,37,6],[4.5,37.5,6.5],[5,38,7],[5.5,39,7.5],[6,39.5,8],[6.5,40,8.5],[7,40.5,9],[7.5,41.5,9.5],[8,42,10]]
+    },
+    'UGG': {
+      '*': [[3,36],[4,37],[5,38],[6,39],[7,40],[8,41],[9,42]],
+      cols: ['UK','EU']
+    },
+    'Hoka': {
+      "Men's": [[7,'40 ⅔',7.5],[7.5,'41 ⅓',8],[8,'42',8.5],[8.5,'42 ⅔',9],[9,'43 ⅓',9.5],[9.5,'44',10],[10,'44 ⅔',10.5],[10.5,'45 ⅓',11],[11,'46',11.5],[11.5,'46 ⅔',12],[12,'47 ⅓',12.5],[12.5,'48',13]],
+      "Women's": [[3,'35 ⅓',5],[3.5,'36',5.5],[4,'36 ⅔',6],[4.5,'37 ⅓',6.5],[5,'38',7],[5.5,'38 ⅔',7.5],[6,'39 ⅓',8],[6.5,'40',8.5],[7,'40 ⅔',9],[7.5,'41 ⅓',9.5],[8,'42',10]]
+    },
+    'New Balance': {
+      '*': [[3.5,36,4],[4,37,4.5],[4.5,37.5,5],[5,38,5.5],[5.5,38.5,6],[6,39.5,6.5],[6.5,40,7],[7,40.5,7.5],[7.5,41.5,8],[8,42,8.5],[8.5,42.5,9],[9,43,9.5],[9.5,44,10],[10,44.5,10.5],[10.5,45,11]]
+    }
+  };
+  var BRANDS = ['Nike', 'ASICS', 'UGG', 'Hoka', 'New Balance'];
+  var UNITS = ['UK', 'EU', 'US'];
+  var NOTE = "Place a sheet of paper on the floor against a wall. Stand on it with your heel touching the wall. Mark the floor at your longest toe, then measure the distance. Use that measurement together with the chart above to find your size. Fit can vary slightly between styles -- if you're between two sizes, sizing up is usually the safer choice.";
+
+  var state = {
+    brand: DATA[root.dataset.scpBrandHint] ? root.dataset.scpBrandHint : 'Nike',
+    gender: root.dataset.scpGenderHint || "Men's",
+    unit: 'UK',
+    query: ''
+  };
+
+  function num(v) {
+    if (typeof v === 'number') return v;
+    var s = String(v), f = 0;
+    if (s.indexOf('⅔') > -1) f = 2 / 3; else if (s.indexOf('⅓') > -1) f = 1 / 3;
+    return parseFloat(s) + f;
+  }
+  function el(tag, cls, text) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text != null) e.textContent = text;
+    return e;
+  }
+
+  // Build dialog
+  var overlay = el('div', 'scp-overlay');
+  var dialog = el('div', 'scp-dialog');
+  dialog.setAttribute('role', 'dialog');
+  dialog.setAttribute('aria-modal', 'true');
+  dialog.setAttribute('aria-label', 'Size Guide');
+  var header = el('header', 'scp-header');
+  header.appendChild(el('h2', 'scp-title', 'Size Guide'));
+  var closeBtn = el('button', 'scp-close', '×');
+  closeBtn.type = 'button';
+  closeBtn.setAttribute('aria-label', 'Close');
+  header.appendChild(closeBtn);
+  var body = el('div', 'scp-body');
+  var brandTabs = el('div', 'scp-brand-tabs');
+  var genderTabs = el('div', 'scp-tabs');
+  var finder = el('div', 'scp-finder');
+  var label = el('label', 'scp-finder__label', 'Know your size? Find your match');
+  var row = el('div', 'scp-finder__row');
+  var inputWrap = el('div', 'scp-input-wrap');
+  var input = el('input', 'scp-input');
+  input.type = 'text'; input.inputMode = 'decimal'; input.placeholder = 'e.g. 8';
+  input.setAttribute('aria-label', 'Your size');
+  var clearBtn = el('button', 'scp-input-clear', '×');
+  clearBtn.type = 'button'; clearBtn.setAttribute('aria-label', 'Clear');
+  inputWrap.appendChild(input); inputWrap.appendChild(clearBtn);
+  var unitsWrap = el('div', 'scp-units');
+  row.appendChild(inputWrap); row.appendChild(unitsWrap);
+  finder.appendChild(label); finder.appendChild(row);
+  var summary = el('p', 'scp-summary');
+  var tableWrap = el('div', 'scp-table-wrap');
+  var table = el('table', 'scp-table');
+  tableWrap.appendChild(table);
+  var help = el('details', 'scp-help');
+  help.appendChild(el('summary', null, 'How to measure your foot'));
+  help.appendChild(el('p', 'scp-help__note', NOTE));
+  [brandTabs, genderTabs, finder, summary, tableWrap, help].forEach(function (n) { body.appendChild(n); });
+  dialog.appendChild(header); dialog.appendChild(body);
+  overlay.appendChild(dialog);
+  document.body.appendChild(overlay);
+
+  function current() {
+    var b = DATA[state.brand];
+    var rows = b['*'] || b[state.gender] || b["Men's"];
+    var cols = b.cols || UNITS;
+    return { rows: rows, cols: cols, hasGender: !b['*'] };
+  }
+
+  function render() {
+    var cur = current();
+    if (cur.cols.indexOf(state.unit) < 0) state.unit = cur.cols[0];
+
+    brandTabs.textContent = '';
+    BRANDS.forEach(function (b) {
+      var btn = el('button', 'scp-brand-tab' + (b === state.brand ? ' is-active' : ''), b);
+      btn.type = 'button';
+      btn.addEventListener('click', function () { state.brand = b; render(); });
+      brandTabs.appendChild(btn);
+    });
+
+    genderTabs.textContent = '';
+    genderTabs.style.display = cur.hasGender ? '' : 'none';
+    if (cur.hasGender) {
+      ["Men's", "Women's"].forEach(function (g) {
+        var btn = el('button', 'scp-tab' + (g === state.gender ? ' is-active' : ''), g);
+        btn.type = 'button';
+        btn.addEventListener('click', function () { state.gender = g; render(); });
+        genderTabs.appendChild(btn);
+      });
+    }
+
+    unitsWrap.textContent = '';
+    cur.cols.forEach(function (u) {
+      var btn = el('button', 'scp-unit' + (u === state.unit ? ' is-active' : ''), u);
+      btn.type = 'button';
+      btn.addEventListener('click', function () { state.unit = u; render(); });
+      unitsWrap.appendChild(btn);
+    });
+
+    // Find match
+    var colIdx = cur.cols.indexOf(state.unit);
+    var q = parseFloat(String(state.query).replace(',', '.'));
+    var matchIdx = -1, exact = false;
+    if (!isNaN(q)) {
+      var best = Infinity;
+      cur.rows.forEach(function (r, i) {
+        var d = Math.abs(num(r[colIdx]) - q);
+        if (d < best) { best = d; matchIdx = i; }
+      });
+      exact = best < 0.05;
+    }
+
+    table.textContent = '';
+    var thead = el('thead'); var hr = el('tr');
+    cur.cols.forEach(function (c) { hr.appendChild(el('th', null, c)); });
+    thead.appendChild(hr); table.appendChild(thead);
+    var tbody = el('tbody');
+    cur.rows.forEach(function (r, i) {
+      var tr = el('tr', i === matchIdx ? 'is-match' : '');
+      r.forEach(function (v) { tr.appendChild(el('td', null, String(v))); });
+      tbody.appendChild(tr);
+    });
+    table.appendChild(tbody);
+
+    if (matchIdx >= 0) {
+      var r = cur.rows[matchIdx];
+      var parts = cur.cols.map(function (c, k) { return c + ' ' + r[k]; }).join(' = ');
+      summary.textContent = (exact ? '' : 'Closest match: ') + parts;
+      var m = tbody.children[matchIdx];
+      if (m) { tableWrap.scrollTop = m.offsetTop - 40; }
+    } else {
+      summary.textContent = '';
+    }
+    inputWrap.classList.toggle('has-value', !!state.query);
+  }
+
+  input.addEventListener('input', function () { state.query = input.value; render(); });
+  clearBtn.addEventListener('click', function () { input.value = ''; state.query = ''; render(); input.focus(); });
+
+  var lastFocus = null;
+  function open() {
+    lastFocus = document.activeElement;
+    render();
+    overlay.classList.add('is-open');
+    document.documentElement.classList.add('scp-locked');
+    closeBtn.focus();
+  }
+  function close() {
+    overlay.classList.remove('is-open');
+    document.documentElement.classList.remove('scp-locked');
+    if (lastFocus && lastFocus.focus) lastFocus.focus();
+  }
+  root.querySelector('[data-scp-trigger]').addEventListener('click', open);
+  closeBtn.addEventListener('click', close);
+  overlay.addEventListener('click', function (e) { if (e.target === overlay) close(); });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && overlay.classList.contains('is-open')) close();
+  });
+})();
+</script>

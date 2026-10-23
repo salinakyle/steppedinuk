@@ -1,0 +1,20 @@
+<nav class="breadcrumb container" aria-label="Breadcrumb" style="padding-top:20px">
+  <ol>
+    <li><a href="{{ routes.root_url }}">{{ 'general.home' | t }}</a></li>
+    {%- if template.name == 'collection' and collection != blank -%}
+      <li aria-hidden="true">/</li>
+      <li><a href="{{ routes.collections_url }}">{{ 'collection.shop' | t }}</a></li>
+      <li aria-hidden="true">/</li>
+      <li aria-current="page">{{ collection.title | escape }}</li>
+    {%- elsif template.name == 'product' -%}
+      <li aria-hidden="true">/</li>
+      {%- if collection != blank and collection.url != blank -%}
+        <li><a href="{{ collection.url }}">{{ collection.title | escape }}</a></li>
+      {%- else -%}
+        <li><a href="{{ routes.all_products_collection_url }}">{{ 'collection.shop' | t }}</a></li>
+      {%- endif -%}
+      <li aria-hidden="true">/</li>
+      <li aria-current="page">{{ product.title | escape }}</li>
+    {%- endif -%}
+  </ol>
+</nav>

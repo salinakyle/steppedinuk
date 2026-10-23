@@ -1,0 +1,41 @@
+<div class="container section" style="--pt:48px;--pb:72px" data-main-cart>
+  <h1 class="display display-xl" style="margin-bottom:32px">{{ 'cart.title' | t }}</h1>
+  {%- if cart.item_count == 0 -%}
+    <div class="cart-empty" style="text-align:left">
+      <p>{{ 'cart.empty' | t }}</p>
+      <a class="btn" href="{{ routes.all_products_collection_url }}">{{ 'cart.continue' | t }}</a>
+    </div>
+  {%- else -%}
+    <div class="cart-page">
+      <div data-cart-lines>
+        {%- for line in cart.items -%}
+          {% render 'cart-line', line: line, index: forloop.index %}
+        {%- endfor -%}
+      </div>
+      <form class="cart-summary" action="{{ routes.cart_url }}" method="post">
+        {%- if section.settings.show_note -%}
+          <div class="field">
+            <label for="CartNote">{{ 'cart.note' | t }}</label>
+            <textarea class="textarea" id="CartNote" name="note" style="min-height:96px" data-cart-note>{{ cart.note }}</textarea>
+          </div>
+        {%- endif -%}
+        {%- for discount in cart.cart_level_discount_applications -%}
+          <div style="display:flex;justify-content:space-between;font-size:14px"><span>{{ discount.title | escape }}</span><span>−{{ discount.total_allocated_amount | money }}</span></div>
+        {%- endfor -%}
+        <div class="cart-summary__row"><span>{{ 'cart.subtotal' | t }}</span><span>{{ cart.total_price | money_with_currency }}</span></div>
+        <p style="color:var(--color-muted);font-size:14px">{{ 'cart.taxes_shipping' | t }}</p>
+        <button type="submit" name="checkout" class="btn btn--lg btn--full">{{ 'cart.checkout' | t }}</button>
+        <a href="{{ routes.all_products_collection_url }}" class="link-underline" style="justify-self:center">{{ 'cart.continue' | t }}</a>
+      </form>
+    </div>
+  {%- endif -%}
+</div>
+
+{% schema %}
+{
+  "name": "Cart",
+  "settings": [
+    { "type": "checkbox", "id": "show_note", "label": "Show order note", "default": false }
+  ]
+}
+{% endschema %}

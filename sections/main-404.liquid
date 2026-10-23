@@ -1,0 +1,10 @@
+<div class="container error-404">
+  <div class="eyebrow">{{ 'errors.page_not_found' | t }}</div>
+  <div class="display">404</div>
+  <p style="font-size:20px;max-width:40ch">{{ 'errors.page_not_found_text' | t }}</p>
+  <a class="btn btn--lg" href="{{ routes.all_products_collection_url }}">{{ 'cart.continue' | t }}</a>
+</div>
+
+{% schema %}
+{ "name": "404" }
+{% endschema %}

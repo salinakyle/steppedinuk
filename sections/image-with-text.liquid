@@ -1,0 +1,41 @@
+<div class="scheme-{{ section.settings.color_scheme }}">
+  <div class="container section" style="--pt:{{ section.settings.padding_top }}px;--pb:{{ section.settings.padding_bottom }}px">
+    <div class="iwt {% if section.settings.flip %}iwt--flip{% endif %}">
+      <div class="iwt__media">
+        {%- if section.settings.image != blank -%}
+          {{- section.settings.image | image_url: width: 1200 | image_tag: loading: 'lazy', widths: '480, 720, 960, 1200', sizes: '(min-width: 990px) 45vw, 90vw', alt: section.settings.image.alt -}}
+        {%- else -%}
+          <span style="width:70%;color:#000">{% render 'shoe-placeholder' %}</span>
+        {%- endif -%}
+      </div>
+      <div class="rich">
+        {%- if section.settings.eyebrow != blank -%}<div class="eyebrow">{{ section.settings.eyebrow | escape }}</div>{%- endif -%}
+        <h2 class="display display-lg">{{ section.settings.heading | escape }}{% if section.settings.heading_outline != blank %} <span class="ital">{{ section.settings.heading_outline | escape }}</span>{% endif %}</h2>
+        {%- if section.settings.text != blank -%}<div class="rte" style="font-size:18px;line-height:1.55">{{ section.settings.text }}</div>{%- endif -%}
+        {%- if section.settings.button_label != blank -%}<a class="btn" href="{{ section.settings.button_link | default: '#' }}">{{ section.settings.button_label | escape }}</a>{%- endif -%}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Image with text",
+  "settings": [
+    { "type": "select", "id": "color_scheme", "label": "Color scheme", "default": "light", "options": [
+      { "value": "light", "label": "Light" }, { "value": "grey", "label": "Grey" }, { "value": "dark", "label": "Dark" }
+    ] },
+    { "type": "image_picker", "id": "image", "label": "Image" },
+    { "type": "checkbox", "id": "flip", "label": "Image on the right (desktop)", "default": false },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Behind the pairs" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Checked, packed," },
+    { "type": "text", "id": "heading_outline", "label": "Outlined heading text", "default": "shipped." },
+    { "type": "richtext", "id": "text", "label": "Text", "default": "<p>Every pair is verified for authenticity and packed properly before it leaves our warehouse.</p>" },
+    { "type": "text", "id": "button_label", "label": "Button label", "default": "Learn more" },
+    { "type": "url", "id": "button_link", "label": "Button link" },
+    { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 140, "step": 4, "unit": "px", "default": 72 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 140, "step": 4, "unit": "px", "default": 40 }
+  ],
+  "presets": [{ "name": "Image with text" }]
+}
+{% endschema %}

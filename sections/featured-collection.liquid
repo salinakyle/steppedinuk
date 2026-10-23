@@ -1,0 +1,53 @@
+<div class="container section" style="--pt:{{ section.settings.padding_top }}px;--pb:{{ section.settings.padding_bottom }}px;--cols:{{ section.settings.columns }}">
+  {%- liquid
+    assign c = section.settings.collection
+    assign link_url = section.settings.link_url
+    if link_url == blank and c != blank
+      assign link_url = c.url
+    endif
+    assign heading = section.settings.heading
+    if heading == blank and c != blank
+      assign heading = c.title
+    endif
+  -%}
+  {% render 'section-heading',
+    eyebrow: section.settings.eyebrow,
+    heading: heading,
+    outline: section.settings.heading_outline,
+    link_text: section.settings.link_text,
+    link_url: link_url %}
+
+  <div class="grid-products {% if section.settings.mobile_carousel %}grid-products--carousel{% endif %}">
+    {%- if c != blank and c.products_count > 0 -%}
+      {%- for product in c.products limit: section.settings.count -%}
+        {% render 'product-card', product: product, show_new: section.settings.show_new, new_days: section.settings.new_days, quick_add: section.settings.quick_add %}
+      {%- endfor -%}
+    {%- else -%}
+      {%- for i in (1..4) -%}{% render 'product-card', product: blank %}{%- endfor -%}
+    {%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Featured collection",
+  "tag": "section",
+  "settings": [
+    { "type": "collection", "id": "collection", "label": "Collection" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Shop the collection" },
+    { "type": "text", "id": "heading", "label": "Heading", "info": "Defaults to the collection title." },
+    { "type": "text", "id": "heading_outline", "label": "Outlined heading text" },
+    { "type": "text", "id": "link_text", "label": "Link label", "default": "View all" },
+    { "type": "url", "id": "link_url", "label": "Link", "info": "Defaults to the collection page." },
+    { "type": "range", "id": "count", "label": "Products to show", "min": 2, "max": 12, "step": 1, "default": 4 },
+    { "type": "range", "id": "columns", "label": "Columns on desktop", "min": 2, "max": 5, "step": 1, "default": 4 },
+    { "type": "checkbox", "id": "mobile_carousel", "label": "Swipeable carousel on mobile", "default": true },
+    { "type": "checkbox", "id": "quick_add", "label": "Show quick add", "default": true },
+    { "type": "checkbox", "id": "show_new", "label": "Show “New” badge on recent products", "default": false },
+    { "type": "range", "id": "new_days", "label": "Count as new for", "min": 7, "max": 90, "step": 1, "default": 30 },
+    { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 140, "step": 4, "unit": "px", "default": 56 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 140, "step": 4, "unit": "px", "default": 24 }
+  ],
+  "presets": [{ "name": "Featured collection" }]
+}
+{% endschema %}

@@ -1,0 +1,49 @@
+<div class="trust {% if section.settings.border_top %}trust--top{% endif %}">
+  <div class="trust__row">
+    {%- for block in section.blocks -%}
+      <div class="trust__item" {{ block.shopify_attributes }}>
+        {% render 'icon', name: block.settings.icon, size: 34, stroke_width: 1.5 %}
+        <div>
+          <div class="trust__label">{{ block.settings.label | escape }}</div>
+          {%- if block.settings.sub != blank -%}<div class="trust__sub">{{ block.settings.sub | escape }}</div>{%- endif -%}
+        </div>
+      </div>
+    {%- endfor -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Trust bar",
+  "max_blocks": 6,
+  "settings": [
+    { "type": "checkbox", "id": "border_top", "label": "Show top border", "default": false }
+  ],
+  "blocks": [
+    {
+      "type": "item",
+      "name": "Item",
+      "settings": [
+        { "type": "select", "id": "icon", "label": "Icon", "default": "delivery", "options": [
+          { "value": "delivery", "label": "Delivery" }, { "value": "returns", "label": "Returns" }, { "value": "authentic", "label": "Authentic shield" },
+          { "value": "secure", "label": "Secure lock" }, { "value": "card", "label": "Card" }, { "value": "worldwide", "label": "Globe" },
+          { "value": "star-outline", "label": "Star" }, { "value": "box", "label": "Box" }, { "value": "clock", "label": "Clock" }
+        ] },
+        { "type": "text", "id": "label", "label": "Label", "default": "Fast delivery" },
+        { "type": "text", "id": "sub", "label": "Sub label", "default": "Tracked, worldwide" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Trust bar",
+      "blocks": [
+        { "type": "item", "settings": { "icon": "delivery", "label": "Fast delivery", "sub": "Tracked, worldwide" } },
+        { "type": "item", "settings": { "icon": "returns", "label": "14-day returns", "sub": "On every order" } },
+        { "type": "item", "settings": { "icon": "authentic", "label": "100% authentic", "sub": "Verified pairs" } },
+        { "type": "item", "settings": { "icon": "secure", "label": "Secure checkout", "sub": "Klarna, Apple Pay" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

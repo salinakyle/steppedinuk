@@ -1,0 +1,113 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-product",
+      "settings": {
+        "show_thumbnails": true,
+        "enable_zoom": true,
+        "show_badge": true,
+        "require_selection": true,
+        "sticky_bar": true
+      },
+      "blocks": {
+        "title": {
+          "type": "title",
+          "settings": {
+            "outline_words": 2
+          }
+        },
+        "rating": {
+          "type": "rating",
+          "settings": {}
+        },
+        "price": {
+          "type": "price",
+          "settings": {}
+        },
+        "picker": {
+          "type": "variant_picker",
+          "settings": {}
+        },
+        "buy": {
+          "type": "buy_buttons",
+          "settings": {}
+        },
+        "delivery": {
+          "type": "delivery",
+          "settings": {}
+        },
+        "perks": {
+          "type": "perks",
+          "settings": {}
+        },
+        "desc": {
+          "type": "collapsible_tab",
+          "settings": {
+            "heading": "Description",
+            "source": "description",
+            "open": true
+          }
+        },
+        "details": {
+          "type": "details",
+          "settings": {
+            "heading": "Details"
+          }
+        },
+        "ship": {
+          "type": "collapsible_tab",
+          "settings": {
+            "heading": "Delivery & returns",
+            "source": "custom",
+            "content": "<p>Fast, tracked delivery worldwide. 14-day returns on every order. See the refund policy for how to send a pair back.</p>"
+          }
+        },
+        "auth": {
+          "type": "collapsible_tab",
+          "settings": {
+            "heading": "Authenticity",
+            "source": "custom",
+            "content": "<p>100% authentic. Every pair is checked before it leaves our warehouse, then packed professionally.</p>"
+          }
+        },
+        "pay": {
+          "type": "payment_icons",
+          "settings": {}
+        }
+      },
+      "block_order": [
+        "title",
+        "rating",
+        "price",
+        "picker",
+        "buy",
+        "delivery",
+        "perks",
+        "desc",
+        "details",
+        "ship",
+        "auth",
+        "pay"
+      ]
+    },
+    "reviews": {
+      "type": "reviews-callout",
+      "settings": {
+        "button_link": "https://www.trustpilot.com"
+      }
+    },
+    "recommendations": {
+      "type": "product-recommendations",
+      "settings": {
+        "heading": "You may",
+        "heading_outline": "also like",
+        "eyebrow": "More to explore"
+      }
+    }
+  },
+  "order": [
+    "main",
+    "reviews",
+    "recommendations"
+  ]
+}

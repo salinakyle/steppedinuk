@@ -1,0 +1,62 @@
+{%- comment -%} Fonts, design tokens (from Theme settings) and stylesheets. {%- endcomment -%}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family={{ settings.font_heading | url_encode }}:wght@700;800;900&family={{ settings.font_body | url_encode }}:wght@400;500;600;700&family={{ settings.font_mono | url_encode }}:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --color-bg: {{ settings.color_bg }};
+    --color-text: {{ settings.color_text }};
+    --color-muted: {{ settings.color_muted }};
+    --color-border: {{ settings.color_border }};
+    --color-surface: {{ settings.color_surface }};
+    --color-surface-2: {{ settings.color_surface_2 }};
+    --color-accent: {{ settings.color_accent }};
+    --color-accent-text: {{ settings.color_accent_text }};
+    --color-dark-bg: {{ settings.color_dark_bg }};
+    --color-dark-text: {{ settings.color_dark_text }};
+    --font-heading: '{{ settings.font_heading }}', 'Impact', sans-serif;
+    --font-body: '{{ settings.font_body }}', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --font-mono: '{{ settings.font_mono }}', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+    --page-width: {{ settings.page_width }}px;
+    --radius: {{ settings.button_radius }}px;
+    --header-h: 73px;
+  }
+</style>
+
+{{ 'base.css' | asset_url | stylesheet_tag }}
+{{ 'sections.css' | asset_url | stylesheet_tag }}
+{{ 'product-motion.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'product-motion.js' | asset_url }}" defer></script>
+<style id="carousel-arrows-css">
+  /* Hide the arrows inside product cards on home and collection pages */
+  .template-index .card__arrow, .template-collection .card__arrow { display: none !important; }
+  /* Product strip arrows styled like the card arrows */
+  .carousel .carousel__btn { width: 40px; height: 40px; border: 0; border-radius: 0; background: var(--color-bg); color: var(--color-text); box-shadow: none; padding: 0; transition: opacity .2s ease, background .15s, color .15s; }
+  .carousel .carousel__btn:hover { transform: translateY(-50%); background: var(--color-text); color: var(--color-bg); }
+  .carousel .carousel__btn--prev { left: 8px; }
+  .carousel .carousel__btn--next { right: 8px; }
+  @media (max-width: 749px) { .carousel .carousel__btn { width: 32px; height: 32px; } }
+  </style>
+  <script id="card-hover-image">
+  /* On hover (mouse devices), show the second product image; return to the first on leave */
+  (function () {
+    if (!window.matchMedia || !window.matchMedia('(hover: hover)').matches) return;
+      var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        function go(card, second) {
+            var track = card.querySelector('.card__track');
+                if (!track || track.querySelectorAll('.card__slide').length < 2) return;
+                    track.scrollTo({ left: second ? track.clientWidth : 0, behavior: reduce ? 'auto' : 'smooth' });
+                      }
+                        document.addEventListener('mouseover', function (e) {
+                            var card = e.target.closest && e.target.closest('.card');
+                                if (!card || (e.relatedTarget && card.contains(e.relatedTarget))) return;
+                                    go(card, true);
+                                      });
+                                        document.addEventListener('mouseout', function (e) {
+                                            var card = e.target.closest && e.target.closest('.card');
+                                                if (!card || (e.relatedTarget && card.contains(e.relatedTarget))) return;
+                                                    go(card, false);
+                                                      });
+                                                      })();
+                                                      </script>

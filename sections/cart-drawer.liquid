@@ -1,0 +1,50 @@
+<aside class="drawer drawer--right" id="cart-drawer" role="dialog" aria-modal="true" aria-label="{{ 'cart.title' | t }}" data-drawer>
+  <div data-cart-inner style="display:flex;flex-direction:column;height:100%;min-height:0">
+    <div class="drawer__head">
+      <h2 class="display drawer__title">{{ 'cart.title' | t }} (<span data-cart-count-text>{{ cart.item_count }}</span>)</h2>
+      <button type="button" class="icon-btn" data-close-drawer aria-label="{{ 'general.close' | t }}">{% render 'icon', name: 'close', size: 24, stroke_width: 2 %}</button>
+    </div>
+
+    {%- if cart.item_count == 0 -%}
+      <div class="drawer__body">
+        <div class="cart-empty">
+          <p>{{ 'cart.empty' | t }}</p>
+          <a class="btn" href="{{ section.settings.empty_link | default: routes.all_products_collection_url }}">{{ section.settings.empty_label | default: 'Shop new arrivals' | escape }}</a>
+        </div>
+      </div>
+    {%- else -%}
+      <div class="drawer__body" data-cart-lines>
+        {%- for line in cart.items -%}
+          {% render 'cart-line', line: line, index: forloop.index %}
+        {%- endfor -%}
+      </div>
+      <div class="drawer__foot">
+        {%- if cart.cart_level_discount_applications.size > 0 -%}
+          {%- for discount in cart.cart_level_discount_applications -%}
+            <div style="display:flex;justify-content:space-between;font-size:14px"><span>{{ discount.title | escape }}</span><span>−{{ discount.total_allocated_amount | money }}</span></div>
+          {%- endfor -%}
+        {%- endif -%}
+        <div style="display:flex;justify-content:space-between;font-size:18px;font-weight:700"><span>{{ 'cart.subtotal' | t }}</span><span>{{ cart.total_price | money_with_currency }}</span></div>
+        <p style="color:var(--color-muted);font-size:14px">{{ 'cart.taxes_shipping' | t }}</p>
+        <form action="{{ routes.cart_url }}" method="post">
+          <button type="submit" name="checkout" class="btn btn--lg btn--full">{{ 'cart.checkout' | t }}</button>
+        </form>
+        <a href="{{ routes.cart_url }}" class="link-underline" style="justify-self:center">{{ 'cart.view' | t }}</a>
+        {%- if section.settings.footer_text != blank -%}
+          <p style="text-align:center;color:var(--color-muted);font-size:13px">{{ section.settings.footer_text | escape }}</p>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+  </div>
+</aside>
+
+{% schema %}
+{
+  "name": "Cart drawer",
+  "settings": [
+    { "type": "text", "id": "empty_label", "label": "Empty cart button label", "default": "Shop new arrivals" },
+    { "type": "url", "id": "empty_link", "label": "Empty cart button link" },
+    { "type": "text", "id": "footer_text", "label": "Footer text", "default": "Secure checkout · Pay with Klarna · 14-day returns" }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,105 @@
+<footer class="footer">
+  <div class="container">
+    <div class="footer__grid">
+      {%- for block in section.blocks -%}
+        {%- case block.type -%}
+          {%- when 'brand' -%}
+            <div {{ block.shopify_attributes }}>
+              {%- if block.settings.logo != blank -%}
+                <a class="logo" href="{{ routes.root_url }}">{{ block.settings.logo | image_url: width: 400 | image_tag: loading: 'lazy', widths: '200, 400', sizes: '200px', alt: shop.name }}</a>
+              {%- else -%}
+                <a class="logo footer__logo" href="{{ routes.root_url }}"><span>{{ block.settings.logo_text_1 | escape }}</span>{% if block.settings.logo_text_2 != blank %}<span class="logo__tag">{{ block.settings.logo_text_2 | escape }}</span>{% endif %}</a>
+              {%- endif -%}
+              {%- if block.settings.text != blank -%}<p class="footer__blurb">{{ block.settings.text | escape }}</p>{%- endif -%}
+            </div>
+          {%- when 'link_list' -%}
+            <nav {{ block.shopify_attributes }} aria-label="{{ block.settings.title | escape }}">
+              {%- if block.settings.title != blank -%}<div class="footer__title">{{ block.settings.title | escape }}</div>{%- endif -%}
+              <ul class="footer__links">
+                {%- for link in linklists[block.settings.menu].links -%}
+                  <li><a href="{{ link.url }}">{{ link.title | escape }}</a></li>
+                {%- endfor -%}
+              </ul>
+            </nav>
+          {%- when 'social' -%}
+            <div {{ block.shopify_attributes }}>
+              {%- if block.settings.title != blank -%}<div class="footer__title">{{ block.settings.title | escape }}</div>{%- endif -%}
+              <ul class="footer__links">
+                {%- if settings.social_instagram != blank -%}<li><a href="{{ settings.social_instagram }}" rel="noopener" target="_blank">Instagram</a></li>{%- endif -%}
+                {%- if settings.social_facebook != blank -%}<li><a href="{{ settings.social_facebook }}" rel="noopener" target="_blank">Facebook</a></li>{%- endif -%}
+                {%- if settings.social_tiktok != blank -%}<li><a href="{{ settings.social_tiktok }}" rel="noopener" target="_blank">TikTok</a></li>{%- endif -%}
+                {%- if settings.social_youtube != blank -%}<li><a href="{{ settings.social_youtube }}" rel="noopener" target="_blank">YouTube</a></li>{%- endif -%}
+                {%- if settings.social_x != blank -%}<li><a href="{{ settings.social_x }}" rel="noopener" target="_blank">X</a></li>{%- endif -%}
+                {%- if settings.social_pinterest != blank -%}<li><a href="{{ settings.social_pinterest }}" rel="noopener" target="_blank">Pinterest</a></li>{%- endif -%}
+              </ul>
+              {%- if block.settings.show_country and localization.available_countries.size > 1 -%}
+                <button type="button" class="footer__country" data-open-modal="country-modal">
+                  {% render 'icon', name: 'globe', size: 18 %}
+                  {{ localization.country.name }} ({{ localization.country.currency.iso_code }})
+                </button>
+              {%- endif -%}
+            </div>
+        {%- endcase -%}
+      {%- endfor -%}
+    </div>
+    <div class="footer__bottom">
+      <span>© {{ 'now' | date: '%Y' }} {{ shop.name | escape }}{% if section.settings.copyright_extra != blank %} · {{ section.settings.copyright_extra | escape }}{% endif %}</span>
+      {%- if section.settings.show_payment_icons and shop.enabled_payment_types.size > 0 -%}
+        <ul class="pay-list" aria-label="{{ 'footer.payment' | t }}">
+          {%- for type in shop.enabled_payment_types -%}
+            <li>{{ type | payment_type_svg_tag: class: 'icon icon--payment' }}</li>
+          {%- endfor -%}
+        </ul>
+      {%- endif -%}
+    </div>
+  </div>
+</footer>
+
+{% schema %}
+{
+  "name": "Footer",
+  "max_blocks": 6,
+  "settings": [
+    { "type": "text", "id": "copyright_extra", "label": "Extra copyright text" },
+    { "type": "checkbox", "id": "show_payment_icons", "label": "Show payment icons", "default": true }
+  ],
+  "blocks": [
+    {
+      "type": "brand",
+      "name": "Brand",
+      "limit": 1,
+      "settings": [
+        { "type": "image_picker", "id": "logo", "label": "Logo image" },
+        { "type": "text", "id": "logo_text_1", "label": "Logo text", "default": "Stepped" },
+        { "type": "text", "id": "logo_text_2", "label": "Highlighted logo text", "default": "In" },
+        { "type": "text", "id": "text", "label": "Description", "default": "Authentic sneakers, packed properly and dispatched fast." }
+      ]
+    },
+    {
+      "type": "link_list",
+      "name": "Link list",
+      "settings": [
+        { "type": "text", "id": "title", "label": "Heading", "default": "Need some help?" },
+        { "type": "link_list", "id": "menu", "label": "Menu", "default": "footer" }
+      ]
+    },
+    {
+      "type": "social",
+      "name": "Social & country",
+      "limit": 1,
+      "settings": [
+        { "type": "text", "id": "title", "label": "Heading", "default": "Follow the Society" },
+        { "type": "checkbox", "id": "show_country", "label": "Show country selector", "default": true }
+      ]
+    }
+  ],
+  "default": {
+    "blocks": [
+      { "type": "brand" },
+      { "type": "link_list", "settings": { "title": "Need some help?", "menu": "footer" } },
+      { "type": "link_list", "settings": { "title": "Info", "menu": "footer" } },
+      { "type": "social" }
+    ]
+  }
+}
+{% endschema %}

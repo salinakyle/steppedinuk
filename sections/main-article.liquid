@@ -1,0 +1,42 @@
+<article class="container section article" style="--pt:56px;--pb:72px">
+  <div class="label-mono">{{ article.published_at | time_tag: format: 'date' }}{% if article.author != blank %} · {{ article.author | escape }}{% endif %}</div>
+  <h1 class="display" style="margin-top:10px">{{ article.title | escape }}</h1>
+  {%- if article.image -%}
+    <div class="article__img">{{ article.image | image_url: width: 1400 | image_tag: loading: 'eager', widths: '700, 1000, 1400', sizes: '(min-width: 990px) 760px, 100vw', alt: article.image.alt | default: article.title }}</div>
+  {%- endif -%}
+  <div class="rte" style="font-size:18px;line-height:1.65">{{ article.content }}</div>
+  {%- if article.tags.size > 0 -%}
+    <div style="margin-top:32px;display:flex;flex-wrap:wrap;gap:8px">
+      {%- for tag in article.tags -%}<a class="pill" href="{{ blog.url }}/tagged/{{ tag | handleize }}">{{ tag | escape }}</a>{%- endfor -%}
+    </div>
+  {%- endif -%}
+  <div style="margin-top:40px"><a class="link-underline" href="{{ blog.url }}">← {{ blog.title | escape }}</a></div>
+
+  {%- if blog.comments_enabled? -%}
+    <div style="margin-top:56px">
+      <h2 class="display display-md">{{ 'blog.comments' | t }}</h2>
+      {%- for comment in article.comments -%}
+        <div style="padding:20px 0;border-bottom:1px solid var(--color-border)">
+          <div class="label-mono">{{ comment.author | escape }} · {{ comment.created_at | time_tag: format: 'date' }}</div>
+          <div class="rte" style="margin-top:8px">{{ comment.content }}</div>
+        </div>
+      {%- endfor -%}
+      {%- form 'new_comment', article -%}
+        <div class="form-stack" style="margin-top:28px">
+          {%- if form.errors -%}<div class="form-error" role="alert">{{ form.errors | default_errors }}</div>{%- endif -%}
+          {%- if form.posted_successfully? -%}<div class="form-message" role="status">{% if blog.moderated? %}{{ 'blog.comment_moderated' | t }}{% else %}{{ 'blog.comment_posted' | t }}{% endif %}</div>{%- endif -%}
+          <div class="field"><label for="CommentAuthor">{{ 'customer.name' | t }}</label><input class="input" id="CommentAuthor" type="text" name="comment[author]" value="{{ form.author }}" required></div>
+          <div class="field"><label for="CommentEmail">{{ 'customer.email' | t }}</label><input class="input" id="CommentEmail" type="email" name="comment[email]" value="{{ form.email }}" required></div>
+          <div class="field"><label for="CommentBody">{{ 'blog.comment' | t }}</label><textarea class="textarea" id="CommentBody" name="comment[body]" required>{{ form.body }}</textarea></div>
+          <button class="btn" type="submit" style="justify-self:start">{{ 'blog.post_comment' | t }}</button>
+        </div>
+      {%- endform -%}
+    </div>
+  {%- endif -%}
+</article>
+
+<script type="application/ld+json">{{ article | structured_data }}</script>
+
+{% schema %}
+{ "name": "Article" }
+{% endschema %}

@@ -1,0 +1,32 @@
+{%- paginate blog.articles by section.settings.per_page -%}
+<div class="container page-title">
+  <h1 class="display">{{ blog.title | escape }}</h1>
+</div>
+<div class="container section" style="--pt:24px;--pb:72px">
+  <div class="article-grid">
+    {%- for article in blog.articles -%}
+      <article class="article-card">
+        {%- if article.image -%}
+          <a class="article-card__img" href="{{ article.url }}">{{ article.image | image_url: width: 800 | image_tag: loading: 'lazy', widths: '400, 600, 800', sizes: '(min-width: 990px) 30vw, 100vw', alt: article.image.alt | default: article.title }}</a>
+        {%- endif -%}
+        <div class="label-mono">{{ article.published_at | time_tag: format: 'date' }}{% if article.author != blank %} · {{ article.author | escape }}{% endif %}</div>
+        <h2 class="display display-md"><a href="{{ article.url }}">{{ article.title | escape }}</a></h2>
+        <p style="color:#333">{{ article.excerpt_or_content | strip_html | truncatewords: 28 }}</p>
+        <a class="link-underline" style="align-self:flex-start" href="{{ article.url }}">{{ 'blog.read_more' | t }}</a>
+      </article>
+    {%- else -%}
+      <p>{{ 'blog.empty' | t }}</p>
+    {%- endfor -%}
+  </div>
+  {% render 'pagination', paginate: paginate %}
+</div>
+{%- endpaginate -%}
+
+{% schema %}
+{
+  "name": "Blog posts",
+  "settings": [
+    { "type": "range", "id": "per_page", "label": "Posts per page", "min": 6, "max": 24, "step": 3, "default": 9 }
+  ]
+}
+{% endschema %}

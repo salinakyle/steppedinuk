@@ -1,0 +1,47 @@
+{%- paginate search.results by section.settings.results_per_page -%}
+<div class="container page-title">
+  <div class="eyebrow">{{ 'search.title' | t }}</div>
+  <h1 class="display">{% if search.performed %}{{ search.terms | escape }}{% else %}{{ 'search.title' | t }}{% endif %}</h1>
+  <form action="{{ routes.search_url }}" method="get" role="search" class="search-page-form">
+    <div class="newsletter__form">
+      <label for="SearchPage-{{ section.id }}" class="visually-hidden">{{ 'search.label' | t }}</label>
+      <input id="SearchPage-{{ section.id }}" type="search" name="q" value="{{ search.terms | escape }}" placeholder="{{ 'search.placeholder' | t }}">
+      <button type="submit" class="btn">{{ 'general.search' | t }}</button>
+    </div>
+  </form>
+  {%- if search.performed -%}
+    <p class="label-mono" style="margin-top:20px">{{ 'search.results_count' | t: count: search.results_count, terms: search.terms }}</p>
+  {%- endif -%}
+</div>
+
+<div class="container section" style="--pt:24px;--pb:72px;--cols:{{ section.settings.columns }}">
+  {%- if search.performed and search.results_count > 0 -%}
+    <div class="grid-products">
+      {%- for item in search.results -%}
+        {%- if item.object_type == 'product' -%}
+          {% render 'product-card', product: item %}
+        {%- else -%}
+          <article class="article-card">
+            {%- if item.featured_image -%}<a class="article-card__img" href="{{ item.url }}">{{ item.featured_image | image_url: width: 600 | image_tag: loading: 'lazy', alt: item.title }}</a>{%- endif -%}
+            <div class="label-mono">{{ item.object_type | capitalize }}</div>
+            <a href="{{ item.url }}" style="font-weight:600">{{ item.title | escape }}</a>
+          </article>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+    {% render 'pagination', paginate: paginate %}
+  {%- elsif search.performed -%}
+    <div class="col-empty"><p>{{ 'search.no_results_for' | t: terms: search.terms }}</p></div>
+  {%- endif -%}
+</div>
+{%- endpaginate -%}
+
+{% schema %}
+{
+  "name": "Search results",
+  "settings": [
+    { "type": "range", "id": "results_per_page", "label": "Results per page", "min": 8, "max": 48, "step": 4, "default": 24 },
+    { "type": "range", "id": "columns", "label": "Columns on desktop", "min": 2, "max": 5, "step": 1, "default": 4 }
+  ]
+}
+{% endschema %}

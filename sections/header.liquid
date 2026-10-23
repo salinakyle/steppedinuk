@@ -1,0 +1,280 @@
+{%- liquid
+  assign menu = linklists[section.settings.menu]
+  assign cart_is_drawer = false
+  if settings.cart_type == 'drawer' and template.name != 'cart'
+    assign cart_is_drawer = true
+  endif
+-%}
+{%- if section.settings.sticky -%}
+  <style>#shopify-section-{{ section.id }}{position:sticky;top:0;z-index:30}</style>
+{%- endif -%}
+
+<site-header class="header" style="position:relative" data-header>
+  <div class="container header__bar">
+    <button type="button" class="icon-btn mob-only header__menu-btn" data-open-drawer="mobile-nav" aria-label="{{ 'header.open_menu' | t }}" aria-controls="mobile-nav">{% render 'icon', name: 'menu', size: 24, stroke_width: 2 %}</button>
+
+    {%- if section.settings.logo != blank -%}
+      <a class="logo" href="{{ routes.root_url }}" aria-label="{{ shop.name | escape }}">
+        {{- section.settings.logo | image_url: width: 400 | image_tag: loading: 'eager', widths: '200, 400', sizes: '200px', alt: shop.name -}}
+      </a>
+    {%- else -%}
+      <a class="logo" href="{{ routes.root_url }}" aria-label="{{ shop.name | escape }}">
+        <span>{{ section.settings.logo_text_1 | escape }}</span>{% if section.settings.logo_text_2 != blank %}<span class="logo__tag">{{ section.settings.logo_text_2 | escape }}</span>{% endif %}
+      </a>
+    {%- endif -%}
+
+    <nav class="nav desk-only" aria-label="{{ 'header.main_navigation' | t }}">
+      {%- for link in menu.links -%}
+        {%- if link.links.size > 0 -%}
+          <div class="nav__item">
+            <button type="button" class="navlink" data-mega-trigger="mega-{{ forloop.index }}" aria-expanded="false" aria-controls="mega-{{ forloop.index }}">{{ link.title | escape }}</button>
+          </div>
+        {%- else -%}
+          <div class="nav__item"><a class="navlink" href="{{ link.url }}" {% if link.current %}aria-current="page"{% endif %}>{{ link.title | escape }}</a></div>
+        {%- endif -%}
+      {%- endfor -%}
+    </nav>
+
+    <div class="header__actions">
+      {%- if section.settings.show_country and localization.available_countries.size > 1 -%}
+        <button type="button" class="header__country" data-open-modal="country-modal" aria-label="{{ 'header.country_label' | t }}">
+          {% render 'icon', name: 'globe', size: 20 %}
+          <span class="desk-only">{{ localization.country.iso_code }} · {{ localization.country.currency.iso_code }}</span>
+        </button>
+      {%- endif -%}
+      <button type="button" class="icon-btn" data-open-drawer="search-drawer" aria-label="{{ 'general.search' | t }}" aria-controls="search-drawer">{% render 'icon', name: 'search', size: 22 %}</button>
+      {%- if section.settings.show_account and shop.customer_accounts_enabled -%}
+        <a class="icon-btn desk-only" href="{{ routes.account_url }}" aria-label="{{ 'general.account' | t }}">{% render 'icon', name: 'user', size: 22 %}</a>
+      {%- endif -%}
+      {%- if cart_is_drawer -%}
+        <button type="button" class="icon-btn" data-open-drawer="cart-drawer" aria-controls="cart-drawer" aria-label="{{ 'header.open_cart' | t: count: cart.item_count }}">
+      {%- else -%}
+        <a class="icon-btn" href="{{ routes.cart_url }}" aria-label="{{ 'header.open_cart' | t: count: cart.item_count }}">
+      {%- endif -%}
+        {% render 'icon', name: 'cart', size: 22 %}
+        <span class="cart-count" data-cart-count data-empty="{% if cart.item_count == 0 %}true{% else %}false{% endif %}">{{ cart.item_count }}</span>
+      {%- if cart_is_drawer -%}</button>{%- else -%}</a>{%- endif -%}
+    </div>
+  </div>
+
+  {%- for link in menu.links -%}
+    {%- if link.links.size > 0 -%}
+      <div class="mega desk-only" id="mega-{{ forloop.index }}" hidden>
+        <div class="container mega__inner">
+          <div>
+            <div class="display mega__title">{{ link.title | escape }}</div>
+            {%- if section.settings.mega_text != blank -%}<p class="mega__text">{{ section.settings.mega_text | escape }}</p>{%- endif -%}
+            <a class="btn" href="{{ link.url }}">{{ 'header.shop_all' | t: title: link.title }} {% render 'icon', name: 'arrow-right', size: 16, stroke_width: 2 %}</a>
+          </div>
+          <ul class="mega__list">
+            {%- for child in link.links -%}
+              <li><a href="{{ child.url }}">{{ child.title | escape }}</a></li>
+            {%- endfor -%}
+          </ul>
+        </div>
+      </div>
+    {%- endif -%}
+  {%- endfor -%}
+</site-header>
+
+{%- comment -%} Sidebar navigation drawer {%- endcomment -%}
+<style>
+  .sidenav{width:min(420px,100%)}
+  .sidenav .drawer__head{padding:14px 14px 14px 24px}
+  .sidenav__close{width:44px;height:44px;flex:none;margin-left:auto;display:inline-flex;align-items:center;justify-content:center;padding:0;border:1.5px solid var(--color-text);background:var(--color-bg);color:var(--color-text);border-radius:var(--radius);transition:background .15s ease,color .15s ease}
+  .sidenav__close:hover,.sidenav__close:focus-visible{background:var(--color-text);color:var(--color-bg)}
+  .sidenav__search{flex:none;padding:16px 24px 8px}
+  .sidenav__form{display:flex;align-items:center;border:1.5px solid var(--color-text);background:var(--color-bg);border-radius:var(--radius)}
+  .sidenav__form:focus-within{outline:3px solid var(--color-text);outline-offset:2px}
+  .sidenav__form input[type="search"]{flex:1;min-width:0;height:52px;padding:0 16px;border:0;background:transparent;font-size:16px;color:var(--color-text);border-radius:0;-webkit-appearance:none;appearance:none}
+  .sidenav__form input[type="search"]:focus{outline:none}
+  .sidenav__form input[type="search"]::-webkit-search-cancel-button{display:none}
+  .sidenav__submit{width:52px;height:52px;flex:none;display:inline-flex;align-items:center;justify-content:center;padding:0;border:0;background:var(--color-accent);color:var(--color-accent-text)}
+  .sidenav .mnav .mnav__group--sub>summary{min-height:48px;border-bottom:0;font-family:var(--font-body);font-size:16px;font-weight:600;text-transform:none;color:#333}
+  .sidenav .mnav .mnav__group--sub .mnav__plus::before{font-size:22px}
+  .sidenav .mnav__sub--deep{margin:0 0 6px;padding-left:16px;border-left:2px solid var(--color-border)}
+  .sidenav .mnav__sub--deep a{padding:10px 0;font-size:15px}
+  .sidenav__section{margin-top:24px;padding-top:16px;border-top:1px solid var(--color-border)}
+  .sidenav__legal{list-style:none;margin:6px 0 16px;padding:0}
+  .sidenav__legal a{display:block;padding:9px 0;font-size:14px;font-weight:600;color:#333}
+  .sidenav__legal a:hover{text-decoration:underline}
+  .sidenav__foot{padding:16px 24px 20px;gap:10px}
+  .sidenav__social{display:flex;flex-wrap:wrap;gap:8px}
+  .sidenav__social a{width:44px;height:44px;display:inline-flex;align-items:center;justify-content:center;border:1.5px solid var(--color-text);color:var(--color-text);border-radius:var(--radius);transition:background .15s ease,color .15s ease}
+  .sidenav__social a:hover,.sidenav__social a:focus-visible{background:var(--color-text);color:var(--color-bg)}
+</style>
+<aside class="drawer drawer--left sidenav" id="mobile-nav" role="dialog" aria-modal="true" aria-label="{{ 'general.menu' | t }}" data-drawer>
+  <div class="drawer__head">
+    <span class="display drawer__title">{{ 'general.menu' | t }}</span>
+    <button type="button" class="sidenav__close" data-close-drawer aria-label="{{ 'general.close' | t }}">{% render 'icon', name: 'close', size: 22, stroke_width: 2.2 %}</button>
+  </div>
+
+  <div class="sidenav__search">
+    <form action="{{ routes.search_url }}" method="get" role="search" class="sidenav__form">
+      <label for="SidenavSearch-{{ section.id }}" class="visually-hidden">{{ 'search.label' | t }}</label>
+      <input id="SidenavSearch-{{ section.id }}" type="search" name="q" value="" placeholder="{{ 'search.placeholder' | t }}" autocomplete="off">
+      <input type="hidden" name="type" value="product,article,page">
+      <button type="submit" class="sidenav__submit" aria-label="{{ 'general.search' | t }}">{% render 'icon', name: 'search', size: 20, stroke_width: 2 %}</button>
+    </form>
+  </div>
+
+  <nav class="drawer__body mnav" aria-label="{{ 'general.menu' | t }}">
+    {%- for link in menu.links -%}
+      {%- if link.links.size > 0 -%}
+        <details class="mnav__group"{% if link.active or link.child_active %} open{% endif %}>
+          <summary>{{ link.title | escape }}<span class="mnav__plus" aria-hidden="true"></span></summary>
+          <ul class="mnav__sub">
+            <li><a href="{{ link.url }}" style="font-weight:700">{{ 'header.shop_all' | t: title: link.title }}</a></li>
+            {%- for child in link.links -%}
+              {%- if child.links.size > 0 -%}
+                <li>
+                  <details class="mnav__group mnav__group--sub"{% if child.active or child.child_active %} open{% endif %}>
+                    <summary>{{ child.title | escape }}<span class="mnav__plus" aria-hidden="true"></span></summary>
+                    <ul class="mnav__sub mnav__sub--deep">
+                      <li><a href="{{ child.url }}" style="font-weight:700">{{ 'header.shop_all' | t: title: child.title }}</a></li>
+                      {%- for grandchild in child.links -%}
+                        <li><a href="{{ grandchild.url }}" {% if grandchild.current %}aria-current="page"{% endif %}>{{ grandchild.title | escape }}</a></li>
+                      {%- endfor -%}
+                    </ul>
+                  </details>
+                </li>
+              {%- else -%}
+                <li><a href="{{ child.url }}" {% if child.current %}aria-current="page"{% endif %}>{{ child.title | escape }}</a></li>
+              {%- endif -%}
+            {%- endfor -%}
+          </ul>
+        </details>
+      {%- else -%}
+        <a class="mnav__link" href="{{ link.url }}" {% if link.current %}aria-current="page"{% endif %}>{{ link.title | escape }}</a>
+      {%- endif -%}
+    {%- endfor -%}
+    {%- if shop.customer_accounts_enabled -%}
+      <a class="mnav__extra" href="{{ routes.account_url }}">{% if customer %}{{ 'general.account' | t }}{% else %}{{ 'general.log_in' | t }}{% endif %}</a>
+    {%- endif -%}
+    {%- if section.settings.show_country and localization.available_countries.size > 1 -%}
+      <button type="button" class="pill" style="margin:8px 0 8px" data-open-modal="country-modal">{% render 'icon', name: 'globe', size: 18 %} {{ localization.country.name }} ({{ localization.country.currency.iso_code }})</button>
+    {%- endif -%}
+    {%- if shop.policies.size > 0 -%}
+      <div class="sidenav__section">
+        <div class="label-mono">Legal</div>
+        <ul class="sidenav__legal">
+          {%- for policy in shop.policies -%}
+            <li><a href="{{ policy.url }}">{{ policy.title | escape }}</a></li>
+          {%- endfor -%}
+        </ul>
+      </div>
+    {%- endif -%}
+  </nav>
+
+  {%- capture sidenav_social -%}
+    {%- if settings.social_instagram != blank -%}<a href="{{ settings.social_instagram }}" target="_blank" rel="noopener" aria-label="Instagram">{% render 'icon', name: 'instagram', size: 20, stroke_width: 1.8 %}</a>{%- endif -%}
+    {%- if settings.social_facebook != blank -%}<a href="{{ settings.social_facebook }}" target="_blank" rel="noopener" aria-label="Facebook">{% render 'icon', name: 'facebook', size: 20, stroke_width: 1.8 %}</a>{%- endif -%}
+    {%- if settings.social_tiktok != blank -%}<a href="{{ settings.social_tiktok }}" target="_blank" rel="noopener" aria-label="TikTok">{% render 'icon', name: 'tiktok', size: 20, stroke_width: 1.8 %}</a>{%- endif -%}
+    {%- if settings.social_youtube != blank -%}<a href="{{ settings.social_youtube }}" target="_blank" rel="noopener" aria-label="YouTube">{% render 'icon', name: 'youtube', size: 20, stroke_width: 1.8 %}</a>{%- endif -%}
+    {%- if settings.social_x != blank -%}<a href="{{ settings.social_x }}" target="_blank" rel="noopener" aria-label="X">{% render 'icon', name: 'x', size: 20, stroke_width: 1.8 %}</a>{%- endif -%}
+    {%- if settings.social_pinterest != blank -%}<a href="{{ settings.social_pinterest }}" target="_blank" rel="noopener" aria-label="Pinterest">{% render 'icon', name: 'pinterest', size: 20, stroke_width: 1.8 %}</a>{%- endif -%}
+  {%- endcapture -%}
+  {%- assign sidenav_social = sidenav_social | strip -%}
+  {%- if sidenav_social != blank -%}
+    <div class="drawer__foot sidenav__foot">
+      <div class="label-mono">Follow us</div>
+      <div class="sidenav__social">{{ sidenav_social }}</div>
+    </div>
+  {%- endif -%}
+</aside>
+<script>
+  /* Drawers sit inside the sticky header wrapper, which traps them below the page overlay.
+     Move them to <body> so they stack above the overlay and can be clicked. */
+  (function () {
+    var ids = ['mobile-nav', 'search-drawer', 'country-modal'];
+    function lift() {
+      ids.forEach(function (id) {
+        var all = document.querySelectorAll('[id="' + id + '"]');
+        var fresh = null;
+        all.forEach(function (el) { if (el.parentNode !== document.body) fresh = el; });
+        if (!fresh) return;
+        all.forEach(function (el) { if (el !== fresh) el.remove(); });
+        document.body.appendChild(fresh);
+      });
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', lift);
+    else lift();
+  })();
+</script>
+
+{%- comment -%} Search drawer {%- endcomment -%}
+<aside class="drawer drawer--top" id="search-drawer" role="dialog" aria-modal="true" aria-label="{{ 'general.search' | t }}" data-drawer>
+  <div class="container" style="padding-top:24px;padding-bottom:40px;max-width:960px;overflow:auto">
+    <predictive-search>
+      <form action="{{ routes.search_url }}" method="get" role="search" class="search-bar">
+        {% render 'icon', name: 'search', size: 26 %}
+        <label for="SearchInput-{{ section.id }}" class="visually-hidden">{{ 'search.label' | t }}</label>
+        <input id="SearchInput-{{ section.id }}" type="search" name="q" value="" placeholder="{{ 'search.placeholder' | t }}" autocomplete="off" data-search-input>
+        <input type="hidden" name="type" value="product,article,page">
+        <button type="button" class="icon-btn" data-close-drawer aria-label="{{ 'general.close' | t }}">{% render 'icon', name: 'close', size: 26, stroke_width: 2 %}</button>
+      </form>
+      {%- assign popular = section.settings.popular_searches | split: ',' -%}
+      {%- if popular.size > 0 and section.settings.popular_searches != blank -%}
+        <div style="margin-top:24px;display:flex;flex-wrap:wrap;gap:8px;align-items:center" data-popular>
+          <span class="label-mono" style="margin-right:8px">{{ 'search.popular' | t }}</span>
+          {%- for term in popular -%}
+            <button type="button" class="pill" data-term="{{ term | strip | escape }}">{{ term | strip | escape }}</button>
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
+      <div data-predictive-results aria-live="polite" style="margin-top:28px"></div>
+    </predictive-search>
+  </div>
+</aside>
+
+{%- comment -%} Country / currency modal {%- endcomment -%}
+{%- if localization.available_countries.size > 1 -%}
+  <div class="modal" id="country-modal" role="dialog" aria-modal="true" aria-label="{{ 'header.ship_to' | t }}" data-modal>
+    <div class="modal__scrim" data-close-modal></div>
+    <div class="modal__panel">
+      <div class="drawer__head">
+        <h2 class="display drawer__title">{{ 'header.ship_to' | t }}</h2>
+        <button type="button" class="icon-btn" data-close-modal aria-label="{{ 'general.close' | t }}">{% render 'icon', name: 'close', size: 24, stroke_width: 2 %}</button>
+      </div>
+      <div style="padding:16px 24px 8px">
+        <label for="CountryFilter-{{ section.id }}" class="visually-hidden">{{ 'header.filter_countries' | t }}</label>
+        <input id="CountryFilter-{{ section.id }}" type="search" class="input" placeholder="{{ 'header.filter_countries' | t }}" data-country-filter>
+      </div>
+      {%- form 'localization', id: 'LocalizationForm', class: 'country-form' -%}
+        <input type="hidden" name="country_code" value="{{ localization.country.iso_code }}" data-country-input>
+        <ul class="country-list" style="max-height:50vh">
+          {%- for country in localization.available_countries -%}
+            <li data-country-row data-name="{{ country.name | downcase | escape }} {{ country.iso_code | downcase }}">
+              <button type="button" class="country-btn" data-country="{{ country.iso_code }}" {% if country.iso_code == localization.country.iso_code %}aria-current="true"{% endif %}>
+                <span class="mono" style="width:36px;font-size:12px;font-weight:800;letter-spacing:.08em;opacity:.7">{{ country.iso_code }}</span>
+                <span style="flex:1">{{ country.name | escape }}</span>
+                <span style="font-weight:700">{{ country.currency.iso_code }} {{ country.currency.symbol }}</span>
+              </button>
+            </li>
+          {%- endfor -%}
+        </ul>
+      {%- endform -%}
+    </div>
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Header",
+  "settings": [
+    { "type": "header", "content": "Logo" },
+    { "type": "image_picker", "id": "logo", "label": "Logo image", "info": "Leave empty to use the two-part text logo below." },
+    { "type": "text", "id": "logo_text_1", "label": "Logo text", "default": "Stepped" },
+    { "type": "text", "id": "logo_text_2", "label": "Highlighted logo text", "default": "In" },
+    { "type": "header", "content": "Navigation" },
+    { "type": "link_list", "id": "menu", "label": "Menu", "default": "main-menu", "info": "Top-level links with sub-links open a mega menu on desktop and an accordion on mobile." },
+    { "type": "text", "id": "mega_text", "label": "Mega menu description", "default": "Authentic pairs, packed properly and dispatched fast." },
+    { "type": "checkbox", "id": "sticky", "label": "Sticky header", "default": true },
+    { "type": "header", "content": "Icons" },
+    { "type": "checkbox", "id": "show_country", "label": "Show country / currency selector", "default": true, "info": "Needs Shopify Markets with more than one market." },
+    { "type": "checkbox", "id": "show_account", "label": "Show account icon", "default": true },
+    { "type": "header", "content": "Search" },
+    { "type": "text", "id": "popular_searches", "label": "Popular searches", "default": "Nike, ASICS, UGG, Pokémon, Air Max", "info": "Comma separated." }
+  ]
+}
+{% endschema %}

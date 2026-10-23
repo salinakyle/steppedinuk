@@ -1,0 +1,50 @@
+{%- liquid
+  assign scheme = section.settings.color_scheme
+-%}
+<section class="scheme-{{ scheme }}" id="join">
+  <div class="container section" style="--pt:{{ section.settings.padding_top }}px;--pb:{{ section.settings.padding_bottom }}px">
+    <div class="newsletter__grid">
+      <div>
+        <h2 class="display display-xl" style="font-size:clamp(48px,7vw,104px);line-height:.88">{{ section.settings.heading | escape }}{% if section.settings.heading_outline != blank %} <span class="ital">{{ section.settings.heading_outline | escape }}</span>{% endif %}</h2>
+        {%- if section.settings.text != blank -%}<p style="margin-top:18px;font-size:18px;line-height:1.5;max-width:44ch;color:var(--s-muted)">{{ section.settings.text | escape }}</p>{%- endif -%}
+      </div>
+      <div>
+        {%- form 'customer', id: 'ContactFooter', class: 'newsletter' -%}
+          <input type="hidden" name="contact[tags]" value="newsletter">
+          {%- if form.posted_successfully? -%}
+            <div class="form-message" role="status">{{ 'newsletter.success' | t }}</div>
+          {%- else -%}
+            {%- if form.errors -%}
+              <div class="form-error" role="alert" style="margin-bottom:12px">{{ form.errors | default_errors }}</div>
+            {%- endif -%}
+            <div class="field">
+              <label for="NewsletterEmail-{{ section.id }}">{{ 'newsletter.label' | t }}</label>
+              <div class="newsletter__form">
+                <input id="NewsletterEmail-{{ section.id }}" type="email" name="contact[email]" required autocomplete="email" placeholder="{{ 'newsletter.placeholder' | t }}" value="{{ form.email }}">
+                <button type="submit" class="btn" style="background:var(--color-accent);color:var(--color-accent-text);border-color:var(--color-accent)">{{ 'newsletter.subscribe' | t }}</button>
+              </div>
+            </div>
+          {%- endif -%}
+        {%- endform -%}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Newsletter",
+  "tag": "div",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "First to know." },
+    { "type": "text", "id": "heading_outline", "label": "Outlined heading text", "default": "First to buy." },
+    { "type": "text", "id": "text", "label": "Text", "default": "Early access to drops and members-only offers, straight to your inbox." },
+    { "type": "select", "id": "color_scheme", "label": "Color scheme", "default": "light", "options": [
+      { "value": "light", "label": "Light" }, { "value": "grey", "label": "Grey" }, { "value": "dark", "label": "Dark" }
+    ] },
+    { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 140, "step": 4, "unit": "px", "default": 96 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 140, "step": 4, "unit": "px", "default": 96 }
+  ],
+  "presets": [{ "name": "Newsletter" }]
+}
+{% endschema %}

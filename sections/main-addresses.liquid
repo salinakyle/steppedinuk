@@ -1,0 +1,55 @@
+<div class="container section" style="--pt:56px;--pb:72px">
+  <a class="link-underline" href="{{ routes.account_url }}">← {{ 'customer.account_title' | t }}</a>
+  <h1 class="display display-xl" style="margin:16px 0 28px">{{ 'customer.addresses' | t }}</h1>
+
+  {%- paginate customer.addresses by 12 -%}
+    <div class="tiles" style="grid-template-columns:repeat(auto-fill,minmax(min(320px,100%),1fr))">
+      {%- for address in customer.addresses -%}
+        <div class="address-card">
+          {%- if address == customer.default_address -%}<span class="badge badge--new" style="justify-self:start">{{ 'customer.default' | t }}</span>{%- endif -%}
+          <div>{{ address | format_address }}</div>
+          <div style="display:flex;gap:16px">
+            <button type="button" class="link-underline" data-toggle-address="{{ address.id }}">{{ 'customer.edit' | t }}</button>
+            <button type="button" class="link-underline" data-delete-address="{{ address.url }}">{{ 'customer.delete' | t }}</button>
+          </div>
+        </div>
+      {%- endfor -%}
+    </div>
+    {% render 'pagination', paginate: paginate %}
+
+    {%- for address in customer.addresses -%}
+      <div id="EditAddress-{{ address.id }}" hidden style="margin-top:32px">
+        <h2 class="display display-md" style="margin-bottom:16px">{{ 'customer.edit_address' | t }}</h2>
+        {%- form 'customer_address', address -%}
+          {% render 'address-fields', form: form, prefix: address.id %}
+          <label class="chk"><input type="checkbox" name="address[default]" value="1" {% if address == customer.default_address %}checked{% endif %}><span class="chk__box">{% render 'icon', name: 'check', size: 14, stroke_width: 3.2 %}</span><span class="chk__label">{{ 'customer.set_default' | t }}</span></label>
+          <button class="btn" type="submit" style="margin-top:16px">{{ 'customer.update' | t }}</button>
+        {%- endform -%}
+      </div>
+    {%- endfor -%}
+  {%- endpaginate -%}
+
+  <div style="margin-top:48px">
+    <h2 class="display display-md" style="margin-bottom:16px">{{ 'customer.add_address' | t }}</h2>
+    {%- form 'customer_address', customer.new_address -%}
+      {% render 'address-fields', form: form, prefix: 'new' %}
+      <label class="chk"><input type="checkbox" name="address[default]" value="1"><span class="chk__box">{% render 'icon', name: 'check', size: 14, stroke_width: 3.2 %}</span><span class="chk__label">{{ 'customer.set_default' | t }}</span></label>
+      <button class="btn" type="submit" style="margin-top:16px">{{ 'customer.add' | t }}</button>
+    {%- endform -%}
+  </div>
+</div>
+<script src="{{ 'shopify_common.js' | shopify_asset_url }}" defer></script>
+<script>
+  document.querySelectorAll('[data-toggle-address]').forEach(function (b) {
+    b.addEventListener('click', function () { var el = document.getElementById('EditAddress-' + b.dataset.toggleAddress); if (el) el.hidden = !el.hidden; });
+  });
+  document.querySelectorAll('[data-delete-address]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      if (confirm({{ 'customer.confirm_delete' | t | json }})) Shopify.postLink(b.dataset.deleteAddress, { parameters: { _method: 'delete' } });
+    });
+  });
+</script>
+
+{% schema %}
+{ "name": "Addresses" }
+{% endschema %}

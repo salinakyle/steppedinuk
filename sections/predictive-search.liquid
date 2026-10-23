@@ -1,0 +1,44 @@
+{%- comment -%} Rendered through the Section Rendering API by the search drawer. {%- endcomment -%}
+<div class="predictive" data-predictive>
+  {%- if predictive_search.performed -%}
+    {%- liquid
+      assign products = predictive_search.resources.products
+      assign collections = predictive_search.resources.collections
+      assign articles = predictive_search.resources.articles
+      assign pages = predictive_search.resources.pages
+      assign total = products.size | plus: collections.size | plus: articles.size | plus: pages.size
+    -%}
+    {%- if total == 0 -%}
+      <p style="color:var(--color-muted);font-size:18px">{{ 'search.no_results_for' | t: terms: predictive_search.terms }}</p>
+    {%- else -%}
+      {%- if products.size > 0 -%}
+        <ul class="search-results" style="margin-top:0">
+          {%- for product in products -%}
+            <li class="search-row">
+              <a class="search-row__img" href="{{ product.url }}" tabindex="-1" aria-hidden="true">
+                {%- if product.featured_image -%}{{ product.featured_image | image_url: width: 160 | image_tag: loading: 'lazy', widths: '80, 160', sizes: '72px', alt: product.title }}{%- else -%}<span style="width:80%;color:#000">{% render 'shoe-placeholder' %}</span>{%- endif -%}
+              </a>
+              <div class="search-row__body">
+                {%- if product.vendor != blank -%}<div class="card__vendor">{{ product.vendor | escape }}</div>{%- endif -%}
+                <a href="{{ product.url }}" style="font-weight:600">{{ product.title | escape }}</a>
+              </div>
+              <strong>{{ product.price | money }}</strong>
+            </li>
+          {%- endfor -%}
+        </ul>
+      {%- endif -%}
+      {%- if collections.size > 0 or articles.size > 0 or pages.size > 0 -%}
+        <div style="margin-top:24px;display:flex;flex-wrap:wrap;gap:8px">
+          {%- for item in collections -%}<a class="pill" href="{{ item.url }}">{{ item.title | escape }}</a>{%- endfor -%}
+          {%- for item in pages -%}<a class="pill" href="{{ item.url }}">{{ item.title | escape }}</a>{%- endfor -%}
+          {%- for item in articles -%}<a class="pill" href="{{ item.url }}">{{ item.title | escape }}</a>{%- endfor -%}
+        </div>
+      {%- endif -%}
+      <a class="btn" style="margin-top:24px" href="{{ routes.search_url }}?q={{ predictive_search.terms | url_encode }}&type=product">{{ 'search.view_all' | t: terms: predictive_search.terms }}</a>
+    {%- endif -%}
+  {%- endif -%}
+</div>
+
+{% schema %}
+{ "name": "Predictive search" }
+{% endschema %}

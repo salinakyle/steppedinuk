@@ -1,0 +1,22 @@
+{%- comment -%} Params: form, prefix {%- endcomment -%}
+<div class="form-stack" style="max-width:640px">
+  {%- if form.errors -%}<div class="form-error" role="alert">{{ form.errors | default_errors }}</div>{%- endif -%}
+  <div class="field"><label for="AddrFirst-{{ prefix }}">{{ 'customer.first_name' | t }}</label><input class="input" id="AddrFirst-{{ prefix }}" type="text" name="address[first_name]" value="{{ form.first_name }}" autocomplete="given-name"></div>
+  <div class="field"><label for="AddrLast-{{ prefix }}">{{ 'customer.last_name' | t }}</label><input class="input" id="AddrLast-{{ prefix }}" type="text" name="address[last_name]" value="{{ form.last_name }}" autocomplete="family-name"></div>
+  <div class="field"><label for="AddrCompany-{{ prefix }}">{{ 'customer.company' | t }}</label><input class="input" id="AddrCompany-{{ prefix }}" type="text" name="address[company]" value="{{ form.company }}" autocomplete="organization"></div>
+  <div class="field"><label for="AddrA1-{{ prefix }}">{{ 'customer.address1' | t }}</label><input class="input" id="AddrA1-{{ prefix }}" type="text" name="address[address1]" value="{{ form.address1 }}" autocomplete="address-line1"></div>
+  <div class="field"><label for="AddrA2-{{ prefix }}">{{ 'customer.address2' | t }}</label><input class="input" id="AddrA2-{{ prefix }}" type="text" name="address[address2]" value="{{ form.address2 }}" autocomplete="address-line2"></div>
+  <div class="field"><label for="AddrCity-{{ prefix }}">{{ 'customer.city' | t }}</label><input class="input" id="AddrCity-{{ prefix }}" type="text" name="address[city]" value="{{ form.city }}" autocomplete="address-level2"></div>
+  <div class="field">
+    <label for="AddrCountry-{{ prefix }}">{{ 'customer.country' | t }}</label>
+    <select class="select" id="AddrCountry-{{ prefix }}" name="address[country]" data-default="{{ form.country }}" autocomplete="country">{{ all_country_option_tags }}</select>
+  </div>
+  <div class="field"><label for="AddrZip-{{ prefix }}">{{ 'customer.zip' | t }}</label><input class="input" id="AddrZip-{{ prefix }}" type="text" name="address[zip]" value="{{ form.zip }}" autocomplete="postal-code"></div>
+  <div class="field"><label for="AddrPhone-{{ prefix }}">{{ 'customer.phone' | t }}</label><input class="input" id="AddrPhone-{{ prefix }}" type="tel" name="address[phone]" value="{{ form.phone }}" autocomplete="tel"></div>
+</div>
+<script>
+  (function () {
+    var s = document.getElementById('AddrCountry-{{ prefix }}');
+    if (s && s.dataset.default) { for (var i = 0; i < s.options.length; i++) { if (s.options[i].text === s.dataset.default || s.options[i].value === s.dataset.default) { s.selectedIndex = i; break; } } }
+  })();
+</script>

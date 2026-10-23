@@ -1,0 +1,69 @@
+[
+  {
+    "name": "theme_info",
+    "theme_name": "Stepped In",
+    "theme_version": "1.0.0",
+    "theme_author": "Stepped In",
+    "theme_documentation_url": "https://help.shopify.com/manual/online-store/themes",
+    "theme_support_url": "https://help.shopify.com/support"
+  },
+  {
+    "name": "Colors",
+    "settings": [
+      { "type": "color", "id": "color_bg", "label": "Background", "default": "#FFFFFF" },
+      { "type": "color", "id": "color_text", "label": "Text", "default": "#000000" },
+      { "type": "color", "id": "color_muted", "label": "Muted text", "default": "#5C5C5C", "info": "Used for secondary labels. Keep contrast above 4.5:1 on the background." },
+      { "type": "color", "id": "color_border", "label": "Borders", "default": "#D4D4D4" },
+      { "type": "color", "id": "color_surface", "label": "Surface (image backgrounds, tiles)", "default": "#EDEDED" },
+      { "type": "color", "id": "color_surface_2", "label": "Light grey section background", "default": "#F2F2F2" },
+      { "type": "header", "content": "Buttons" },
+      { "type": "color", "id": "color_accent", "label": "Button background", "default": "#000000" },
+      { "type": "color", "id": "color_accent_text", "label": "Button text", "default": "#FFFFFF" },
+      { "type": "header", "content": "Dark sections" },
+      { "type": "color", "id": "color_dark_bg", "label": "Dark background", "default": "#000000", "info": "Announcement bar, footer and dark-scheme sections." },
+      { "type": "color", "id": "color_dark_text", "label": "Dark text", "default": "#FFFFFF" }
+    ]
+  },
+  {
+    "name": "Typography",
+    "settings": [
+      { "type": "paragraph", "content": "Enter any family name from fonts.google.com. Heading font should offer weights 700, 800 and 900; body 400–700; mono 400 and 500." },
+      { "type": "text", "id": "font_heading", "label": "Heading font", "default": "Big Shoulders Display" },
+      { "type": "text", "id": "font_body", "label": "Body font", "default": "Hanken Grotesk" },
+      { "type": "text", "id": "font_mono", "label": "Label font", "default": "DM Mono" }
+    ]
+  },
+  {
+    "name": "Layout",
+    "settings": [
+      { "type": "range", "id": "page_width", "label": "Maximum page width", "min": 1100, "max": 1760, "step": 20, "unit": "px", "default": 1360 },
+      { "type": "range", "id": "button_radius", "label": "Corner radius (buttons, inputs)", "min": 0, "max": 24, "step": 2, "unit": "px", "default": 0 }
+    ]
+  },
+  {
+    "name": "Cart & wishlist",
+    "settings": [
+      { "type": "select", "id": "cart_type", "label": "Cart style", "default": "drawer", "options": [
+        { "value": "drawer", "label": "Slide-out drawer" }, { "value": "page", "label": "Cart page" }
+      ] },
+      { "type": "checkbox", "id": "show_wishlist", "label": "Show wishlist hearts", "default": true, "info": "Saved in the shopper's browser (no account needed)." }
+    ]
+  },
+  {
+    "name": "Social media",
+    "settings": [
+      { "type": "url", "id": "social_instagram", "label": "Instagram" },
+      { "type": "url", "id": "social_facebook", "label": "Facebook" },
+      { "type": "url", "id": "social_tiktok", "label": "TikTok" },
+      { "type": "url", "id": "social_youtube", "label": "YouTube" },
+      { "type": "url", "id": "social_x", "label": "X (Twitter)" },
+      { "type": "url", "id": "social_pinterest", "label": "Pinterest" }
+    ]
+  },
+  {
+    "name": "Favicon",
+    "settings": [
+      { "type": "image_picker", "id": "favicon", "label": "Favicon image", "info": "Square, at least 32 × 32 px." }
+    ]
+  }
+]

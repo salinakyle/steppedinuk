@@ -1,0 +1,74 @@
+<div class="container section" style="--pt:{{ section.settings.padding_top }}px;--pb:{{ section.settings.padding_bottom }}px">
+  {% render 'section-heading', heading: section.settings.heading, outline: section.settings.heading_outline, size: 'lg' %}
+  <div class="tiles {% if section.settings.mobile_carousel %}tiles--carousel-m{% endif %}">
+    {%- for block in section.blocks -%}
+      {%- liquid
+        assign url = block.settings.link
+        assign title = block.settings.title
+        if block.settings.collection != blank
+          if url == blank
+            assign url = block.settings.collection.url
+          endif
+          if title == blank
+            assign title = block.settings.collection.title
+          endif
+        endif
+      -%}
+      <a class="tile" href="{{ url | default: '#' }}" style="background:{{ block.settings.tint }}" {{ block.shopify_attributes }}>
+        <div class="tile__top">{{ section.settings.tile_label | escape }}</div>
+        {%- if block.settings.image != blank -%}
+          {%- if block.settings.image_fill -%}
+            {{- block.settings.image | image_url: width: 900 | image_tag: class: 'tile__bg', loading: 'lazy', widths: '450, 600, 900', sizes: '(min-width: 990px) 33vw, 80vw', alt: '' -}}
+          {%- else -%}
+            <div class="tile__art">{{- block.settings.image | image_url: width: 900 | image_tag: loading: 'lazy', widths: '450, 600, 900', sizes: '(min-width: 990px) 25vw, 70vw', alt: '' -}}</div>
+          {%- endif -%}
+        {%- else -%}
+          <div class="tile__art">{% render 'shoe-placeholder', stroke_width: 1.6 %}</div>
+        {%- endif -%}
+        <div class="tile__foot">
+          <span class="display display-md" style="font-size:44px;line-height:.9;color:{{ block.settings.text_color }}">{{ title | escape }}</span>
+          <span class="tile__arrow" aria-hidden="true">{% render 'icon', name: 'arrow-up-right', size: 18, stroke_width: 2 %}</span>
+        </div>
+      </a>
+    {%- endfor -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Collection tiles",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Also in the" },
+    { "type": "text", "id": "heading_outline", "label": "Outlined heading text", "default": "vault" },
+    { "type": "text", "id": "tile_label", "label": "Small label on tiles", "default": "Collection" },
+    { "type": "checkbox", "id": "mobile_carousel", "label": "Swipeable carousel on mobile", "default": true },
+    { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 140, "step": 4, "unit": "px", "default": 96 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 140, "step": 4, "unit": "px", "default": 40 }
+  ],
+  "blocks": [
+    {
+      "type": "tile",
+      "name": "Tile",
+      "settings": [
+        { "type": "collection", "id": "collection", "label": "Collection" },
+        { "type": "text", "id": "title", "label": "Title", "info": "Defaults to the collection title." },
+        { "type": "url", "id": "link", "label": "Link", "info": "Defaults to the collection page." },
+        { "type": "image_picker", "id": "image", "label": "Image" },
+        { "type": "checkbox", "id": "image_fill", "label": "Image fills the whole tile", "default": false },
+        { "type": "color", "id": "tint", "label": "Tile color", "default": "#EDEDED" },
+        { "type": "color", "id": "text_color", "label": "Title color", "default": "#000000" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Collection tiles",
+      "blocks": [
+        { "type": "tile", "settings": { "title": "Air Jordan", "tint": "#EDEDED" } },
+        { "type": "tile", "settings": { "title": "Nike Air Force", "tint": "#E4E4E4" } },
+        { "type": "tile", "settings": { "title": "Adidas", "tint": "#DADADA" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

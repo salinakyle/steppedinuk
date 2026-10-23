@@ -1,0 +1,23 @@
+{%- comment -%}
+  Renders a price (and compare-at when on sale).
+  Params: product (required), variant (optional, defaults to product.selected_or_first_available_variant), show_from (bool)
+{%- endcomment -%}
+{%- liquid
+  assign v = variant | default: product.selected_or_first_available_variant
+  assign on_sale = false
+  if v.compare_at_price > v.price
+    assign on_sale = true
+  endif
+-%}
+<div class="price" data-price>
+  {%- if show_from and product.price_varies and variant == blank -%}
+    <span class="price__now" data-price-now>{{ 'general.from' | t }} {{ product.price_min | money }}</span>
+  {%- else -%}
+    <span class="price__now" data-price-now>{{ v.price | money }}</span>
+  {%- endif -%}
+  {%- if on_sale -%}
+    <s class="price__was" data-price-was>{{ v.compare_at_price | money }}</s>
+  {%- else -%}
+    <s class="price__was" data-price-was hidden></s>
+  {%- endif -%}
+</div>

@@ -1,0 +1,28 @@
+{
+  "name": "Header group",
+  "type": "header",
+  "sections": {
+    "announcement-bar": {
+      "type": "announcement-bar",
+      "blocks": {
+        "a1": { "type": "announcement", "settings": { "text": "Fresh kicks. Fast delivery" } },
+        "a2": { "type": "announcement", "settings": { "text": "14-day returns on every order" } },
+        "a3": { "type": "announcement", "settings": { "text": "Summer sale now on" } }
+      },
+      "block_order": ["a1", "a2", "a3"],
+      "settings": { "autoplay": true, "interval": 5 }
+    },
+    "header": {
+      "type": "header",
+      "settings": {
+        "logo_text_1": "Stepped",
+        "logo_text_2": "In",
+        "menu": "main-menu",
+        "sticky": true,
+        "show_country": true,
+        "show_account": true
+      }
+    }
+  },
+  "order": ["announcement-bar", "header"]
+}

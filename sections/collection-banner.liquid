@@ -1,0 +1,103 @@
+{%- liquid
+  assign banner_img = section.settings.image
+  if banner_img == blank and collection.image
+    assign banner_img = collection.image
+  endif
+  assign parent = collection.metafields.custom.parent_collection.value
+  assign subs = collection.metafields.custom.subcollections.value
+  assign description_long = false
+  if collection.description.size > 360
+    assign description_long = true
+  endif
+-%}
+
+<section class="col-hero">
+  <div class="col-hero__text">
+    {%- if section.settings.show_breadcrumb -%}
+      <nav class="col-hero__crumbs" aria-label="Breadcrumb">
+        <ol>
+          <li><a href="{{ routes.root_url }}">{{ 'general.home' | t }}</a></li>
+          <li aria-hidden="true" class="sep">&rsaquo;</li>
+          {%- if parent != blank -%}
+            <li><a href="{{ parent.url }}">{{ parent.title | escape }}</a></li>
+          {%- else -%}
+            <li><a href="{{ routes.collections_url }}">{{ 'collection.shop' | t }}</a></li>
+          {%- endif -%}
+          <li aria-hidden="true" class="sep">&rsaquo;</li>
+          <li><a href="{{ collection.url }}" aria-current="page">{{ collection.title | escape }}</a></li>
+        </ol>
+      </nav>
+    {%- endif -%}
+
+    <h1 class="col-hero__title">{{ collection.title | escape }}</h1>
+
+    {%- if collection.description != blank -%}
+      <div class="col-hero__desc rte {% if description_long %}is-clamped{% endif %}" id="CollectionDescription" {% if description_long %}data-clamp{% endif %}>{{ collection.description }}</div>
+      {%- if description_long -%}
+        <button type="button" class="link-underline" style="margin-top:12px" data-read-more aria-expanded="false" aria-controls="CollectionDescription" data-more="{{ 'general.read_more' | t }}" data-less="{{ 'general.read_less' | t }}">{{ 'general.read_more' | t }}</button>
+      {%- endif -%}
+    {%- elsif section.settings.fallback_text != blank -%}
+      <p class="col-hero__desc">{{ section.settings.fallback_text | escape }}</p>
+    {%- endif -%}
+
+    {%- if section.settings.show_subcollections and subs != blank -%}
+      <ul class="col-hero__pills" role="list">
+        {%- for sub in subs -%}
+          <li>
+            <a class="col-hero__pill" href="{{ sub.url }}">
+              {%- if sub.image -%}
+                {{- sub.image | image_url: width: 48, height: 48, crop: 'center' | image_tag: class: 'col-hero__pill-img', loading: 'lazy', width: 24, height: 24, alt: '' -}}
+              {%- endif -%}
+              <span>{{ sub.title | escape }}</span>
+            </a>
+          </li>
+        {%- endfor -%}
+      </ul>
+    {%- endif -%}
+  </div>
+
+  <div class="col-hero__media">
+    {%- if banner_img != blank -%}
+      {{- banner_img | image_url: width: 1400 | image_tag: class: 'col-hero__img', loading: 'eager', fetchpriority: 'high', widths: '600, 900, 1200, 1400', sizes: '(min-width: 750px) 50vw, 100vw', alt: collection.title -}}
+    {%- else -%}
+      <div class="col-hero__art" aria-hidden="true">{% render 'shoe-placeholder', stroke_width: 1.1 %}</div>
+    {%- endif -%}
+  </div>
+</section>
+
+{% stylesheet %}
+  .col-hero{display:grid;grid-template-columns:1fr 1fr;min-height:clamp(300px,26vw,400px);background:var(--color-bg)}
+  .col-hero__text{display:flex;flex-direction:column;justify-content:center;align-items:flex-start;gap:0;padding:clamp(24px,3vw,40px) clamp(24px,4vw,56px)}
+  .col-hero__crumbs ol{list-style:none;margin:0 0 28px;padding:0;display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:12px;letter-spacing:.12em;text-transform:uppercase}
+  .col-hero__crumbs a{border-bottom:1px solid currentColor;padding-bottom:1px}
+  .col-hero__crumbs .sep{border:0}
+  .col-hero__title{font-family:var(--font-heading);font-weight:600;text-transform:uppercase;font-size:clamp(30px,3.2vw,46px);line-height:1.05;letter-spacing:.01em;margin:0 0 10px}
+  .col-hero__desc{font-size:16px;line-height:1.55;max-width:56ch;margin:0}
+  .col-hero__pills{list-style:none;margin:20px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:10px}
+  .col-hero__pill{display:inline-flex;align-items:center;gap:8px;min-height:34px;padding:0 16px 0 8px;border:1px solid var(--color-text);border-radius:999px;font-size:14px;line-height:1;transition:background .15s ease,color .15s ease}
+  .col-hero__pill:not(:has(.col-hero__pill-img)){padding-left:16px}
+  .col-hero__pill:hover{background:var(--color-text);color:var(--color-bg)}
+  .col-hero__pill-img{width:20px;height:20px;border-radius:50%;object-fit:cover}
+  .col-hero__media{position:relative;background:var(--color-surface-2,#000);overflow:hidden}
+  .col-hero__img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .col-hero__art{position:absolute;inset:8% 4%;display:flex;align-items:center;justify-content:center}
+  @media (max-width:749px){
+    .col-hero{grid-template-columns:1fr;min-height:0}
+    .col-hero__media{order:-1;aspect-ratio:4/3}
+    .col-hero__text{order:1;padding:24px 16px}
+    .col-hero__crumbs ol{margin-bottom:18px}
+    .col-hero__title{font-size:28px}
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Collection banner",
+  "settings": [
+    { "type": "checkbox", "id": "show_breadcrumb", "label": "Show breadcrumb", "default": true, "info": "Parent link uses the collection's Parent collection metafield, otherwise Shop." },
+    { "type": "image_picker", "id": "image", "label": "Override image", "info": "Optional. Defaults to each collection's own image shown on the right." },
+    { "type": "textarea", "id": "fallback_text", "label": "Intro text when the collection has no description", "default": "Authentic Nike, ASICS, UGG, Saucony and HOKA, packed properly and out of the door fast." },
+    { "type": "checkbox", "id": "show_subcollections", "label": "Show subcollection pills", "default": true, "info": "Filled per collection via the Subcollections metafield." }
+  ]
+}
+{% endschema %}
