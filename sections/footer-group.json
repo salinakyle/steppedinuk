@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "name": "Footer group",
   "type": "footer",
@@ -8,7 +17,7 @@
         "heading": "First to know.",
         "heading_outline": "First to buy.",
         "text": "Early access to drops and members-only offers, straight to your inbox.",
-        "color_scheme": "light",
+        "color_scheme": "grey",
         "padding_top": 96,
         "padding_bottom": 96
       }
@@ -16,14 +25,50 @@
     "footer": {
       "type": "footer",
       "blocks": {
-        "brand": { "type": "brand", "settings": { "logo_text_1": "Stepped", "logo_text_2": "In", "text": "Authentic sneakers, packed properly and dispatched fast." } },
-        "help": { "type": "link_list", "settings": { "title": "Need some help?", "menu": "footer" } },
-        "info": { "type": "link_list", "settings": { "title": "Info", "menu": "footer" } },
-        "social": { "type": "social", "settings": { "title": "Follow the Society", "show_country": true } }
+        "brand": {
+          "type": "brand",
+          "settings": {
+            "logo_text_1": "Stepped",
+            "logo_text_2": "In",
+            "text": "Authentic sneakers, packed properly and dispatched fast."
+          }
+        },
+        "help": {
+          "type": "link_list",
+          "settings": {
+            "title": "Need some help?",
+            "menu": "footer"
+          }
+        },
+        "info": {
+          "type": "link_list",
+          "settings": {
+            "title": "Info",
+            "menu": "footer"
+          }
+        },
+        "social": {
+          "type": "social",
+          "settings": {
+            "title": "Follow the Society",
+            "show_country": true
+          }
+        }
       },
-      "block_order": ["brand", "help", "info", "social"],
-      "settings": { "show_payment_icons": true }
+      "block_order": [
+        "brand",
+        "help",
+        "info",
+        "social"
+      ],
+      "settings": {
+        "copyright_extra": "",
+        "show_payment_icons": true
+      }
     }
   },
-  "order": ["newsletter", "footer"]
+  "order": [
+    "newsletter",
+    "footer"
+  ]
 }
