@@ -374,22 +374,24 @@
         "v2": {
           "type": "tile",
           "settings": {
-            "collection": "",
+            "collection": "nike-air-force",
             "title": "Nike Air Force",
-            "link": "",
-            "image_fill": false,
+            "link": "{{ block.settings.collection.url }}",
+            "image": "shopify://shop_images/nike-air-force-1-low-supreme-mini-box-logo-black-cu9225-001_1_r0gte2_1024x1024_da152fbe-1ec8-45ca-b03e-1b7dd70f7f0a.jpg",
+            "image_fill": true,
             "tint": "#e4e4e4",
             "text_color": "#000000"
           }
         },
-        "v3": {
+        "tile_kQyPM3": {
           "type": "tile",
           "settings": {
-            "collection": "",
-            "title": "Adidas",
-            "link": "",
-            "image_fill": false,
-            "tint": "#dadada",
+            "collection": "nike-air-force",
+            "title": "ADIDAS",
+            "link": "{{ block.settings.collection.url }}",
+            "image": "shopify://shop_images/adidas-yeezy-boost-350-v2-earth-fx9033_1_1000x1000_64920827-1cab-43e6-8572-f480fd37e46a.jpg",
+            "image_fill": true,
+            "tint": "#e4e4e4",
             "text_color": "#000000"
           }
         }
@@ -397,7 +399,7 @@
       "block_order": [
         "v1",
         "v2",
-        "v3"
+        "tile_kQyPM3"
       ],
       "settings": {
         "heading": "Also in the",
