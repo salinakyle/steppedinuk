@@ -21,7 +21,7 @@
             "heading_outline": "landed.",
             "text": "Authentic Nike, ASICS, UGG, Saucony and HOKA, packed properly and out of the door fast.",
             "button_label": "Shop new arrivals",
-            "button_link": "",
+            "button_link": "https://steppedinuk.myshopify.com/collections/new-arrivals",
             "product": "",
             "show_price": false,
             "video": "shopify://files/videos/Slider 1 viedo.mp4",
@@ -37,9 +37,10 @@
             "heading_outline": "Gel-1130",
             "text": "Dusty Fern Black. Just in and moving fast.",
             "button_label": "Shop ASICS",
-            "button_link": "",
+            "button_link": "https://steppedin.uk/collections/asics-collection",
             "product": "",
             "show_price": true,
+            "video": "shopify://files/videos/ASICS.mp4",
             "video_url": ""
           }
         },
