@@ -25,6 +25,13 @@
     "footer": {
       "type": "footer",
       "blocks": {
+        "link_list_XHpTfj": {
+          "type": "link_list",
+          "settings": {
+            "title": "Shop",
+            "menu": "footer-shop"
+          }
+        },
         "brand": {
           "type": "brand",
           "settings": {
@@ -50,6 +57,7 @@
         }
       },
       "block_order": [
+        "link_list_XHpTfj",
         "brand",
         "help",
         "social"
