@@ -9,7 +9,7 @@
   <style>#shopify-section-{{ section.id }}{position:sticky;top:0;z-index:30}</style>
 {%- endif -%}
 
-<site-header class="header" style="position:relative" data-header>
+<style>.mega__inner:has(.mega__media){grid-template-columns:minmax(0,1fr) minmax(0,1.6fr) minmax(0,1fr)}.mega__media{grid-column:3;grid-row:1;position:relative;display:block;overflow:hidden;aspect-ratio:4/5;max-height:360px;align-self:start;background:#111}.mega__media-img{width:100%;height:100%;object-fit:cover;transition:transform .5s ease}.mega__media:hover .mega__media-img{transform:scale(1.05)}.mega__media::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.7),rgba(0,0,0,0) 55%)}.mega__media-label{position:absolute;left:20px;right:20px;bottom:18px;z-index:1;color:#fff;font-size:30px;line-height:1;text-transform:uppercase}</style><site-header class="header" style="position:relative" data-header>
   <div class="container header__bar">
     <button type="button" class="icon-btn mob-only header__menu-btn" data-open-drawer="mobile-nav" aria-label="{{ 'header.open_menu' | t }}" aria-controls="mobile-nav">{% render 'icon', name: 'menu', size: 24, stroke_width: 2 %}</button>
 
@@ -59,14 +59,14 @@
 
   {%- for link in menu.links -%}
     {%- if link.links.size > 0 -%}
-      <div class="mega desk-only" id="mega-{{ forloop.index }}" hidden>
+      {%- assign mega_col = '' -%}{%- if link.type == 'collection_link' -%}{%- assign mega_col = link.object -%}{%- endif -%}{%- assign mega_img = mega_col.image -%}{%- if mega_img == blank -%}{%- assign mega_img = mega_col.products.first.featured_image -%}{%- endif -%}{%- if mega_img == blank -%}{%- for child in link.links -%}{%- if mega_img == blank and child.type == 'collection_link' -%}{%- assign mega_img = child.object.image | default: child.object.products.first.featured_image -%}{%- endif -%}{%- endfor -%}{%- endif -%}<div class="mega desk-only" id="mega-{{ forloop.index }}" hidden>
         <div class="container mega__inner">
           <div>
             <div class="display mega__title">{{ link.title | escape }}</div>
             {%- if section.settings.mega_text != blank -%}<p class="mega__text">{{ section.settings.mega_text | escape }}</p>{%- endif -%}
             <a class="btn" href="{{ link.url }}">{{ 'header.shop_all' | t: title: link.title }} {% render 'icon', name: 'arrow-right', size: 16, stroke_width: 2 %}</a>
           </div>
-          <ul class="mega__list">
+          {%- if mega_img != blank -%}<a class="mega__media" href="{{ link.url }}">{{ mega_img | image_url: width: 700 | image_tag: loading: 'lazy', widths: '350, 700', sizes: '320px', class: 'mega__media-img', alt: link.title }}<span class="mega__media-label display">{{ link.title | escape }}</span></a>{%- endif -%} <ul class="mega__list">
             {%- for child in link.links -%}
               <li><a href="{{ child.url }}">{{ child.title | escape }}</a></li>
             {%- endfor -%}
