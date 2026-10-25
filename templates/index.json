@@ -98,7 +98,8 @@
         "m0": {
           "type": "item",
           "settings": {
-            "text": "Nike"
+            "text": "Nike",
+            "logo": "shopify://shop_images/6-2-nike-logo-free-png-image.png"
           }
         },
         "m1": {
