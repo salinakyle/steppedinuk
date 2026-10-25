@@ -120,21 +120,21 @@
           "type": "item",
           "settings": {
             "text": "Saucony",
-            "logo": "shopify://shop_images/saucony_logo.png"
+            "logo": "shopify://shop_images/saucony_logo-removebg-preview.png"
           }
         },
         "m4": {
           "type": "item",
           "settings": {
             "text": "HOKA",
-            "logo": "shopify://shop_images/Hoka_logo.png"
+            "logo": "shopify://shop_images/Hoka_logo-removebg-preview.png"
           }
         },
         "m5": {
           "type": "item",
           "settings": {
             "text": "Air Jordan",
-            "logo": "shopify://shop_images/air_jordan_logo.png"
+            "logo": "shopify://shop_images/air_jordan_logo-removebg-preview.png"
           }
         },
         "m6": {
