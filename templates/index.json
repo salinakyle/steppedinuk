@@ -105,37 +105,43 @@
         "m1": {
           "type": "item",
           "settings": {
-            "text": "ASICS"
+            "text": "ASICS",
+            "logo": "shopify://shop_images/asics-logo.png"
           }
         },
         "m2": {
           "type": "item",
           "settings": {
-            "text": "UGG"
+            "text": "UGG",
+            "logo": "shopify://shop_images/UGG_logo.webp"
           }
         },
         "m3": {
           "type": "item",
           "settings": {
-            "text": "Saucony"
+            "text": "Saucony",
+            "logo": "shopify://shop_images/saucony_logo.png"
           }
         },
         "m4": {
           "type": "item",
           "settings": {
-            "text": "HOKA"
+            "text": "HOKA",
+            "logo": "shopify://shop_images/Hoka_logo.png"
           }
         },
         "m5": {
           "type": "item",
           "settings": {
-            "text": "Air Jordan"
+            "text": "Air Jordan",
+            "logo": "shopify://shop_images/air_jordan_logo.png"
           }
         },
         "m6": {
           "type": "item",
           "settings": {
-            "text": "Adidas"
+            "text": "Adidas",
+            "logo": "shopify://shop_images/Adidas_logo.png"
           }
         },
         "m7": {
