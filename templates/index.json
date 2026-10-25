@@ -141,7 +141,8 @@
         "m7": {
           "type": "item",
           "settings": {
-            "text": "Pokémon"
+            "text": "Pokémon",
+            "logo": "shopify://shop_images/Pokemon_logo.png"
           }
         }
       },
