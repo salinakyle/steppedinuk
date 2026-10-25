@@ -4,7 +4,7 @@
     {%- for i in (1..4) -%}
       <div class="marquee__group">
         {%- for block in section.blocks -%}
-          <span class="marquee__item" {% if i == 1 %}{{ block.shopify_attributes }}{% endif %}>{{ block.settings.text | escape }} <span>✦</span></span>
+          <span class="marquee__item" {% if i == 1 %}{{ block.shopify_attributes }}{% endif %}>{%- if block.settings.logo -%}<img class="marquee__logo" src="{{ block.settings.logo | image_url: width: 400 }}" alt="{{ block.settings.text | escape }}" height="28" loading="lazy">{%- else -%}{{ block.settings.text | escape }}{%- endif -%} <span>✦</span></span>
         {%- endfor -%}
       </div>
     {%- endfor -%}
@@ -22,7 +22,7 @@
     { "type": "range", "id": "speed", "label": "Loop duration", "min": 10, "max": 90, "step": 2, "unit": "s", "default": 40 }
   ],
   "blocks": [
-    { "type": "item", "name": "Item", "settings": [ { "type": "text", "id": "text", "label": "Text", "default": "Nike" } ] }
+    { "type": "item", "name": "Item", "settings": [ { "type": "text", "id": "text", "label": "Text", "default": "Nike" }, { "type": "image_picker", "id": "logo", "label": "Brand logo (shown in black)" } ] }
   ],
   "presets": [
     {
@@ -37,3 +37,7 @@
   ]
 }
 {% endschema %}
+
+{% stylesheet %}
+.marquee__logo { height: 28px; width: auto; max-width: none; display: inline-block; vertical-align: middle; filter: brightness(0); }
+{% endstylesheet %}
