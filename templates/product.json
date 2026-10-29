@@ -1,57 +1,93 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "main": {
       "type": "main-product",
-      "settings": {
-        "show_thumbnails": true,
-        "enable_zoom": true,
-        "show_badge": true,
-        "require_selection": true,
-        "sticky_bar": true
-      },
       "blocks": {
         "title": {
           "type": "title",
           "settings": {
-            "outline_words": 2
+            "outline_words": 2,
+            "show_type": false
           }
         },
         "rating": {
           "type": "rating",
-          "settings": {}
+          "settings": {
+            "hot_tag": "selling-fast",
+            "hot_label": "Selling fast"
+          }
         },
         "price": {
           "type": "price",
-          "settings": {}
+          "settings": {
+            "installments": 3,
+            "installments_label": "or [count] payments of [amount] with Klarna"
+          }
         },
         "picker": {
           "type": "variant_picker",
-          "settings": {}
+          "settings": {
+            "size_prefix": "UK",
+            "size_guide_page": "",
+            "low_stock_threshold": 5
+          }
         },
         "buy": {
           "type": "buy_buttons",
-          "settings": {}
+          "settings": {
+            "show_dynamic_checkout": true
+          }
         },
         "delivery": {
           "type": "delivery",
-          "settings": {}
+          "settings": {
+            "show_countdown": true,
+            "cutoff_hour": 9,
+            "countdown_before": "Order within",
+            "countdown_after": "for same-day dispatch",
+            "delivery_label": "Estimated delivery",
+            "min_days": 2,
+            "max_days": 4,
+            "skip_weekends": true
+          }
         },
         "perks": {
           "type": "perks",
-          "settings": {}
+          "settings": {
+            "perk_1_title": "100% authentic",
+            "perk_1_sub": "Verified pairs",
+            "perk_2_title": "14-day returns",
+            "perk_2_sub": "On every order",
+            "perk_3_title": "Fast delivery",
+            "perk_3_sub": "Tracked, worldwide",
+            "perk_4_title": "Secure checkout",
+            "perk_4_sub": "Klarna, Apple Pay"
+          }
         },
         "desc": {
           "type": "collapsible_tab",
           "settings": {
             "heading": "Description",
             "source": "description",
+            "content": "",
+            "page": "",
             "open": true
           }
         },
         "details": {
           "type": "details",
           "settings": {
-            "heading": "Details"
+            "heading": "Details",
+            "open": false
           }
         },
         "ship": {
@@ -59,7 +95,9 @@
           "settings": {
             "heading": "Delivery & returns",
             "source": "custom",
-            "content": "<p>Fast, tracked delivery worldwide. 14-day returns on every order. See the refund policy for how to send a pair back.</p>"
+            "content": "<p>Fast, tracked delivery worldwide. 14-day returns on every order. See the refund policy for how to send a pair back.</p>",
+            "page": "",
+            "open": false
           }
         },
         "auth": {
@@ -67,7 +105,9 @@
           "settings": {
             "heading": "Authenticity",
             "source": "custom",
-            "content": "<p>100% authentic. Every pair is checked before it leaves our warehouse, then packed professionally.</p>"
+            "content": "<p>100% authentic. Every pair is checked before it leaves our warehouse, then packed professionally.</p>",
+            "page": "",
+            "open": false
           }
         },
         "pay": {
@@ -88,20 +128,47 @@
         "ship",
         "auth",
         "pay"
-      ]
+      ],
+      "settings": {
+        "show_thumbnails": true,
+        "enable_zoom": true,
+        "show_badge": true,
+        "badge_text": "AUTHENTIC · GUARANTEED · VERIFIED ·",
+        "show_new_badge": true,
+        "new_days": 30,
+        "require_selection": true,
+        "update_url": true,
+        "sticky_bar": true
+      }
     },
     "reviews": {
       "type": "reviews-callout",
       "settings": {
-        "button_link": "https://www.trustpilot.com"
+        "heading": "Customer",
+        "heading_outline": "reviews",
+        "stars": 5,
+        "card_title": "Rated 5 stars on Trustpilot",
+        "button_label": "Read all reviews",
+        "button_link": "https://www.trustpilot.com",
+        "quote": "Wow, great customer service.",
+        "attribution": "Verified customer · Trustpilot",
+        "padding_top": 80,
+        "padding_bottom": 0
       }
     },
     "recommendations": {
       "type": "product-recommendations",
       "settings": {
+        "eyebrow": "More to explore",
         "heading": "You may",
         "heading_outline": "also like",
-        "eyebrow": "More to explore"
+        "intent": "related",
+        "count": 4,
+        "columns": 4,
+        "mobile_carousel": true,
+        "quick_add": true,
+        "padding_top": 80,
+        "padding_bottom": 24
       }
     }
   },
