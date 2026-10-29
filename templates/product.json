@@ -56,7 +56,7 @@
             "countdown_after": "for same-day dispatch",
             "delivery_label": "Estimated delivery",
             "min_days": 2,
-            "max_days": 4,
+            "max_days": 5,
             "skip_weekends": true
           }
         },
