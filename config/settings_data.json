@@ -28,10 +28,11 @@
   },
   "platform_customizations": {
     "custom_css": [
-      ".card__media {aspect-ratio: 7 / 5 !important; }",
-      ".card__media img {object-fit: contain !important; }",
-      ".pgal__main {aspect-ratio: 7 / 5 !important; }",
-      ".pgal__main img {object-fit: contain !important; }"
+      ".card__media {aspect-ratio: 7 / 5 !important;}",
+      ".card__media img {object-fit: contain !important;}",
+      ".pgal__main {aspect-ratio: 7 / 5 !important;}",
+      ".pgal__main img {object-fit: contain !important;}",
+      ".card__media, .pgal__main {background: #fff; }"
     ]
   }
 }
