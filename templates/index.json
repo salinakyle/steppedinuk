@@ -394,7 +394,7 @@
         "tile_kQyPM3": {
           "type": "tile",
           "settings": {
-            "collection": "nike-air-force",
+            "collection": "adidas",
             "title": "ADIDAS",
             "link": "{{ block.settings.collection.url }}",
             "image": "shopify://shop_images/adidas-yeezy-boost-350-v2-earth-fx9033_1_1000x1000_64920827-1cab-43e6-8572-f480fd37e46a.jpg",
