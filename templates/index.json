@@ -17,8 +17,8 @@
           "settings": {
             "color_scheme": "grey",
             "kicker": "Fresh kicks · Fast delivery",
-            "heading": "New drops,",
-            "heading_outline": "landed.",
+            "heading": "New drops,  landed.",
+            "heading_outline": "",
             "text": "Authentic Nike, ASICS, UGG, Saucony and HOKA, packed properly and out of the door fast.",
             "button_label": "Shop new arrivals",
             "button_link": "https://steppedinuk.myshopify.com/collections/new-arrivals",
@@ -33,8 +33,8 @@
           "settings": {
             "color_scheme": "dark",
             "kicker": "Trending now",
-            "heading": "ASICS",
-            "heading_outline": "Gel-Kayano 14",
+            "heading": "ASICS Gel-Kayano 14",
+            "heading_outline": "",
             "text": "White Pure Silver. Just in and moving fast.",
             "button_label": "Shop ASICS",
             "button_link": "https://steppedin.uk/collections/asics-collection",
@@ -48,8 +48,8 @@
           "type": "slide",
           "settings": {
             "color_scheme": "light",
-            "kicker": "Summer sale",
-            "heading": "UGG",
+            "kicker": "Clearances sale UGG",
+            "heading": "",
             "heading_outline": "for less.",
             "text": "Classic minis, micros and slippers, marked down.",
             "button_label": "Shop the sale",
