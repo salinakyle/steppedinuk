@@ -145,8 +145,8 @@
     "reviews": {
       "type": "reviews-callout",
       "settings": {
-        "heading": "Customer",
-        "heading_outline": "reviews",
+        "heading": "Customer  reviews",
+        "heading_outline": "",
         "stars": 5,
         "card_title": "Rated 5 stars on Trustpilot",
         "button_label": "Read all reviews",
