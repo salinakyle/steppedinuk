@@ -90,8 +90,8 @@
       ],
       "name": "Benefits grid",
       "settings": {
-        "heading": "Why shop",
-        "heading_outline": "with us",
+        "heading": "Why shop  with us",
+        "heading_outline": "",
         "padding_top": 96,
         "padding_bottom": 40
       }
@@ -142,8 +142,8 @@
         "v3"
       ],
       "settings": {
-        "heading": "Shop more",
-        "heading_outline": "collections",
+        "heading": "Shop more collections",
+        "heading_outline": "",
         "tile_label": "Collection",
         "mobile_carousel": true,
         "padding_top": 96,
