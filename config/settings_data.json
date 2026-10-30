@@ -13,8 +13,8 @@
     "font_body": "Google Sans",
     "cart_type": "drawer",
     "show_wishlist": true,
-    "social_instagram": "#",
-    "social_facebook": "#",
+    "social_instagram": "https://www.instagram.com/stepped.in/",
+    "social_facebook": "https://www.facebook.com/SteppedInUk/",
     "social_tiktok": "#",
     "favicon": "shopify://shop_images/favicon.svg",
     "sections": {
@@ -88,7 +88,7 @@
       ".pgal__main {aspect-ratio: 7 / 5 !important;}",
       ".pgal__main img {object-fit: contain !important;}",
       ".card__media,.pgal__main {background: #fff;}",
-      "@media (max-width: 749px) {.buy-row {gap: 6px; flex-wrap: nowrap; } .buy-row .qty button {width: 36px; } .buy-row .btn--add {padding: 0 10px; gap: 6px; font-size: 12px; letter-spacing: 0.04em; white-space: nowrap; } .buy-row .btn--add .icon {width: 16px; height: 16px; } .buy-row .wish-btn {flex: 0 0 auto; } }"
+      "@media (max-width: 749px) {.buy-row {gap: 6px; flex-wrap: nowrap; } .buy-row .qty button {width: 36px; } .buy-row .btn--add {padding: 0 10px; gap: 6px; font-size: 12px; letter-spacing: 0.04em; white-space: nowrap; } .buy-row .btn--add .icon {width: 16px; height: 16px; } .buy-row .wish-btn {flex: 0 0 auto; }}"
     ]
   }
 }
