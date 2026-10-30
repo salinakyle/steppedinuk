@@ -64,7 +64,7 @@
         <div class="card__track" data-track>
           {%- for image in product.images limit: 3 -%}
             <a class="card__slide" href="{{ product.url }}" {% unless forloop.first %}tabindex="-1" aria-hidden="true"{% endunless %}>
-              {{- image | image_url: width: 800 | image_tag: widths: '360, 540, 720, 800', sizes: img_sizes, loading: 'lazy', alt: image.alt | default: product.title -}}
+              {{- image | image_url: width: 720 | image_tag: widths: '240, 360, 480, 540, 720', sizes: img_sizes, loading: 'lazy', alt: image.alt | default: product.title -}}
             </a>
           {%- else -%}
             <a class="card__slide" href="{{ product.url }}" style="color:#000" aria-label="{{ product.title | escape }}">{% render 'shoe-placeholder' %}</a>
