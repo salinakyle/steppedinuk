@@ -53,7 +53,7 @@
             "show_countdown": true,
             "cutoff_hour": 9,
             "countdown_before": "Order within",
-            "countdown_after": "for same-day dispatch",
+            "countdown_after": "for lightening fast dispatch",
             "delivery_label": "Estimated delivery",
             "min_days": 2,
             "max_days": 5,
