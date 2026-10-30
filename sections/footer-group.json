@@ -28,6 +28,7 @@
         "brand": {
           "type": "brand",
           "settings": {
+            "logo": "shopify://shop_images/stepped-in-logo-white-transparent.png",
             "logo_text_1": "Stepped",
             "logo_text_2": "In",
             "text": "Authentic sneakers, packed properly and dispatched fast."
