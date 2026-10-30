@@ -4,7 +4,7 @@
     {%- for i in (1..4) -%}
       <div class="marquee__group">
         {%- for block in section.blocks -%}
-          <span class="marquee__item" {% if i == 1 %}{{ block.shopify_attributes }}{% endif %}>{%- if block.settings.logo -%}<img class="marquee__logo" src="{{ block.settings.logo | image_url: width: 400 }}" alt="{{ block.settings.text | escape }}" height="28" loading="lazy">{%- else -%}{{ block.settings.text | escape }}{%- endif -%} <span>✦</span></span>
+          <span class="marquee__item" {% if i == 1 %}{{ block.shopify_attributes }}{% endif %}>{%- if block.settings.logo -%}<img class="marquee__logo" src="{{ block.settings.logo | image_url: height: 100 }}" alt="{{ block.settings.text | escape }}" height="28" loading="lazy">{%- else -%}{{ block.settings.text | escape }}{%- endif -%} <span>✦</span></span>
         {%- endfor -%}
       </div>
     {%- endfor -%}
