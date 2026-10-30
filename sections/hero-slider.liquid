@@ -48,7 +48,7 @@
           <div class="hero__visual{% if show_video %} hero__visual--video{% endif %}" aria-hidden="{% if hero_img != blank or show_video %}false{% else %}true{% endif %}">
             {%- if show_video -%}
               {%- if video_kind == 'file' -%}
-                {{- s.video | video_tag: image_size: '1200x', autoplay: true, loop: true, muted: true, controls: false, playsinline: true, preload: 'metadata', class: 'hero__video' -}}
+                {{- s.video | video_tag: image_size: '720x', autoplay: true, loop: true, muted: true, controls: false, playsinline: true, preload: 'metadata', class: 'hero__video' -}}
               {%- elsif video_kind == 'youtube' -%}
                 <div class="hero__embed"><iframe src="https://www.youtube.com/embed/{{ s.video_url.id }}?autoplay=1&mute=1&loop=1&playlist={{ s.video_url.id }}&controls=0&playsinline=1&rel=0&modestbranding=1" title="{{ s.heading | escape }}" loading="lazy" allow="autoplay; encrypted-media; picture-in-picture" referrerpolicy="strict-origin-when-cross-origin"></iframe></div>
               {%- elsif video_kind == 'vimeo' -%}
