@@ -15,7 +15,7 @@
         "title": {
           "type": "title",
           "settings": {
-            "outline_words": 2,
+            "outline_words": 0,
             "show_type": false
           }
         },
