@@ -49,6 +49,7 @@
         },
         "delivery": {
           "type": "delivery",
+          "disabled": true,
           "settings": {
             "show_countdown": true,
             "cutoff_hour": 9,
