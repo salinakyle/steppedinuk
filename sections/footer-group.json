@@ -14,8 +14,8 @@
     "newsletter": {
       "type": "newsletter",
       "settings": {
-        "heading": "First to know.",
-        "heading_outline": "First to buy.",
+        "heading": "First to know.  First to buy.",
+        "heading_outline": "",
         "text": "Early access to drops and exclusive offers, straight to your inbox.",
         "color_scheme": "grey",
         "padding_top": 96,

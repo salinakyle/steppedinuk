@@ -260,8 +260,8 @@
         "p4"
       ],
       "settings": {
-        "heading": "Shop by",
-        "heading_outline": "brand",
+        "heading": "Shop by brand",
+        "heading_outline": "",
         "count": 4,
         "columns": 4,
         "mobile_carousel": true,
@@ -274,8 +274,8 @@
       "settings": {
         "collection": "new-arrivals",
         "eyebrow": "Just landed",
-        "heading": "New",
-        "heading_outline": "arrivals",
+        "heading": "New arrivals",
+        "heading_outline": "",
         "link_text": "View all new",
         "link_url": "",
         "count": 4,
@@ -410,8 +410,8 @@
         "tile_kQyPM3"
       ],
       "settings": {
-        "heading": "Also in the",
-        "heading_outline": "locker",
+        "heading": "Also in the locker",
+        "heading_outline": "",
         "tile_label": "Collection",
         "mobile_carousel": true,
         "padding_top": 96,
@@ -605,8 +605,8 @@
         "b9"
       ],
       "settings": {
-        "heading": "Popular",
-        "heading_outline": "now",
+        "heading": "Popular now",
+        "heading_outline": "",
         "padding_top": 56,
         "padding_bottom": 64
       }
@@ -658,8 +658,8 @@
         "v_align": "flex-start",
         "flip": false,
         "eyebrow": "ABOUT US",
-        "heading": "Checked, packed,",
-        "heading_outline": "shipped.",
+        "heading": "Checked, packed, shipped.",
+        "heading_outline": "",
         "text": "<p>SteppedIn is a curated sneaker destination for people who know what they’re buying.<br/><br/>We don’t list everything.<br/><br/>We hand-pick the best trainers, rare colour-ways and performance shoes — so you don’t have to search through thousands of average pairs.<br/><br/>Every order is:<br/><br/>✔ Professionally packaged<br/><br/>✔ Priority dispatch<br/><br/>✔ Society early access<br/><br/>Our members don’t just shop here — they get early access, private drops and first pick of what sells out.<br/><br/>This is where people step in before everyone else does.<br/><br/>Welcome to the Steppedin Society.</p>",
         "button_label": "Learn more",
         "button_link": "shopify://pages/authenticity",
@@ -728,8 +728,8 @@
         "w5"
       ],
       "settings": {
-        "heading": "Why shop",
-        "heading_outline": "with us",
+        "heading": "Why shop with us",
+        "heading_outline": "",
         "padding_top": 96,
         "padding_bottom": 40
       }
