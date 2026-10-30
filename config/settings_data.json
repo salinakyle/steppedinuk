@@ -16,6 +16,7 @@
     "social_instagram": "#",
     "social_facebook": "#",
     "social_tiktok": "#",
+    "favicon": "shopify://shop_images/favicon.svg",
     "sections": {
       "cart-drawer": {
         "type": "cart-drawer",
