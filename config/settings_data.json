@@ -9,6 +9,8 @@
  */
 {
   "current": {
+    "font_heading": "Roboto",
+    "font_body": "Google Sans",
     "cart_type": "drawer",
     "show_wishlist": true,
     "social_instagram": "#",
