@@ -231,4 +231,4 @@ card-gallery{position:absolute;inset:0}
 .shopify-section-group-header-group,.shopify-section-group-footer-group{display:block}
 @media (max-width:749px){.footer__grid{padding-top:48px;gap:32px}.footer__title{margin-bottom:12px}}
 /* mobile product title & price sizes */
-@media (max-width:699px){.product-title,h1.product-title,.product-card .product-title{font-size:22px!important}.price-list,.price-list *,sale-price,compare-at-price{font-size:18px!important}}
+@media (max-width:699px){.card__title,.pinfo h1,.pblock h1{font-size:22px!important}.price,.price__now,.price__was,.sticky-atc__price{font-size:18px!important}}
