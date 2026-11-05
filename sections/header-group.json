@@ -68,16 +68,11 @@
         "show_account": true,
         "popular_searches": "Nike, ASICS, UGG, Pokémon, Air Max"
       }
-    },
-    "1793838569b23c2ff4": {
-      "type": "apps",
-      "settings": {}
     }
   },
   "order": [
     "custom_liquid_7GC6J7",
     "announcement-bar",
-    "header",
-    "1793838569b23c2ff4"
+    "header"
   ]
 }
