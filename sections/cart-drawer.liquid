@@ -90,7 +90,6 @@
         <form action="{{ routes.cart_url }}" method="post">
           <button type="submit" name="checkout" class="btn btn--lg btn--full">{{ 'cart.checkout' | t }}</button>
         </form>
-        <a href="{{ routes.cart_url }}" class="link-underline" style="justify-self:center">{{ 'cart.view' | t }}</a>
         {%- if section.settings.footer_text != blank -%}
           <p style="text-align:center;color:var(--color-muted);font-size:13px">{{ section.settings.footer_text | escape }}</p>
         {%- endif -%}
