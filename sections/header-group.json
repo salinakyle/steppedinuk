@@ -15,7 +15,7 @@
       "type": "custom-liquid",
       "name": "Custom Liquid",
       "settings": {
-        "custom_liquid": "<div class=\"trustpilot-widget\" data-locale=\"en-US\" data-template-id=\"5419b637fa0340045cd0c936\" data-businessunit-id=\"62043bc32319ce9269738995\" data-style-height=\"20px\" data-style-width=\"100%\" data-theme=\"light\"><a href=\"https://www.trustpilot.com/review/steppedin.uk\" target=\"_blank\" rel=\"noopener\">Trustpilot</a></div><script type=\"text/javascript\" src=\"//widget.trustpilot.com/bootstrap/v5/tp.widget.bootstrap.min.js\" async></script>",
+        "custom_liquid": "<div class=\"trustpilot-widget\" data-locale=\"en-US\" data-template-id=\"5419b6ffb0d04a076446a9af\" data-businessunit-id=\"62043bc32319ce9269738995\" data-style-height=\"20px\" data-style-width=\"100%\" data-theme=\"light\"><a href=\"https://www.trustpilot.com/review/steppedin.uk\" target=\"_blank\" rel=\"noopener\">Trustpilot</a></div><script type=\"text/javascript\" src=\"//widget.trustpilot.com/bootstrap/v5/tp.widget.bootstrap.min.js\" async></script>",
         "padding_top": 8,
         "padding_bottom": 8
       }
