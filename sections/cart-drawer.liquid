@@ -17,6 +17,67 @@
         {%- for line in cart.items -%}
           {% render 'cart-line', line: line, index: forloop.index %}
         {%- endfor -%}
+              {%- liquid
+        assign cyc_cart_pids = cart.items | map: 'product_id'
+        assign cyc_coll = nil
+        for cyc_c in cart.items.first.product.collections
+          if cyc_c.handle != 'all' and cyc_c.handle != 'frontpage' and cyc_c.products_count > 1
+            assign cyc_coll = cyc_c
+            break
+          endif
+        endfor
+        assign cyc_ids = ''
+        assign cyc_n = 0
+        if cyc_coll
+          for cyc_p in cyc_coll.products limit: 30
+            if cyc_p.available and cyc_p.id != cart.items.first.product_id
+              unless cyc_cart_pids contains cyc_p.id
+                assign cyc_ids = cyc_ids | append: cyc_p.id | append: ','
+                assign cyc_n = cyc_n | plus: 1
+              endunless
+            endif
+            if cyc_n >= 8
+              break
+            endif
+          endfor
+        endif
+        assign cyc_arr = cyc_ids | split: ','
+        assign cyc_size = cyc_arr.size
+        assign cyc_seed = 'now' | date: '%s' | plus: 0
+        if cyc_size > 0
+          assign cyc_i1 = cyc_seed | modulo: cyc_size
+          assign cyc_i2 = cyc_seed | divided_by: 7 | modulo: cyc_size
+          if cyc_i2 == cyc_i1
+            assign cyc_i2 = cyc_i1 | plus: 1 | modulo: cyc_size
+          endif
+          assign cyc_pick1 = cyc_arr[cyc_i1]
+          assign cyc_pick2 = cyc_arr[cyc_i2]
+        endif
+      -%}
+      {%- if cyc_size > 0 -%}
+        <div class="complete-collection" style="margin-top:20px;padding-top:16px;border-top:1px solid var(--color-border,#e5e5e5)">
+          <h3 style="font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin:0 0 12px">Complete your collection</h3>
+          {%- for cyc_p in cyc_coll.products limit: 30 -%}
+            {%- assign cyc_pid = cyc_p.id | append: '' -%}
+            {%- if cyc_pid == cyc_pick1 or cyc_pid == cyc_pick2 -%}
+              {%- assign cyc_v = cyc_p.selected_or_first_available_variant -%}
+              <div class="complete-collection__item" style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+                <a href="{{ cyc_p.url }}" style="flex:0 0 64px;width:64px;height:64px;display:block;background:#f4f4f4;overflow:hidden">
+                  {%- if cyc_p.featured_image -%}
+                    <img src="{{ cyc_p.featured_image | image_url: width: 160 }}" alt="{{ cyc_p.featured_image.alt | default: cyc_p.title | escape }}" width="64" height="64" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block">
+                  {%- endif -%}
+                </a>
+                <div style="flex:1;min-width:0">
+                  <a href="{{ cyc_p.url }}" style="display:block;font-size:13px;font-weight:600;line-height:1.3;color:inherit;text-decoration:none;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical">{{ cyc_p.title }}</a>
+                  <span style="display:block;font-size:13px;margin-top:2px">{{ cyc_v.price | money }}</span>
+                </div>
+                <button type="button" data-quick-add="{{ cyc_v.id }}" class="btn btn--sm" style="flex:0 0 auto;padding:8px 18px;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;background:var(--color-text,#000);color:var(--color-bg,#fff);border:1px solid var(--color-text,#000);cursor:pointer">Add</button>
+              </div>
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
+
       </div>
       <div class="drawer__foot">
         {%- if cart.cart_level_discount_applications.size > 0 -%}
